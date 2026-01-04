@@ -32,7 +32,7 @@ const inverterList = [
   { model: "SOLARVERTER PRO 10.1KVA (MPPT)", price: 82817 }
 ];
 
-// SOLAR PANELS (model / watt / dealer price)
+// SOLAR PANELS
 const panelList = [
   { model: "POLY 170W/12V", watt: 170, price: 3815 },
   { model: "PV MOD LUM24550M DCR BI-TS EXWH31", watt: 550, price: 14025 },
@@ -95,7 +95,6 @@ window.addEventListener('DOMContentLoaded', () => {
   recalcAllCards();
 });
 
-/* populate dropdowns */
 function populateSelects() {
   const invSel = $('inverterModel');
   inverterList.forEach(inv => {
@@ -227,13 +226,12 @@ function attachEventListeners() {
   $('structUseCommonMargin').addEventListener('change', toggleCustomMarginInput.bind(null,'structure'));
   $('structCustomMargin').addEventListener('input', updateStructureData);
 
-   // Earthing Set
-   $('earthingSetQty').addEventListener('input', updateEarthingSetData);
-   $('earthingSetOverrideToggle').addEventListener('change', () => toggleOverrideUI('earthingSet'));
-   $('earthingSetOverridePrice').addEventListener('input', updateEarthingSetData);
-   $('earthingSetUseCommonMargin').addEventListener('change', toggleCustomMarginInput.bind(null, 'earthingSet'));
-   $('earthingSetCustomMargin').addEventListener('input', updateEarthingSetData);
- 
+  // Earthing Set
+  $('earthingSetQty').addEventListener('input', updateEarthingSetData);
+  $('earthingSetOverrideToggle').addEventListener('change', () => toggleOverrideUI('earthingSet'));
+  $('earthingSetOverridePrice').addEventListener('input', updateEarthingSetData);
+  $('earthingSetUseCommonMargin').addEventListener('change', toggleCustomMarginInput.bind(null, 'earthingSet'));
+  $('earthingSetCustomMargin').addEventListener('input', updateEarthingSetData);
 
   // enable/disable products via header toggles
   ['inverter','panels','battery','meter','acdb','dcdb','acCable','earthCable','la','installation','structure', 'earthingSet'].forEach(pid => {
@@ -1011,10 +1009,12 @@ function buildDetailedQuotationHtml(totals, systemType) {
   const customerEmail = $('customerEmail')?.value || '';
   const date = new Date();
   const proposalDate = date.toLocaleDateString('en-IN', { day:'2-digit', month:'long', year:'numeric' });
+  // Proposal No: VS/Year/Month/001 -> simple randomized or logic
   const proposalNo = `VS/${date.getFullYear()}/001`;
 
-  // Off-grid usually doesn't have subsidy, but code structure kept similar
-  const isSubsidyYes = false; 
+  // CHECK SUBSIDY RADIO BUTTON
+  const subsidyRadio = document.querySelector('input[name="subsidyEligible"]:checked');
+  const isSubsidyYes = subsidyRadio && subsidyRadio.value === 'yes';
 
   /* ===============================
      1. SYSTEM SPECIFICATION ROWS
@@ -1067,14 +1067,26 @@ function buildDetailedQuotationHtml(totals, systemType) {
     </tr>
   `;
 
-  // Use standard On-Grid "getCommonHtml" structure logic here manually to ensure 100% match
-  // I will embed the full HTML structure directly as requested to be a replica
+  // BUILD SUBSIDY DISCLAIMER BLOCK
+  let subsidyDisclaimerHtml = '';
+  if (isSubsidyYes) {
+    subsidyDisclaimerHtml = `
+      <div class="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg text-xs text-green-800 shadow-sm">
+          <strong class="block mb-1 text-green-900 border-b border-green-200 pb-1">Subsidy Eligibility (PM Surya Ghar):</strong>
+          <ul class="list-disc list-inside space-y-1 mt-1">
+              <li><strong>₹60,000 subsidy</strong> for 2kW systems.</li>
+              <li><strong>₹78,000 subsidy</strong> for 3kW and above systems.</li>
+          </ul>
+          <div class="mt-2 italic text-[10px] text-green-700">*Subject to government approval and DBT transfer directly to customer. Not deducted from invoice.</div>
+      </div>
+    `;
+  }
 
+  // Identical HTML Template as Detailed Quote
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${plantKw}KW Offgrid ${customerName}${customerEmail ? ' ' + customerEmail : ''}</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -1504,18 +1516,109 @@ function buildDetailedQuotationHtml(totals, systemType) {
 
     <!-- PAGE 5: WHY CHOOSE US -->
     <div class="page-container page-break relative">
-        <div class="wave-corner-top-left-accent h-[150px]"></div><div class="wave-corner-top-left h-[130px]"></div>
-        <div class="absolute top-8 right-8 z-30 w-32"><img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" class="w-full object-contain"></div>
-        <div class="absolute top-8 left-12 z-30 flex items-center gap-3"><i class="far fa-star text-3xl text-white"></i><h2 class="text-3xl font-bold text-white">Why Choose Us?</h2></div>
-        <div class="relative z-20 mt-40 px-12 h-full pb-12 flex flex-col"><p class="text-lg text-gray-600 mb-12 border-l-4 border-brand-orange pl-4 italic bg-white/60 p-2 rounded">Empowering your home with eco-friendly solutions.</p>
-        <div class="grid grid-cols-2 gap-y-12 gap-x-12">
-            <div class="flex items-start gap-5 content-card-bg p-4 rounded-lg shadow-sm"><div class="flex-shrink-0 w-16 h-16 rounded-full bg-brand-green/10 flex items-center justify-center text-brand-green border border-brand-green/20"><i class="fas fa-drafting-compass text-2xl"></i></div><div><h3 class="font-bold text-xl text-brand-blue mb-2">Customized Solution</h3><p class="text-sm text-gray-600 leading-relaxed">Tailored specifically to your energy needs.</p></div></div>
-            <div class="flex items-start gap-5 content-card-bg p-4 rounded-lg shadow-sm"><div class="flex-shrink-0 w-16 h-16 rounded-full bg-brand-blue/10 flex items-center justify-center text-brand-blue border border-brand-blue/20"><i class="fas fa-tools text-2xl"></i></div><div><h3 class="font-bold text-xl text-brand-blue mb-2">Minimal Maintenance</h3><p class="text-sm text-gray-600">Built to last with minimal upkeep.</p></div></div>
-            <div class="flex items-start gap-5 content-card-bg p-4 rounded-lg shadow-sm"><div class="flex-shrink-0 w-16 h-16 rounded-full bg-brand-orange/10 flex items-center justify-center text-brand-orange border border-brand-orange/20"><i class="fas fa-medal text-2xl"></i></div><div><h3 class="font-bold text-xl text-brand-blue mb-2">Quality Assurance</h3><p class="text-sm text-gray-600">Top-rated inverters and Tier-1 modules.</p></div></div>
-            <div class="flex items-start gap-5 content-card-bg p-4 rounded-lg shadow-sm"><div class="flex-shrink-0 w-16 h-16 rounded-full bg-brand-green/10 flex items-center justify-center text-brand-green border border-brand-green/20"><i class="fas fa-shield-alt text-2xl"></i></div><div><h3 class="font-bold text-xl text-brand-blue mb-2">Highest Safety</h3><p class="text-sm text-gray-600">Strict electrical safety standards.</p></div></div>
-            <div class="flex items-start gap-5 content-card-bg p-4 rounded-lg shadow-sm"><div class="flex-shrink-0 w-16 h-16 rounded-full bg-brand-blue/10 flex items-center justify-center text-brand-blue border border-brand-blue/20"><i class="fas fa-chart-line text-2xl"></i></div><div><h3 class="font-bold text-xl text-brand-blue mb-2">Quick ROI</h3><p class="text-sm text-gray-600">Substantial electricity bill reductions.</p></div></div>
-            <div class="flex items-start gap-5 content-card-bg p-4 rounded-lg shadow-sm"><div class="flex-shrink-0 w-16 h-16 rounded-full bg-brand-orange/10 flex items-center justify-center text-brand-orange border border-brand-orange/20"><i class="fas fa-hand-holding-usd text-2xl"></i></div><div><h3 class="font-bold text-xl text-brand-blue mb-2">Smart Investment</h3><p class="text-sm text-gray-600">Appreciating asset hedging against tariff hikes.</p></div></div>
-        </div></div>
+        <!-- Abstract Top Shape -->
+        <div class="wave-corner-top-left-accent h-[150px]"></div>
+        <div class="wave-corner-top-left h-[130px]"></div>
+        
+        <!-- Logo (TOP RIGHT) -->
+        <div class="absolute top-8 right-8 z-30 w-32">
+            <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
+        </div>
+
+        <!-- Shifted Header -->
+        <div class="absolute top-8 left-12 z-30 flex items-center gap-3">
+             <i class="far fa-star text-3xl text-white"></i>
+             <h2 class="text-3xl font-bold text-white">Why Choose Us?</h2>
+        </div>
+
+        <div class="relative z-20 mt-40 px-12 h-full pb-12 flex flex-col">
+            
+            <p class="text-lg text-gray-600 mb-12 border-l-4 border-brand-orange pl-4 italic bg-white/60 p-2 rounded">
+                Empowering your home with eco-friendly solutions and a sustainable future through trusted technology.
+            </p>
+
+            <!-- Grid Layout (Unchanged) -->
+            <div class="grid grid-cols-2 gap-y-12 gap-x-12">
+                <!-- Item 1 -->
+                <div class="flex items-start gap-5 content-card-bg p-4 rounded-lg shadow-sm">
+                    <div class="flex-shrink-0 w-16 h-16 rounded-full bg-brand-green/10 flex items-center justify-center text-brand-green border border-brand-green/20">
+                        <i class="fas fa-drafting-compass text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-xl text-brand-blue mb-2">Customized Solution</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            We don't believe in one-size-fits-all. Our team designs a solar power system tailored specifically to your roof structure and energy needs, ensuring maximum efficiency.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="flex items-start gap-5 content-card-bg p-4 rounded-lg shadow-sm">
+                    <div class="flex-shrink-0 w-16 h-16 rounded-full bg-brand-blue/10 flex items-center justify-center text-brand-blue border border-brand-blue/20">
+                        <i class="fas fa-tools text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-xl text-brand-blue mb-2">Minimal Maintenance</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            Our systems are built to last with minimal upkeep. High-quality components and optional anti-dust coatings mean you spend less time cleaning and more time saving.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="flex items-start gap-5 content-card-bg p-4 rounded-lg shadow-sm">
+                    <div class="flex-shrink-0 w-16 h-16 rounded-full bg-brand-orange/10 flex items-center justify-center text-brand-orange border border-brand-orange/20">
+                        <i class="fas fa-medal text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-xl text-brand-blue mb-2">Quality Assurance</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            We use only Tier-1 modules and top-rated inverters from trusted global brands. Every installation undergoes rigorous quality checks before commissioning.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Item 4 -->
+                <div class="flex items-start gap-5 content-card-bg p-4 rounded-lg shadow-sm">
+                    <div class="flex-shrink-0 w-16 h-16 rounded-full bg-brand-green/10 flex items-center justify-center text-brand-green border border-brand-green/20">
+                        <i class="fas fa-shield-alt text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-xl text-brand-blue mb-2">Highest Safety</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            Safety is our priority. We adhere to strict electrical safety standards, using advanced protection devices (ACDB/DCDB) to safeguard your home and family.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Item 5 -->
+                <div class="flex items-start gap-5 content-card-bg p-4 rounded-lg shadow-sm">
+                    <div class="flex-shrink-0 w-16 h-16 rounded-full bg-brand-blue/10 flex items-center justify-center text-brand-blue border border-brand-blue/20">
+                        <i class="fas fa-chart-line text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-xl text-brand-blue mb-2">Quick ROI</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            Start saving from day one. With substantial electricity bill reductions, most of our customers recover their initial investment within just 3-4 years.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Item 6 -->
+                <div class="flex items-start gap-5 content-card-bg p-4 rounded-lg shadow-sm">
+                    <div class="flex-shrink-0 w-16 h-16 rounded-full bg-brand-orange/10 flex items-center justify-center text-brand-orange border border-brand-orange/20">
+                        <i class="fas fa-hand-holding-usd text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-xl text-brand-blue mb-2">Smart Investment</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            Solar is an asset that appreciates. Increase your property value while hedging against future hikes in utility electricity tariffs.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
     
     <!-- P6: Payment -->
@@ -1548,178 +1651,6 @@ function buildDetailedQuotationHtml(totals, systemType) {
     <div class="page-container page-break relative">
         <div class="wave-top-accent h-[120px]"></div><div class="wave-top h-[140px]"></div>
         <div class="absolute top-4 left-1/2 -translate-x-1/2 z-30 w-32"><img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" class="w-full object-contain"></div>
-        <div class="relative z-20 mt-40 px-12">
-            <div class="flex items-center gap-3 mb-6"><i class="fas fa-gavel text-3xl text-brand-blue"></i><h2 class="text-3xl font-bold text-brand-blue">General Terms & Conditions</h2></div>
-            <div class="grid grid-cols-1 gap-4 text-xs text-gray-800 bg-white/80 p-4 rounded">
-                <div class="bg-gray-50/80 p-3 rounded border"><h4 class="font-bold text-brand-blue">1. Validity</h4><p>15 Days.</p></div>
-                <div class="bg-gray-50/80 p-3 rounded border"><h4 class="font-bold text-brand-blue">2. Taxes</h4><p>Included as per norms.</p></div>
-                <div class="bg-gray-50/80 p-3 rounded border"><h4 class="font-bold text-brand-blue">3. Warranty</h4><p>As per OEM.</p></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- P8: Contact -->
-    <div class="page-container page-break relative flex flex-col">
-        <div class="h-[40%] w-full relative overflow-hidden"><img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/8f2c0c796ba02307c87dda837a906dc9c079aa05/Uplodes/bg%203.png?raw=true" class="w-full h-full object-cover"></div>
-        <div class="absolute top-4 left-1/2 -translate-x-1/2 z-30 w-32 bg-white/90 p-2 rounded shadow-lg"><img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" class="w-full"></div>
-        <div class="h-[60%] w-full bg-white px-12 pt-16 relative flex flex-col items-center">
-             <div class="w-full max-w-2xl bg-white rounded-2xl shadow-2xl p-8 -mt-24 z-20 flex items-start gap-8 border-t-8 border-brand-orange">
-                <div class="flex-shrink-0"><div class="w-28 h-28 bg-gray-200 rounded-full overflow-hidden border-4 border-white shadow-md"><img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover"></div></div>
-                <div class="flex-grow pl-8">
-                    <h2 class="text-2xl font-bold text-brand-blue">V-Sustain Solar Solutions</h2><p class="text-gray-800 font-bold">Pravesh Kumar Tiwari</p><p class="text-gray-800">+91 99-000-00476</p><p>vsustainsolarsolutions@gmail.com</p>
-                </div>
-             </div>
-             <div class="mt-auto mb-8 text-center w-full border-t border-gray-200 pt-6">
-                 <p class="text-xs text-gray-400 mb-2">Office Address</p>
-                 <p class="text-sm text-gray-600 max-w-lg mx-auto leading-relaxed">NO.33/1, 6th main, Kanteerava Studio Peenya, Rajagopalnagar Main Rd, Nandini Layout, Bengaluru, Karnataka 560096</p>
-             </div>
-        </div>
-    </div>
-  </body></html>`;
-}
-
-function buildSummaryQuotationHtml(totals, systemType) {
-  const kw = n($('systemKw').value);
-  const name = $('customerName').value || 'Customer';
-  const email = $('customerEmail').value || '';
-  const dateStr = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'long', year:'numeric' });
-  const propNo = `VS/${new Date().getFullYear()}/OF-${Math.floor(Math.random()*1000)}`;
-
-  // REUSE EXACT SAME TEMPLATE AS DETAILED BUT WITH PRICES HIDDEN
-  // This logic is mirrored from the buildDetailedQuotationHtml but commercial table rows are different
-
-  // Rows logic
-  const specRows = totals.items.map(it => `
-    <tr class="odd:bg-white/50 even:bg-gray-50/50">
-      <td class="p-2 border font-semibold">${it.item}</td>
-      <td class="p-2 border">${it.desc || '-'}</td>
-      <td class="p-2 border">Standard</td>
-      <td class="p-2 border text-center">${it.qty}</td>
-      <td class="p-2 border text-center">${it.unit}</td>
-    </tr>
-  `).join('');
-  
-  // Commercial Rows - Prices Hidden
-  const commercialRows = totals.items.map((it, idx) => `
-    <tr class="odd:bg-white/50 even:bg-gray-50/50">
-      <td class="p-3 border text-center">${idx + 1}</td>
-      <td class="p-3 border">${it.item}</td>
-      <td class="p-3 border text-center">${it.unit}</td>
-      <td class="p-3 border text-center">${it.qty}</td>
-      <td class="p-3 border text-right">-</td>
-    </tr>
-  `).join('');
-
-  // Footer Rows - Grand Total Visible
-  const footerRows = `
-    <tr class="bg-white/50"><td class="p-3 border"></td><td class="p-3 border text-right font-semibold">Total GST</td><td colspan="2" class="p-3 border"></td><td class="p-3 border text-right">${fmt(totals.totalGst)}</td></tr>
-    <tr class="bg-blue-50/80 font-bold border-t-2 border-brand-blue"><td class="p-4 border"></td><td colspan="3" class="p-4 border text-right">GRAND TOTAL (INR)</td><td class="p-4 border text-right text-xl text-brand-blue">${fmt(totals.grandTotal)}</td></tr>
-  `;
-
-  // HTML Structure identical to Detailed Quote
-  // I'm embedding the template again to ensure it's self-contained and identical
-  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>${kw}KW Offgrid ${name} ${email}</title>${commonStyle}</head>
-  <body class="font-sans text-gray-800">
-    <div class="fixed bottom-8 right-8 z-50 no-print flex flex-col gap-3">
-        <button onclick="printMode('laptop')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full shadow-lg"><i class="fas fa-laptop"></i> Laptop</button>
-        <button onclick="printMode('mobile')" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-full shadow-lg"><i class="fas fa-mobile-alt"></i> Mobile</button>
-    </div>
-    
-    <!-- P1: Cover -->
-    <div class="page-container relative flex flex-col justify-between">
-        <div class="h-[13%] w-full flex justify-between items-start p-2 relative z-20 bg-white/90">
-             <div class="w-36"><img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" class="w-full object-contain"></div>
-             <div class="text-right text-brand-blue"><h2 class="font-bold text-xl">V-Sustain Solar Solutions</h2><p class="text-sm">Authorized Luminous Partner</p><p class="text-sm font-bold mt-1"># ${propNo}</p><p class="text-sm">${dateStr}</p></div>
-        </div>
-        <div class="h-[45%] w-full overflow-hidden relative"><img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=2072&auto=format&fit=crop" class="w-full h-full object-cover"></div>
-        <div class="h-[42%] w-full bg-[#001f3f] text-white p-12 flex flex-col justify-center relative"><div class="relative z-10 border-l-4 border-brand-lightBlue pl-6"><h1 class="text-4xl font-bold mb-2">Techno-commercial</h1><h1 class="text-4xl font-bold mb-8">Offer</h1><div class="space-y-1"><h3 class="text-xl font-bold">${kw} KW Off-Grid Solar</h3><h3 class="text-xl font-bold border-b border-gray-500 pb-2 mb-2 w-1/2">Solution</h3><p class="text-xl text-gray-300">Proposal for</p><p class="text-2xl font-semibold">${name}</p><p class="text-lg text-gray-300">${$('customerCity').value}</p></div></div></div>
-    </div>
-
-    <!-- P2: Project Explanation -->
-    <div class="page-container page-break relative">
-        <div class="wave-corner-top-left-accent h-[150px]"></div><div class="wave-corner-top-left h-[130px]"></div>
-        <div class="absolute top-8 right-8 z-30 w-32"><img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" class="w-full"></div>
-        <div class="relative z-20 pt-40 px-12 pb-12 flex flex-col h-full justify-between">
-            <div>
-                <div class="flex items-center gap-3 mb-8"><i class="far fa-arrow-alt-circle-right text-3xl text-brand-blue"></i><h2 class="text-3xl font-bold text-brand-blue">Project Explanation</h2></div>
-                <div class="flex items-center justify-center mb-8 relative h-[350px]">
-                    <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/d2ac544338d64714fdc75e8008f2a733bb61ab83/Uplodes/on%20grid%20plannnt%20explained.png?raw=true" class="h-full w-full object-contain shadow-lg rounded-lg bg-white/50">
-                </div>
-                <div class="space-y-6 bg-white/90 p-8 rounded-xl shadow-lg border-l-4 border-brand-green">
-                    <div><h4 class="font-bold text-2xl mb-2 text-brand-blue flex items-center gap-2"><i class="fas fa-solar-panel"></i> ${kw} KW Off-Grid Solution</h4><ul class="list-none ml-2 text-gray-700"><li class="flex gap-2"><i class="fas fa-check text-brand-green"></i> Battery Backup Included</li></ul></div>
-                    <div><h4 class="font-bold text-2xl mb-2 text-brand-blue flex items-center gap-2"><i class="fas fa-map-marker-alt"></i> Location</h4><p class="text-lg ml-2">${$('customerAddress').value}</p></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- P3: Specs -->
-    <div class="page-container page-break relative flex flex-col">
-       <div class="absolute top-0 left-0 w-full h-12 bg-gradient-to-r from-brand-blue to-brand-lightBlue z-10"></div>
-       <div class="absolute top-4 right-8 z-30 w-32"><img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" class="w-full"></div>
-       <div class="relative z-20 mt-16 px-12 h-full flex flex-col justify-start pb-12">
-           <div class="flex items-center justify-between mb-8 border-b-2 border-brand-orange pb-2 w-[80%]"><div class="flex items-center gap-3"><i class="far fa-file-alt text-3xl text-brand-blue"></i><h2 class="text-3xl font-bold text-brand-blue">Techno-Commercial Offer</h2></div></div>
-           <div class="mb-8"><h3 class="text-lg font-bold text-brand-green mb-3 pl-2 border-l-4 border-brand-green">1. System Specifications</h3><table class="w-full text-sm border-collapse shadow-sm bg-white/90"><thead><tr class="bg-brand-green text-white"><th class="p-3 border text-left">Component</th><th class="p-3 border text-left">Description</th><th class="p-3 border">Make</th><th class="p-3 border text-center">Qty</th><th class="p-3 border text-center">UoM</th></tr></thead><tbody>${specRows}</tbody></table></div>
-       </div>
-    </div>
-
-    <!-- P4: Commercial -->
-    <div class="page-container page-break relative flex flex-col">
-       <div class="absolute top-0 left-0 w-full h-12 bg-gradient-to-r from-brand-blue to-brand-lightBlue z-10"></div>
-       <div class="absolute top-4 right-8 z-30 w-32"><img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" class="w-full"></div>
-       <div class="relative z-20 mt-16 px-12 h-full flex flex-col justify-between pb-12">
-           <div class="flex items-center justify-between mb-8 border-b-2 border-brand-orange pb-2 w-[80%]"><div class="flex items-center gap-3"><i class="fas fa-rupee-sign text-3xl text-brand-blue"></i><h2 class="text-3xl font-bold text-brand-blue">Commercial Proposal</h2></div></div>
-           <div class="mb-8"><table class="w-full text-sm border-collapse shadow-lg bg-white/90"><thead><tr class="bg-brand-blue text-white"><th class="p-3 border w-12">#</th><th class="p-3 border text-left">Description</th><th class="p-3 border text-center">UOM</th><th class="p-3 border text-center">Qty</th><th class="p-3 border text-right">Price (INR)</th></tr></thead><tbody>${commercialRows}${footerRows}</tbody></table></div>
-           <div class="flex gap-6 mt-auto"><div class="w-2/3"><h3 class="text-sm font-bold text-brand-green mb-2">Optional Services</h3><table class="w-full text-xs border-collapse shadow-sm bg-white/90"><thead><tr class="bg-gray-600 text-white"><th class="p-2 text-left">Description</th><th class="p-2 text-center">Tenure</th><th class="p-2 text-right">Cost (INR)</th></tr></thead><tbody><tr class="bg-gray-50/50 border-b"><td class="p-2 font-semibold">AMC</td><td class="p-2 text-center">5 Years</td><td class="p-2 text-right">10,000</td></tr></tbody></table></div></div>
-       </div>
-    </div>
-
-    <!-- P5: Why Choose Us -->
-    <div class="page-container page-break relative">
-        <div class="wave-corner-top-left-accent h-[150px]"></div><div class="wave-corner-top-left h-[130px]"></div>
-        <div class="absolute top-8 right-8 z-30 w-32"><img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" class="w-full"></div>
-        <div class="absolute top-8 left-12 z-30 flex items-center gap-3"><i class="far fa-star text-3xl text-white"></i><h2 class="text-3xl font-bold text-white">Why Choose Us?</h2></div>
-        <div class="relative z-20 mt-40 px-12 h-full pb-12 flex flex-col"><p class="text-lg text-gray-600 mb-12 border-l-4 border-brand-orange pl-4 italic bg-white/60 p-2 rounded">Empowering your home with eco-friendly solutions.</p>
-        <div class="grid grid-cols-2 gap-y-12 gap-x-12">
-            <div class="flex items-start gap-5 content-card-bg p-4 rounded-lg shadow-sm"><div class="flex-shrink-0 w-16 h-16 rounded-full bg-brand-green/10 flex items-center justify-center text-brand-green border border-brand-green/20"><i class="fas fa-drafting-compass text-2xl"></i></div><div><h3 class="font-bold text-xl text-brand-blue mb-2">Customized Solution</h3><p class="text-sm text-gray-600 leading-relaxed">Tailored specifically to your energy needs.</p></div></div>
-            <div class="flex items-start gap-5 content-card-bg p-4 rounded-lg shadow-sm"><div class="flex-shrink-0 w-16 h-16 rounded-full bg-brand-blue/10 flex items-center justify-center text-brand-blue border border-brand-blue/20"><i class="fas fa-tools text-2xl"></i></div><div><h3 class="font-bold text-xl text-brand-blue mb-2">Minimal Maintenance</h3><p class="text-sm text-gray-600">Built to last with minimal upkeep.</p></div></div>
-            <div class="flex items-start gap-5 content-card-bg p-4 rounded-lg shadow-sm"><div class="flex-shrink-0 w-16 h-16 rounded-full bg-brand-orange/10 flex items-center justify-center text-brand-orange border border-brand-orange/20"><i class="fas fa-medal text-2xl"></i></div><div><h3 class="font-bold text-xl text-brand-blue mb-2">Quality Assurance</h3><p class="text-sm text-gray-600">Top-rated inverters and Tier-1 modules.</p></div></div>
-            <div class="flex items-start gap-5 content-card-bg p-4 rounded-lg shadow-sm"><div class="flex-shrink-0 w-16 h-16 rounded-full bg-brand-green/10 flex items-center justify-center text-brand-green border border-brand-green/20"><i class="fas fa-shield-alt text-2xl"></i></div><div><h3 class="font-bold text-xl text-brand-blue mb-2">Highest Safety</h3><p class="text-sm text-gray-600">Strict electrical safety standards.</p></div></div>
-            <div class="flex items-start gap-5 content-card-bg p-4 rounded-lg shadow-sm"><div class="flex-shrink-0 w-16 h-16 rounded-full bg-brand-blue/10 flex items-center justify-center text-brand-blue border border-brand-blue/20"><i class="fas fa-chart-line text-2xl"></i></div><div><h3 class="font-bold text-xl text-brand-blue mb-2">Quick ROI</h3><p class="text-sm text-gray-600">Substantial electricity bill reductions.</p></div></div>
-            <div class="flex items-start gap-5 content-card-bg p-4 rounded-lg shadow-sm"><div class="flex-shrink-0 w-16 h-16 rounded-full bg-brand-orange/10 flex items-center justify-center text-brand-orange border border-brand-orange/20"><i class="fas fa-hand-holding-usd text-2xl"></i></div><div><h3 class="font-bold text-xl text-brand-blue mb-2">Smart Investment</h3><p class="text-sm text-gray-600">Appreciating asset hedging against tariff hikes.</p></div></div>
-        </div></div>
-    </div>
-    
-    <!-- P6: Payment -->
-    <div class="page-container page-break relative">
-        <div class="wave-top-accent"></div><div class="wave-top"></div>
-        <div class="absolute top-4 left-1/2 -translate-x-1/2 z-30 w-32"><img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" class="w-full"></div>
-        <div class="relative z-20 pt-48 px-12 pb-12">
-            <div class="flex items-center gap-3 mb-16 mt-8"><i class="far fa-credit-card text-3xl text-brand-blue"></i><h2 class="text-3xl font-bold text-brand-blue">Payment Terms</h2></div>
-            <div class="relative px-4 mb-20"><div class="absolute top-[35%] left-0 w-full h-1 bg-gray-200 z-0 -translate-y-1/2 rounded-full"></div>
-            <div class="flex justify-between items-start relative z-10">
-                <div class="flex flex-col items-center w-1/3"><div class="bg-white p-2 rounded-full shadow-lg border-4 border-brand-blue w-32 h-32 flex items-center justify-center mb-6"><i class="fas fa-file-contract text-5xl text-brand-blue"></i></div><div class="bg-white p-4 rounded-xl shadow-md border-b-4 border-brand-blue w-4/5 text-center"><span class="block text-3xl font-bold text-brand-blue">25%</span><span class="block text-sm">Advance</span></div></div>
-                <div class="flex flex-col items-center w-1/3"><div class="bg-white p-2 rounded-full shadow-lg border-4 border-brand-orange w-32 h-32 flex items-center justify-center mb-6"><i class="fas fa-truck-fast text-5xl text-brand-orange"></i></div><div class="bg-white p-4 rounded-xl shadow-md border-b-4 border-brand-orange w-4/5 text-center"><span class="block text-3xl font-bold text-brand-orange">65%</span><span class="block text-sm">Delivery</span></div></div>
-                <div class="flex flex-col items-center w-1/3"><div class="bg-white p-2 rounded-full shadow-lg border-4 border-brand-green w-32 h-32 flex items-center justify-center mb-6"><i class="fas fa-clipboard-check text-5xl text-brand-green"></i></div><div class="bg-white p-4 rounded-xl shadow-md border-b-4 border-brand-green w-4/5 text-center"><span class="block text-3xl font-bold text-brand-green">10%</span><span class="block text-sm">Completion</span></div></div>
-            </div></div>
-            <!-- Warranty Terms -->
-            <div class="flex items-center gap-3 mb-8"><i class="fas fa-shield-alt text-3xl text-brand-blue"></i><h2 class="text-3xl font-bold text-brand-blue">Warranty Terms</h2></div>
-            <div class="bg-gradient-to-r from-brand-blue to-[#004080] w-full p-8 rounded-2xl flex justify-between items-center text-white mb-8 shadow-2xl relative overflow-hidden">
-                <i class="fas fa-shield-alt absolute -right-10 -bottom-10 text-9xl text-white opacity-10"></i>
-                <div class="flex flex-col items-center flex-1 relative z-10"><div class="flex items-center gap-2 mb-2"><i class="fas fa-solar-panel text-3xl text-brand-orange"></i><span class="text-4xl font-bold">25+</span></div><span class="font-semibold tracking-wide text-center">YEARS PERFORMANCE</span><span class="text-xs opacity-75 mt-1">On PV Modules</span></div>
-                <div class="h-16 w-px bg-white/30"></div>
-                <div class="flex flex-col items-center flex-1 relative z-10"><div class="flex items-center gap-2 mb-2"><i class="fas fa-charging-station text-3xl text-brand-orange"></i><span class="text-4xl font-bold">8</span></div><span class="font-semibold tracking-wide text-center">YEARS WARRANTY</span><span class="text-xs opacity-75 mt-1">On Inverter</span></div>
-                <div class="h-16 w-px bg-white/30"></div>
-                <div class="flex flex-col items-center flex-1 relative z-10"><div class="flex items-center gap-2 mb-2"><i class="fas fa-tools text-3xl text-brand-orange"></i><span class="text-4xl font-bold">5</span></div><span class="font-semibold tracking-wide text-center">YEARS SERVICE</span><span class="text-xs opacity-75 mt-1">On System</span></div>
-            </div>
-            <p class="text-xs text-gray-500 bg-gray-50 p-4 rounded-lg border border-gray-200 leading-relaxed"><strong class="text-brand-blue">Note:</strong> Please refer to the T&C and warranty documents for further details.</p>
-        </div>
-    </div>
-    
-    <!-- P7: Terms -->
-    <div class="page-container page-break relative">
-        <div class="wave-top-accent h-[120px]"></div><div class="wave-top h-[140px]"></div>
-        <div class="absolute top-4 left-1/2 -translate-x-1/2 z-30 w-32"><img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" class="w-full"></div>
         <div class="relative z-20 mt-40 px-12">
             <div class="flex items-center gap-3 mb-6"><i class="fas fa-gavel text-3xl text-brand-blue"></i><h2 class="text-3xl font-bold text-brand-blue">Terms & Conditions</h2></div>
             <div class="grid grid-cols-1 gap-4 text-xs text-gray-800 bg-white/80 p-4 rounded">
@@ -1749,48 +1680,6 @@ function buildSummaryQuotationHtml(totals, systemType) {
     </div>
   </body></html>`;
 }
-
-function buildShortQuotationHtml(totals, systemType) {
-  const kw = n($('systemKw').value);
-  const name = $('customerName').value || 'Customer';
-  const email = $('customerEmail').value || '';
-  const dateStr = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'long', year:'numeric' });
-  const propNo = `VS/${new Date().getFullYear()}/OF-${Math.floor(Math.random()*1000)}`;
-
-  // Use the SAME template logic as buildSummaryQuotationHtml in on-grid
-  // But adapted to be "short" - only essential info.
-  // Actually, user requested "duplicate the summary quote design in the short quotation".
-  // The summary design I built above (which is identical to detailed but hidden prices) is HEAVY for a "short" quote if "short" implies 1 page.
-  // BUT user said "duplicate the summury quote designe in the in the short quotation".
-  // If "summary" quote is now the 8-page version without prices, and "short" quote is meant to be the 1-page version...
-  // Wait, user previous instruction: "make the summury quotation just like detailed quoattion... and then add one more button... short quotation... this button should make maximam a one or two page quoitation".
-  // So:
-  // Detailed = 8 Pages, Full Prices
-  // Summary = 8 Pages, No individual prices
-  // Short = 1 Page, Full Summary
-
-  // Here is the 1-Page Short Quote Template (Standard condensed view)
-  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>${kw}KW Offgrid ${name} ${email}</title>${commonStyle}</head>
-    <body class="font-sans text-gray-800">
-      <div class="fixed bottom-8 right-8 z-50 no-print flex flex-col gap-3">
-        <button onclick="printMode('laptop')" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-full shadow-lg"><i class="fas fa-laptop"></i> Laptop</button>
-        <button onclick="printMode('mobile')" class="bg-green-600 text-white font-bold py-3 px-6 rounded-full shadow-lg"><i class="fas fa-mobile-alt"></i> Mobile</button>
-      </div>
-      <div class="page-container" style="padding:40px;">
-        <div class="flex justify-between items-start border-b-2 border-brand-orange pb-6 mb-8">
-            <div class="w-40"><img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" class="w-full"></div>
-            <div class="text-right"><h1 class="text-3xl font-bold text-brand-blue">Quotation</h1><p class="text-sm font-semibold text-gray-600"># ${propNo}</p><p class="text-sm text-gray-500">${dateStr}</p></div>
-        </div>
-        <div class="flex justify-between mb-10 bg-gray-50 p-6 rounded-xl border border-gray-100">
-            <div><h3 class="text-xs font-bold text-gray-400 uppercase">Proposal For</h3><p class="text-lg font-bold text-brand-blue">${name}</p><p class="text-sm text-gray-600">${$('customerAddress').value}</p></div>
-            <div class="text-right"><h3 class="text-xs font-bold text-gray-400 uppercase">System Details</h3><p class="text-xl font-bold text-brand-green">${kw} KW</p><p class="text-sm text-gray-600">Off-Grid System</p></div>
-        </div>
-        <div class="mb-8">
-            <h3 class="text-lg font-bold text-brand-blue mb-4 border-l-4 border-brand-blue pl-3">Commercial Offer</h3>
-            <table class="w-full text-sm border-collapse"><tr class="bg-gray-100 border-b border-gray-200"><td class="p-4 font-medium">Supply & Installation of ${kw} KW Off-Grid Solar System</td><td class="p-4 text-right font-bold">${fmt(totals.grandTotal)}</td></tr></table>
-            <div class="mt-2 text-right"><p class="text-xs text-gray-500">* Inclusive of GST & Installation</p></div>
-        </div>
-        <div class="absolute bottom-0 left-0 w-full bg-[#001f3f] text-white p-8"><div class="flex justify-between items-center max-w-4xl mx-auto"><div><h4 class="font-bold text-lg">V-Sustain Solar Solutions</h4></div><div class="text-right text-sm"><p>+91 99-000-00476</p><p>vsustainsolarsolutions@gmail.com</p></div></div></div>
-      </div>
-    </body></html>`;
-}
+function buildDetailedQuotationHtml(totals, type) { return getCommonHtml(totals, type, false, false); }
+function buildSummaryQuotationHtml(totals, type) { return getCommonHtml(totals, type, true, false); }
+function buildShortQuotationHtml(totals, type) { return getCommonHtml(totals, type, false, true); }
