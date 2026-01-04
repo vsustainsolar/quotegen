@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>On-Grid Solar Quotation Builder</title>
+    <title>Off-Grid Solar Quotation Builder</title>
 
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="../on-grid/style.css" />
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -14,7 +14,7 @@
 
 <body>
     <header class="page-header">
-        <h1>On-Grid Solar Quotation Builder</h1>
+        <h1>Off-Grid Solar Quotation Builder</h1>
         <a class="back-home" href="../index.html">← Back to Home</a>
     </header>
 
@@ -60,25 +60,25 @@
             <div class="row">
                 <div class="col">
                     <label>Required System Size (kW)</label>
-                    <input type="number" id="systemKw" min="1" placeholder="Enter kW (e.g., 3)" oninput="updateSystemKW()" />
+                    <input type="number" id="systemKw" min="1" placeholder="Enter kW (e.g., 3)" oninput="updateSystemDependent(); recalcAllCards()" />
                 </div>
 
                 <div class="col">
                     <label>Common Margin (%)</label>
-                    <input type="number" id="commonMargin" min="0" max="100" value="20" oninput="applyCommonMargin()" />
+                    <input type="number" id="commonMargin" min="0" max="100" value="20" oninput="recalcAllCards()" />
                 </div>
             </div>
-
-            <!-- NEW SUBSIDY SECTION -->
+            
+            <!-- SUBSIDY SECTION (Kept for consistency) -->
             <div class="row">
                 <div class="col">
                     <label style="display:block; margin-bottom:8px;">Subsidy Eligible?</label>
                     <div style="display:flex; gap:15px; align-items:center;">
                         <label style="display:flex; align-items:center; gap:5px; cursor:pointer;">
-                            <input type="radio" name="subsidyEligible" value="yes" checked> Yes
+                            <input type="radio" name="subsidyEligible" value="yes"> Yes
                         </label>
                         <label style="display:flex; align-items:center; gap:5px; cursor:pointer;">
-                            <input type="radio" name="subsidyEligible" value="no"> No
+                            <input type="radio" name="subsidyEligible" value="no" checked> No
                         </label>
                     </div>
                 </div>
@@ -86,11 +86,11 @@
         </section>
 
         <!-- =================================================== -->
-        <!--      PRODUCT CARD — INVERTER (FULL FIELD CARD)      -->
+        <!--      PRODUCT CARD — INVERTER                        -->
         <!-- =================================================== -->
         <section class="card" id="inverterCard">
             <div class="card-header">
-                <h2>Inverter</h2>
+                <h2>Off-Grid Inverter</h2>
                 <label class="switch">
                     <input type="checkbox" id="enableInverter" checked onclick="toggleProduct('inverter')">
                     <span class="slider round"></span>
@@ -102,7 +102,6 @@
                     <label>Choose Inverter Model</label>
                     <select id="inverterModel" onchange="updateInverterData()">
                         <option value="">-- Select Inverter --</option>
-                        <!-- OPTIONS COME FROM script.js -->
                     </select>
                 </div>
 
@@ -121,7 +120,7 @@
                 <div class="col">
                     <label>Manual Price Override</label>
                     <label class="switch-small">
-                        <input type="checkbox" id="inverterOverrideToggle" onclick="toggleOverride('inverter')">
+                        <input type="checkbox" id="inverterOverrideToggle" onclick="toggleOverrideUI('inverter')">
                         <span class="slider-small round"></span>
                     </label>
                     <input type="number" id="inverterOverridePrice" class="hidden" placeholder="Enter manual price" oninput="updateInverterData()" />
@@ -150,7 +149,7 @@
                 </div>
 
                 <div class="col">
-                    <label>GST (5%)</label>
+                    <label>GST (18%)</label>
                     <input type="number" id="inverterGST" readonly />
                 </div>
             </div>
@@ -162,8 +161,9 @@
                 </div>
             </div>
         </section>
+
         <!-- =================================================== -->
-        <!--      PRODUCT CARD — SOLAR PANELS (AUTO QTY)         -->
+        <!--      PRODUCT CARD — SOLAR PANELS                    -->
         <!-- =================================================== -->
         <section class="card" id="panelCard">
             <div class="card-header">
@@ -179,13 +179,11 @@
                     <label>Select Panel Model</label>
                     <select id="panelModel" onchange="updatePanelData()">
                         <option value="">-- Select Solar Panel --</option>
-                        <!-- PANEL OPTIONS FROM script.js -->
                     </select>
                 </div>
 
                 <div class="col">
                     <label>Panel Quantity (Editable)</label>
-                    <!-- Make editable and add handler -->
                     <input type="number" id="panelQty" oninput="updatePanelData(true)" />
                 </div>
             </div>
@@ -206,7 +204,7 @@
                 <div class="col">
                     <label>Manual Price Override</label>
                     <label class="switch-small">
-                        <input type="checkbox" id="panelOverrideToggle" onclick="toggleOverride('panels')">
+                        <input type="checkbox" id="panelOverrideToggle" onclick="toggleOverrideUI('panel')">
                         <span class="slider-small round"></span>
                     </label>
                     <input type="number" id="panelOverridePrice" class="hidden" placeholder="Enter override price" oninput="updatePanelData()" />
@@ -242,6 +240,83 @@
                 <div class="col">
                     <label>Total Amount</label>
                     <input type="number" id="panelTotal" readonly />
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================================== -->
+        <!--         PRODUCT CARD — BATTERY (OFF-GRID ONLY)      -->
+        <!-- =================================================== -->
+        <section class="card" id="batteryCard">
+            <div class="card-header">
+                <h2>Battery</h2>
+                <label class="switch">
+                    <input type="checkbox" id="enableBattery" checked onclick="toggleProduct('battery')">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Select Battery Model</label>
+                    <select id="batteryModel" onchange="updateBatteryData()">
+                        <option value="">-- Select Battery --</option>
+                    </select>
+                </div>
+
+                <div class="col">
+                    <label>Quantity</label>
+                    <input type="number" id="batteryQty" value="1" min="1" oninput="updateBatteryData()" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Dealer Price (Auto)</label>
+                    <input type="number" id="batteryDealer" readonly />
+                </div>
+
+                <div class="col">
+                    <label>Manual Price Override</label>
+                    <label class="switch-small">
+                        <input type="checkbox" id="batteryOverrideToggle" onclick="toggleOverrideUI('battery')">
+                        <span class="slider-small round"></span>
+                    </label>
+                    <input type="number" id="batteryOverridePrice" class="hidden" placeholder="Enter override price" oninput="updateBatteryData()" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Use Common Margin?</label>
+                    <label class="switch-small">
+                        <input type="checkbox" id="batteryUseCommonMargin" checked onclick="updateBatteryData()">
+                        <span class="slider-small round"></span>
+                    </label>
+                </div>
+
+                <div class="col">
+                    <label>Custom Margin (%)</label>
+                    <input type="number" id="batteryCustomMargin" value="0" disabled oninput="updateBatteryData()" />
+                </div>
+            </div>
+
+            <div class="row result-row">
+                <div class="col">
+                    <label>Effective Rate</label>
+                    <input type="number" id="batteryFinalRate" readonly />
+                </div>
+
+                <div class="col">
+                    <label>GST (28%)</label>
+                    <input type="number" id="batteryGST" readonly />
+                </div>
+            </div>
+            
+            <div class="row result-row">
+                 <div class="col">
+                    <label>Total Amount</label>
+                    <input type="number" id="batteryTotal" readonly />
                 </div>
             </div>
         </section>
@@ -283,7 +358,7 @@
                 <div class="col">
                     <label>Manual Price Override</label>
                     <label class="switch-small">
-                        <input type="checkbox" id="meterOverrideToggle" onclick="toggleOverride('meter')">
+                        <input type="checkbox" id="meterOverrideToggle" onclick="toggleOverrideUI('meter')">
                         <span class="slider-small round"></span>
                     </label>
                     <input type="number" id="meterOverridePrice" class="hidden" placeholder="Enter override price" oninput="updateMeterData()" />
@@ -335,7 +410,6 @@
                     <label>ACDB Model</label>
                     <select id="acdbModel" onchange="updateACDBData()">
                         <option value="">-- Select ACDB --</option>
-                        <!-- ACDB OPTIONS FROM script.js -->
                     </select>
                 </div>
 
@@ -354,7 +428,7 @@
                 <div class="col">
                     <label>Manual Override</label>
                     <label class="switch-small">
-                        <input type="checkbox" id="acdbOverrideToggle" onclick="toggleOverride('acdb')">
+                        <input type="checkbox" id="acdbOverrideToggle" onclick="toggleOverrideUI('acdb')">
                         <span class="slider-small round"></span>
                     </label>
                     <input id="acdbOverridePrice" class="hidden" type="number" placeholder="Override price" oninput="updateACDBData()">
@@ -406,7 +480,6 @@
                     <label>DCDB Model</label>
                     <select id="dcdbModel" onchange="updateDCDBData()">
                         <option value="">-- Select DCDB --</option>
-                        <!-- OPTIONS FROM script.js -->
                     </select>
                 </div>
 
@@ -425,7 +498,7 @@
                 <div class="col">
                     <label>Manual Override</label>
                     <label class="switch-small">
-                        <input type="checkbox" id="dcdbOverrideToggle" onclick="toggleOverride('dcdb')">
+                        <input type="checkbox" id="dcdbOverrideToggle" onclick="toggleOverrideUI('dcdb')">
                         <span class="slider-small round"></span>
                     </label>
                     <input id="dcdbOverridePrice" class="hidden" type="number" placeholder="Override price" oninput="updateDCDBData()">
