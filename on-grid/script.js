@@ -901,24 +901,41 @@ if (isEnabled('earthingSet')) {
 /* calculate totals */
 function calcTotals() {
   const items = buildLineItemsForQuotation();
+
   let subtotal = 0;
   let totalGst = 0;
+  let gst5Total = 0;
+  let gst18Total = 0;
+
   items.forEach(it => {
     const amount = round2(it.baseRate * it.qty);
     const gstAmt = round2(amount * it.gstPercent / 100);
+
     subtotal = round2(subtotal + amount);
     totalGst = round2(totalGst + gstAmt);
+
+    if (it.gstPercent === 5) gst5Total += gstAmt;
+    if (it.gstPercent === 18) gst18Total += gstAmt;
   });
+
   const grandTotal = round2(subtotal + totalGst);
 
-  // subsidy logic for ON-GRID
   const kw = Math.max(0, n($('systemKw').value));
   let subsidy = 0;
   if (kw > 0 && kw <= 2) subsidy = 60000;
   else if (kw >= 3 && kw <= 10) subsidy = 78000;
 
-  return { items, subtotal, totalGst, grandTotal, subsidy };
+  return {
+    items,
+    subtotal: round2(subtotal),
+    totalGst: round2(totalGst),
+    gst5Total: round2(gst5Total),
+    gst18Total: round2(gst18Total),
+    grandTotal,
+    subsidy
+  };
 }
+
 
 /* ===========================
    8. QUOTATION HTML (Detailed & Summary)
@@ -995,19 +1012,37 @@ function buildDetailedQuotationHtml(totals, systemType) {
 
   // Add GST and Grand Total rows
   const footerRows = `
-    <tr class="bg-white/50">
-      <td class="p-3 border"></td>
-      <td class="p-3 border text-right font-semibold">Total GST</td>
-      <td class="p-3 border"></td>
-      <td class="p-3 border"></td>
-      <td class="p-3 border text-right">${fmt(totals.totalGst)}</td>
-    </tr>
-    <tr class="bg-blue-50/80 font-bold border-t-2 border-brand-blue">
-      <td class="p-4 border"></td>
-      <td class="p-4 border text-right text-base" colspan="3">GRAND TOTAL (INR)</td>
-      <td class="p-4 border text-right text-xl text-brand-blue">${fmt(totals.grandTotal)}</td>
-    </tr>
-  `;
+  <tr class="bg-white/50">
+    <td class="p-3 border"></td>
+    <td class="p-3 border text-right font-medium">GST @ 5%</td>
+    <td class="p-3 border"></td>
+    <td class="p-3 border"></td>
+    <td class="p-3 border text-right">${fmt(totals.gst5Total)}</td>
+  </tr>
+
+  <tr class="bg-white/50">
+    <td class="p-3 border"></td>
+    <td class="p-3 border text-right font-medium">GST @ 18%</td>
+    <td class="p-3 border"></td>
+    <td class="p-3 border"></td>
+    <td class="p-3 border text-right">${fmt(totals.gst18Total)}</td>
+  </tr>
+
+  <tr class="bg-white/50 border-t">
+    <td class="p-3 border"></td>
+    <td class="p-3 border text-right font-semibold">Total GST</td>
+    <td class="p-3 border"></td>
+    <td class="p-3 border"></td>
+    <td class="p-3 border text-right">${fmt(totals.totalGst)}</td>
+  </tr>
+
+  <tr class="bg-blue-50/80 font-bold border-t-2 border-brand-blue">
+    <td class="p-4 border"></td>
+    <td class="p-4 border text-right text-base" colspan="3">GRAND TOTAL (INR)</td>
+    <td class="p-4 border text-right text-xl text-brand-blue">${fmt(totals.grandTotal)}</td>
+  </tr>
+`;
+
 
   // BUILD SUBSIDY DISCLAIMER BLOCK
   let subsidyDisclaimerHtml = '';
