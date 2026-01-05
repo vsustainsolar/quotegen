@@ -750,24 +750,29 @@ function buildLineItemsForQuotation() {
   }
 
   // panels
-  if (isEnabled('panels')) {
-    const sel = $('panelModel').selectedOptions[0];
-    if (sel) {
-      const qty = Math.max(0, n($('panelQty').value));
-      const dealer = n(sel.dataset.price);
-      const base = computeBasePrice('panels', dealer);
-      const rate = applyMarginTo(base, 'panels');
-      items.push({
-  type: 'panels',
-  item: sel.value,
-  desc: `${sel.value} (${sel.dataset.watt} Wp)`,
-  qty,
-  unit: 'Nos',
-  baseRate: rate,
-  gstPercent: getGstFor('panels')
-});
-    }
+if (isEnabled('panels')) {
+  const sel = $('panelModel').selectedOptions[0];
+  if (sel) {
+    const qty = Math.max(0, n($('panelQty').value));
+    const dealer = n(sel.dataset.price);
+
+    // ✅ FIX: use 'panel' for override lookup
+    const base = computeBasePrice('panel', dealer);
+
+    // ✅ Correct margin source remains plural
+    const rate = applyMarginTo(base, 'panels');
+
+    items.push({
+      type: 'panels',
+      item: sel.value,
+      desc: `${sel.value} (${sel.dataset.watt} Wp)`,
+      qty,
+      unit: 'Nos',
+      baseRate: rate,
+      gstPercent: getGstFor('panels')
+    });
   }
+}
 
   // meter
   if (isEnabled('meter')) {
