@@ -101,7 +101,6 @@ function populateSelects() {
     const o = document.createElement('option');
     o.value = inv.model;
     o.dataset.price = inv.price;
-    // Off-grid list doesn't always have capacityKw explicit in object, but for display:
     o.textContent = `${inv.model} — ${fmt(inv.price)}`;
     invSel.appendChild(o);
   });
@@ -155,7 +154,6 @@ function populateSelects() {
   });
 }
 
-/* attach UI event handlers */
 function attachEventListeners() {
   // System KW and common margin
   $('systemKw').addEventListener('input', () => { updateSystemDependent(); recalcAllCards(); });
@@ -169,15 +167,15 @@ function attachEventListeners() {
   $('inverterUseCommonMargin').addEventListener('change', toggleCustomMarginInput.bind(null, 'inverter'));
   $('inverterCustomMargin').addEventListener('input', updateInverterData);
 
-  // Panels - Updated listener for quantity input to allow manual editing
+  // Panels
   $('panelModel').addEventListener('change', () => updatePanelData(false));
-  $('panelQty').addEventListener('input', () => updatePanelData(true)); // Pass true for manual edit
+  $('panelQty').addEventListener('input', () => updatePanelData(true));
   $('panelOverrideToggle').addEventListener('change', () => toggleOverrideUI('panel'));
-  $('panelOverridePrice').addEventListener('input', () => updatePanelData(false)); // Recalc with new price
+  $('panelOverridePrice').addEventListener('input', () => updatePanelData(false));
   $('panelsUseCommonMargin').addEventListener('change', toggleCustomMarginInput.bind(null, 'panels'));
-  $('panelsCustomMargin').addEventListener('input', () => updatePanelData(false)); // Recalc with new margin
+  $('panelsCustomMargin').addEventListener('input', () => updatePanelData(false));
 
-  // Battery (New)
+  // Battery
   $('batteryModel').addEventListener('change', updateBatteryData);
   $('batteryQty').addEventListener('input', updateBatteryData);
   $('batteryOverrideToggle').addEventListener('change', () => toggleOverrideUI('battery'));
@@ -193,7 +191,7 @@ function attachEventListeners() {
   $('meterUseCommonMargin').addEventListener('change', toggleCustomMarginInput.bind(null, 'meter'));
   $('meterCustomMargin').addEventListener('input', updateMeterData);
 
-  // ACDB/DCDB
+  // ACDB
   $('acdbModel').addEventListener('change', updateACDBData);
   $('acdbQty').addEventListener('input', updateACDBData);
   $('acdbOverrideToggle').addEventListener('change', () => toggleOverrideUI('acdb'));
@@ -201,6 +199,7 @@ function attachEventListeners() {
   $('acdbUseCommonMargin').addEventListener('change', toggleCustomMarginInput.bind(null, 'acdb'));
   $('acdbCustomMargin').addEventListener('input', updateACDBData);
 
+  // DCDB
   $('dcdbModel').addEventListener('change', updateDCDBData);
   $('dcdbQty').addEventListener('input', updateDCDBData);
   $('dcdbOverrideToggle').addEventListener('change', () => toggleOverrideUI('dcdb'));
@@ -208,20 +207,22 @@ function attachEventListeners() {
   $('dcdbUseCommonMargin').addEventListener('change', toggleCustomMarginInput.bind(null, 'dcdb'));
   $('dcdbCustomMargin').addEventListener('input', updateDCDBData);
 
-  // AC cable & Earth cable
+  // Cables
   $('acCableQty').addEventListener('input', updateACCableData);
   $('acCablePrice').addEventListener('input', updateACCableData);
   $('earthCableQty').addEventListener('input', updateEarthCableData);
   $('earthCablePrice').addEventListener('input', updateEarthCableData);
 
-  // LA, installation, structure
+  // LA
   $('laQty').addEventListener('input', updateLAData);
   $('laPrice').addEventListener('input', updateLAData);
 
+  // Installation
   $('installEditable').addEventListener('input', updateInstallationData);
   $('installUseCommonMargin').addEventListener('change', toggleCustomMarginInput.bind(null,'installation'));
   $('installCustomMargin').addEventListener('input', updateInstallationData);
 
+  // Structure
   $('structEditable').addEventListener('input', updateStructureData);
   $('structUseCommonMargin').addEventListener('change', toggleCustomMarginInput.bind(null,'structure'));
   $('structCustomMargin').addEventListener('input', updateStructureData);
@@ -233,20 +234,13 @@ function attachEventListeners() {
   $('earthingSetUseCommonMargin').addEventListener('change', toggleCustomMarginInput.bind(null, 'earthingSet'));
   $('earthingSetCustomMargin').addEventListener('input', updateEarthingSetData);
 
-  // enable/disable products via header toggles
-  ['inverter','panels','battery','meter','acdb','dcdb','acCable','earthCable','la','installation','structure', 'earthingSet'].forEach(pid => {
+  // Toggles
+  ['inverter','panels','battery','meter','acdb','dcdb','acCable','earthCable','la','installation','structure','earthingSet'].forEach(pid => {
     const el = document.querySelector(`#${pid}Card input[type="checkbox"]`);
     if (el) el.addEventListener('change', () => recalcAllCards());
   });
-
-  // custom product add
-  // addCustomProduct defined later; button calls addCustomProduct()
-
-  // quote buttons (functions defined later)
-  // generateDetailedQuote() and generateSummaryQuote() will be global functions bound in HTML
 }
 
-/* set initial values for installation/structure base */
 function setInitialValues() {
   const kw = Math.max(1, n($('systemKw').value) || 1);
   $('installBase').value = round2(kw * 5000);
@@ -255,7 +249,6 @@ function setInitialValues() {
   $('structEditable').value = round2(kw * 8000);
 }
 
-/* update system dependent values (panel qty, base rates) */
 function updateSystemDependent() {
   const kw = Math.max(0, n($('systemKw').value));
   if (kw > 0) {
@@ -300,11 +293,9 @@ function toggleOverrideUI(sectionId) {
 }
 
 function toggleProduct(section) {
-  // card's checkbox changed — recalc totals; HTML binds checkbox to on change
   recalcAllCards();
 }
 
-/* compute effective base price for a section (applies manual override if set) */
 function computeBasePrice(sectionId, dealerPrice) {
   const overrideToggle = $(`${sectionId}OverrideToggle`);
   const overrideInput = $(`${sectionId}OverridePrice`);
@@ -315,7 +306,6 @@ function computeBasePrice(sectionId, dealerPrice) {
   return dealerPrice;
 }
 
-/* apply margin (either common or custom) */
 function applyMarginTo(base, sectionId) {
   const useCommonEl = $(`${sectionId}UseCommonMargin`);
   const customEl = $(`${sectionId}CustomMargin`);
@@ -329,18 +319,13 @@ function applyMarginTo(base, sectionId) {
   }
 }
 
-/* get GST percent for OFF-GRID items
-   Panels => 5%
-   Battery => 28%
-   Inverter & Rest => 18%
-*/
+// TAXATION LOGIC - Off-Grid specific
 function getGstFor(type) {
   if (type === 'panels') return 5;
   if (type === 'battery') return 28; 
-  return 18;
+  return 18; // Inverter and others
 }
 
-/* check if a section is enabled (header toggle) */
 function isEnabled(sectionId) {
   const chk = $(`${sectionId}Card`) ? $(`${sectionId}Card`).querySelector('input[type="checkbox"]') : null;
   if (!chk) return true;
@@ -377,7 +362,6 @@ function updateInverterData() {
   $('inverterTotal').value = total;
 }
 
-// Updated function to handle manual quantity edits
 function updatePanelData(manual = false) {
   if (!isEnabled('panels')) {
     $('panelDealer').value = '';
@@ -404,23 +388,18 @@ function updatePanelData(manual = false) {
 
   const watt = n(opt.dataset.watt);
   const dealer = n(opt.dataset.price);
-
+  
   let qty;
   if (manual) {
       qty = Math.max(0, n($('panelQty').value));
   } else {
-      // total watt required = kw * 1000, qty = ceil(totalWatt / watt)
-      const totalWatt = round2(kw * 1000);
-      qty = Math.ceil(totalWatt / Math.max(1, watt));
+      qty = Math.ceil((kw * 1000) / Math.max(1, watt));
       $('panelQty').value = qty;
   }
-  
-  const dcCapacityKw = round2((qty * watt) / 1000);
 
-  // FIXED: computeBasePrice uses 'panel' (singular) to match input ID
-  const base = computeBasePrice('panel', dealer);
-  // Margin uses 'panels' (plural) to match input ID
-  const finalRate = applyMarginTo(base, 'panels'); 
+  const dcCapacityKw = round2((qty * watt) / 1000);
+  const base = computeBasePrice('panel', dealer); 
+  const finalRate = applyMarginTo(base, 'panels');
   const amount = round2(finalRate * qty);
   const gstPct = getGstFor('panels');
   const gstAmt = round2(amount * gstPct / 100);
@@ -674,7 +653,6 @@ function updateEarthingSetData() {
 /* recalc all cards */
 function recalcAllCards() {
   updateInverterData();
-  // Pass false to ensure standard logic on global recalc, but inputs will trigger with true
   updatePanelData(false); 
   updateBatteryData();
   updateMeterData();
@@ -972,8 +950,8 @@ function calcTotals() {
   });
   const grandTotal = round2(subtotal + totalGst);
 
-  // subsidy logic for OFF-GRID - generally 0
-  const subsidy = 0;
+  // subsidy logic for OFF-GRID - Generally None, but keeping placeholder logic if needed
+  const subsidy = 0; 
 
   return { items, subtotal, totalGst, grandTotal, subsidy };
 }
@@ -1082,11 +1060,11 @@ function buildDetailedQuotationHtml(totals, systemType) {
     `;
   }
 
-  // Identical HTML Template as Detailed Quote
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${plantKw}KW Offgrid ${customerName}${customerEmail ? ' ' + customerEmail : ''}</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
