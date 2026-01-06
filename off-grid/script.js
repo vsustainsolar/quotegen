@@ -1,6 +1,12 @@
-/* =========================================
-   1. DATA SETS (OFF-GRID VERSION)
-   ========================================= */
+/*******************************************************
+ * off-grid/script.js
+ * Off-Grid Calculation + Quotation Engine
+ * Based on original On-Grid script structure
+ *******************************************************/
+
+/* ===========================
+   1. DATASETS (Off-Grid Specific)
+   =========================== */
 
 // OFF-GRID INVERTERS
 const inverterList = [
@@ -26,51 +32,57 @@ const inverterList = [
   { model: "SOLARVERTER PRO 10.1KVA (MPPT)", price: 82817 }
 ];
 
-// SOLAR BATTERIES (OFF-GRID)
+// SOLAR BATTERIES (New)
 const batteryList = [
-  { model: "LPT 1240L (40Ah, 60M*)", price: 4300, voltage: 12 },
-  { model: "LPT 1240H (40Ah, 72M*)", price: 4765, voltage: 12 },
-  { model: "LPT 1280H (80Ah, 72M*)", price: 7587, voltage: 12 },
-  { model: "LPTT 12100H (100Ah, 72M*)", price: 9370, voltage: 12 },
-  { model: "LPTT12120H (120Ah, 72M*)", price: 10006, voltage: 12 },
-  { model: "LPTT 12150L (150Ah, 60M*)", price: 11526, voltage: 12 },
-  { model: "LPTT 12150H (150Ah, 72M*)", price: 12554, voltage: 12 },
-  { model: "LPTT 12200L (200Ah, 60M*)", price: 15561, voltage: 12 },
-  { model: "LPTT 12200H (200Ah, 72M*)", price: 16311, voltage: 12 }
+  { model: "LPT 1240L (40Ah, 60M*)", price: 4300 },
+  { model: "LPT 1240H (40Ah, 72M*)", price: 4765 },
+  { model: "LPT 1280H (80Ah, 72M*)", price: 7587 },
+  { model: "LPTT 12100H (100Ah, 72M*)", price: 9370 },
+  { model: "LPTT12120H (120Ah, 72M*)", price: 10006 },
+  { model: "LPTT 12150L (150Ah, 60M*)", price: 11526 },
+  { model: "LPTT 12150H (150Ah, 72M*)", price: 12554 },
+  { model: "LPTT 12200L (200Ah, 60M*)", price: 15561 },
+  { model: "LPTT 12200H (200Ah, 72M*)", price: 16311 }
 ];
 
 const panelList = [
-    { model: "550W Mono Perc", watts: 550, price: 22 }, // Price per watt
-    { model: "540W Mono Perc", watts: 540, price: 21 },
-    { model: "450W Mono Perc", watts: 450, price: 20 },
-    { model: "335W Poly", watts: 335, price: 19 }
+  { model: "550W Mono Perc", watts: 550, price: 22 },
+  { model: "540W Mono Perc", watts: 540, price: 21 },
+  { model: "450W Mono Perc", watts: 450, price: 20 },
+  { model: "335W Poly", watts: 335, price: 19 }
 ];
 
 const acdbList = [
-    { model: "1 Phase ACDB", price: 1500 },
-    { model: "3 Phase ACDB", price: 3500 }
+  { model: "1 Phase ACDB", price: 1800 },
+  { model: "3 Phase ACDB", price: 3800 }
 ];
 
 const dcdbList = [
-    { model: "1 In 1 Out", price: 1200 },
-    { model: "2 In 2 Out", price: 2200 },
-    { model: "3 In 3 Out", price: 3200 }
+  { model: "1 In 1 Out", price: 1500 },
+  { model: "2 In 2 Out", price: 2500 },
+  { model: "3 In 3 Out", price: 3500 }
 ];
 
-/* =========================================
+const meterOptions = [
+  { model: "Single Phase Net Meter", price: 8000 },
+  { model: "Three Phase Net Meter", price: 15000 },
+  { model: "None", price: 0 }
+];
+
+/* ===========================
    2. INITIALIZATION
-   ========================================= */
+   =========================== */
 
 window.onload = function() {
     populateSelects();
     attachEventListeners();
     setInitialValues();
-    recalcAllCards(); // Initial calculation
+    recalcAllCards();
 };
 
 function populateSelects() {
     // Inverter
-    const invSelect = $('inverterSelect');
+    const invSelect = safeGet('inverterSelect');
     inverterList.forEach(i => {
         let opt = document.createElement('option');
         opt.value = i.model;
@@ -78,8 +90,8 @@ function populateSelects() {
         invSelect.appendChild(opt);
     });
 
-    // Battery (NEW)
-    const batSelect = $('batterySelect');
+    // Battery (Added for Off-Grid)
+    const batSelect = safeGet('batterySelect');
     batteryList.forEach(b => {
         let opt = document.createElement('option');
         opt.value = b.model;
@@ -88,7 +100,7 @@ function populateSelects() {
     });
 
     // Panels
-    const pnlSelect = $('panelSelect');
+    const pnlSelect = safeGet('panelSelect');
     panelList.forEach(p => {
         let opt = document.createElement('option');
         opt.value = p.model;
@@ -96,8 +108,8 @@ function populateSelects() {
         pnlSelect.appendChild(opt);
     });
 
-    // ACDB/DCDB
-    const acdbSelect = $('acdbSelect');
+    // BOS
+    const acdbSelect = safeGet('acdbSelect');
     acdbList.forEach(a => {
         let opt = document.createElement('option');
         opt.value = a.model;
@@ -105,23 +117,31 @@ function populateSelects() {
         acdbSelect.appendChild(opt);
     });
     
-    const dcdbSelect = $('dcdbSelect');
+    const dcdbSelect = safeGet('dcdbSelect');
     dcdbList.forEach(d => {
         let opt = document.createElement('option');
         opt.value = d.model;
         opt.textContent = `${d.model} - ₹${fmt(d.price)}`;
         dcdbSelect.appendChild(opt);
     });
+
+    // Net Meter
+    const nmSelect = safeGet('netMeterSelect');
+    meterOptions.forEach(m => {
+        let opt = document.createElement('option');
+        opt.value = m.model;
+        opt.textContent = `${m.model} - ₹${fmt(m.price)}`;
+        nmSelect.appendChild(opt);
+    });
 }
 
 function attachEventListeners() {
-    // Global
-    $('systemKW').addEventListener('input', () => { updateSystemDependent(); recalcAllCards(); });
-    $('commonMargin').addEventListener('input', recalcAllCards);
-    $('useCommonMargin').addEventListener('change', () => {
-        // Toggle disable state of individual margins
-        const useCommon = $('useCommonMargin').checked;
-        const marginGroups = document.querySelectorAll('.margin-group');
+    // Global Inputs
+    safeGet('systemKW').addEventListener('input', () => { updateSystemDependent(); recalcAllCards(); });
+    safeGet('commonMargin').addEventListener('input', recalcAllCards);
+    safeGet('useCommonMargin').addEventListener('change', () => {
+        const useCommon = safeGet('useCommonMargin').checked;
+        const marginGroups = document.querySelectorAll('.margin-col');
         marginGroups.forEach(g => {
             if (useCommon) g.classList.add('disabled');
             else g.classList.remove('disabled');
@@ -129,114 +149,130 @@ function attachEventListeners() {
         recalcAllCards();
     });
 
-    // Inverter
-    $('inverterSelect').addEventListener('change', recalcAllCards);
-    $('inverterQty').addEventListener('input', recalcAllCards);
-    $('inverterManualPrice').addEventListener('input', recalcAllCards);
-    $('inverterMargin').addEventListener('input', recalcAllCards);
+    // Inverter Section
+    safeGet('inverterSelect').addEventListener('change', recalcAllCards);
+    safeGet('inverterQty').addEventListener('input', recalcAllCards);
+    safeGet('inverter-manual-toggle').addEventListener('change', () => toggleOverrideUI('inverter'));
+    safeGet('inverterManualPrice').addEventListener('input', recalcAllCards);
+    safeGet('inverterMargin').addEventListener('input', recalcAllCards);
 
-    // Battery (NEW)
-    $('batterySelect').addEventListener('change', recalcAllCards);
-    $('batteryQty').addEventListener('input', recalcAllCards);
-    $('batteryManualPrice').addEventListener('input', recalcAllCards);
-    $('batteryMargin').addEventListener('input', recalcAllCards);
+    // Battery Section (Added for Off-Grid)
+    safeGet('batterySelect').addEventListener('change', recalcAllCards);
+    safeGet('batteryQty').addEventListener('input', recalcAllCards);
+    safeGet('battery-manual-toggle').addEventListener('change', () => toggleOverrideUI('battery'));
+    safeGet('batteryManualPrice').addEventListener('input', recalcAllCards);
+    safeGet('batteryMargin').addEventListener('input', recalcAllCards);
 
-    // Panel
-    $('panelSelect').addEventListener('change', recalcAllCards);
-    $('panelQty').addEventListener('input', recalcAllCards);
-    $('panelManualPrice').addEventListener('input', recalcAllCards);
-    $('panelMargin').addEventListener('input', recalcAllCards);
+    // Panel Section
+    safeGet('panelSelect').addEventListener('change', recalcAllCards);
+    safeGet('panelQty').addEventListener('input', recalcAllCards);
+    safeGet('panel-manual-toggle').addEventListener('change', () => toggleOverrideUI('panel'));
+    safeGet('panelManualPrice').addEventListener('input', recalcAllCards);
+    safeGet('panelMargin').addEventListener('input', recalcAllCards);
 
-    // Structure & Install
-    $('structureSelect').addEventListener('change', recalcAllCards);
-    $('structureRate').addEventListener('input', recalcAllCards);
-    $('structureManualPrice').addEventListener('input', recalcAllCards);
-    $('structureMargin').addEventListener('input', recalcAllCards);
+    // Structure Section
+    safeGet('structureSelect').addEventListener('change', recalcAllCards);
+    safeGet('structureRate').addEventListener('input', recalcAllCards);
+    safeGet('structure-manual-toggle').addEventListener('change', () => toggleOverrideUI('structure'));
+    safeGet('structureManualPrice').addEventListener('input', recalcAllCards);
+    safeGet('structureMargin').addEventListener('input', recalcAllCards);
     
-    $('installRate').addEventListener('input', recalcAllCards);
-    $('installManualPrice').addEventListener('input', recalcAllCards);
-    $('installMargin').addEventListener('input', recalcAllCards);
+    // Installation Section
+    safeGet('installRate').addEventListener('input', recalcAllCards);
+    safeGet('install-manual-toggle').addEventListener('change', () => toggleOverrideUI('install'));
+    safeGet('installManualPrice').addEventListener('input', recalcAllCards);
+    safeGet('installMargin').addEventListener('input', recalcAllCards);
 
-    // BOS
-    $('acdbSelect').addEventListener('change', recalcAllCards);
-    $('acdbQty').addEventListener('input', recalcAllCards);
-    $('dcdbSelect').addEventListener('change', recalcAllCards);
-    $('dcdbQty').addEventListener('input', recalcAllCards);
-    $('boxesMargin').addEventListener('input', recalcAllCards);
+    // BOS Section
+    safeGet('acdbSelect').addEventListener('change', recalcAllCards);
+    safeGet('acdbQty').addEventListener('input', recalcAllCards);
+    safeGet('dcdbSelect').addEventListener('change', recalcAllCards);
+    safeGet('dcdbQty').addEventListener('input', recalcAllCards);
+    safeGet('boxesMargin').addEventListener('input', recalcAllCards);
 
-    $('dcCableQty').addEventListener('input', recalcAllCards);
-    $('dcCableRate').addEventListener('input', recalcAllCards);
-    $('acCableQty').addEventListener('input', recalcAllCards);
-    $('acCableRate').addEventListener('input', recalcAllCards);
-    $('cableMargin').addEventListener('input', recalcAllCards);
+    safeGet('dcCableQty').addEventListener('input', recalcAllCards);
+    safeGet('dcCableRate').addEventListener('input', recalcAllCards);
+    safeGet('acCableQty').addEventListener('input', recalcAllCards);
+    safeGet('acCableRate').addEventListener('input', recalcAllCards);
+    safeGet('cableMargin').addEventListener('input', recalcAllCards);
 
-    $('earthingQty').addEventListener('input', recalcAllCards);
-    $('earthingRate').addEventListener('input', recalcAllCards);
-    $('laQty').addEventListener('input', recalcAllCards);
-    $('laRate').addEventListener('input', recalcAllCards);
-    $('safetyMargin').addEventListener('input', recalcAllCards);
+    safeGet('netMeterSelect').addEventListener('change', recalcAllCards);
+    safeGet('netMeterQty').addEventListener('input', recalcAllCards);
+    safeGet('netmeter-manual-toggle').addEventListener('change', () => toggleOverrideUI('netmeter'));
+    safeGet('netmeterManualPrice').addEventListener('input', recalcAllCards);
+    safeGet('netmeterMargin').addEventListener('input', recalcAllCards);
+
+    safeGet('earthingQty').addEventListener('input', recalcAllCards);
+    safeGet('earthingRate').addEventListener('input', recalcAllCards);
+    safeGet('laQty').addEventListener('input', recalcAllCards);
+    safeGet('laRate').addEventListener('input', recalcAllCards);
+    safeGet('safetyMargin').addEventListener('input', recalcAllCards);
 }
 
-/* =========================================
-   3. LOGIC & CALCULATIONS
-   ========================================= */
+function setInitialValues() {
+    // Default system sizing logic if needed
+    updateSystemDependent();
+}
 
-// Helper: Get Number
+function updateSystemDependent() {
+    // Example: Auto-adjust cables based on KW if needed
+    // const kw = n('systemKW');
+    // if (kw > 0) safeGet('dcCableQty').value = kw * 10;
+}
+
+/* ===========================
+   3. CORE LOGIC & HELPERS
+   =========================== */
+
 function n(idOrValue) {
     if (typeof idOrValue === 'string') {
-        const el = $(idOrValue);
+        const el = document.getElementById(idOrValue);
         return el ? (parseFloat(el.value) || 0) : 0;
     }
     return parseFloat(idOrValue) || 0;
 }
 
-// Helper: Format Currency
 function fmt(num) {
     return num.toLocaleString('en-IN');
 }
 
-// Helper: Get Element
-function $(id) { return document.getElementById(id); }
-
-// Logic: Determine Tax Rate
-// UPDATED FOR OFF-GRID: 5% for Inverter, Battery, Panels
-function getGstFor(type) {
-    if (type === 'panel') return 0.05;
-    if (type === 'inverter') return 0.05;
-    if (type === 'battery') return 0.05; // User Requirement: 5%
-    return 0.18; // Default for others
+// Improved safeGet to prevent crashes on missing listeners
+function safeGet(id) {
+    const el = document.getElementById(id);
+    return el ? el : { value: '', checked: false, addEventListener: ()=>{} };
 }
 
 function getCommonMargin() {
-    return $('useCommonMargin').checked ? n('commonMargin') : null;
+    return safeGet('useCommonMargin').checked ? n('commonMargin') : null;
 }
 
 function toggleOverrideUI(section) {
-    const isManual = $(section + '-manual-toggle').checked;
-    const group = $(section + '-override-group');
-    if(isManual) group.classList.remove('hidden');
-    else group.classList.add('hidden');
+    const isManual = safeGet(section + '-manual-toggle').checked;
+    const group = safeGet(section + '-override-group');
+    if(group && group.classList) {
+        if(isManual) group.classList.remove('hidden-row');
+        else group.classList.add('hidden-row');
+    }
     recalcAllCards();
 }
 
-function setInitialValues() {
-    const kw = n('systemKW');
-    // Default assumptions
-    $('structureRate').value = 5000;
-    $('installRate').value = 4000;
+// TAXATION LOGIC (Custom for Off-Grid)
+function getGstFor(type) {
+    // Inverter, Battery, Panel = 5%
+    if (type === 'inverter') return 0.05;
+    if (type === 'battery') return 0.05; 
+    if (type === 'panel') return 0.05;
+    // Services/BOS = 18%
+    return 0.18; 
 }
 
-function updateSystemDependent() {
-    // When KW changes, update default Quantities if needed
-    // Panel qty is calc'd in panel function, but BOS qtys might scale? 
-    // Keeping simple for now.
-}
 
-// --- CARD UPDATERS ---
+/* ===========================
+   4. CARD UPDATE FUNCTIONS
+   =========================== */
 
-// 1. Inverter
 function updateInverterData() {
-    const isManual = $('inverter-manual-toggle').checked;
+    const isManual = safeGet('inverter-manual-toggle').checked;
     let basePrice = 0;
     let modelName = "";
 
@@ -244,7 +280,7 @@ function updateInverterData() {
         basePrice = n('inverterManualPrice');
         modelName = "Manual Inverter Spec";
     } else {
-        const sel = $('inverterSelect').value;
+        const sel = safeGet('inverterSelect').value;
         const item = inverterList.find(i => i.model === sel);
         if (item) {
             basePrice = item.price;
@@ -261,11 +297,12 @@ function updateInverterData() {
     const withMargin = totalBase + (totalBase * margin / 100);
 
     // GST
-    const gstRate = getGstFor('inverter');
+    const gstRate = getGstFor('inverter'); // 5%
     const tax = withMargin * gstRate;
     const final = withMargin + tax;
 
-    $('inverterTotal').textContent = "₹" + fmt(Math.round(final));
+    const el = document.getElementById('inverterTotal');
+    if(el) el.textContent = "₹" + fmt(Math.round(final));
 
     return { 
         name: modelName, 
@@ -278,40 +315,38 @@ function updateInverterData() {
     };
 }
 
-// 2. Battery (NEW)
+// NEW: Battery Update Function
 function updateBatteryData() {
-    const isManual = $('battery-manual-toggle').checked;
+    const isManual = safeGet('battery-manual-toggle').checked;
     let basePrice = 0;
     let modelName = "";
-    let voltage = 0;
 
     if (isManual) {
         basePrice = n('batteryManualPrice');
         modelName = "Manual Battery Spec";
     } else {
-        const sel = $('batterySelect').value;
+        const sel = safeGet('batterySelect').value;
         const item = batteryList.find(b => b.model === sel);
         if (item) {
             basePrice = item.price;
             modelName = item.model;
-            voltage = item.voltage;
         }
     }
 
     const qty = n('batteryQty');
     const totalBase = basePrice * qty;
     
-    // Margin
     const common = getCommonMargin();
     const margin = (common !== null) ? common : n('batteryMargin');
     const withMargin = totalBase + (totalBase * margin / 100);
 
-    // GST (5%)
+    // GST 5%
     const gstRate = getGstFor('battery');
     const tax = withMargin * gstRate;
     const final = withMargin + tax;
 
-    $('batteryTotal').textContent = "₹" + fmt(Math.round(final));
+    const el = document.getElementById('batteryTotal');
+    if(el) el.textContent = "₹" + fmt(Math.round(final));
 
     return { 
         name: modelName, 
@@ -320,74 +355,62 @@ function updateBatteryData() {
         marginAmt: withMargin - totalBase, 
         tax: tax, 
         total: final,
-        type: 'battery',
-        voltage: voltage
+        type: 'battery'
     };
 }
 
-// 3. Panels
 function updatePanelData() {
-    const isManual = $('panel-manual-toggle').checked;
+    const isManual = safeGet('panel-manual-toggle').checked;
     const sysKW = n('systemKW');
     let totalBase = 0;
     let modelName = "";
     let qty = 0;
 
     if (isManual) {
-        // Manual: User enters Price Per Watt
-        // We still assume System KW determines total Watts
         const ratePerWatt = n('panelManualPrice');
         const totalWatts = sysKW * 1000;
         totalBase = totalWatts * ratePerWatt;
         modelName = "Custom Panels";
-        qty = Math.ceil(totalWatts / 550); // rough estimate for display
-        $('panelQty').value = qty; 
+        qty = Math.ceil(totalWatts / 550);
+        safeGet('panelQty').value = qty; 
     } else {
-        const sel = $('panelSelect').value;
+        const sel = safeGet('panelSelect').value;
         const item = panelList.find(p => p.model === sel);
         if (item) {
-            // Calculate Qty required for System KW
-            // e.g. 3kW = 3000W. 3000 / 550 = 5.45 -> 6 panels
             const req = (sysKW * 1000) / item.watts;
             qty = Math.ceil(req);
-            // Update UI Qty if not user overridden (logic simplified here)
-            // Ideally we let user adjust qty, but for now we auto-calc
-            $('panelQty').value = qty; 
+            safeGet('panelQty').value = qty; 
             
-            // Pricing: Dealer Price per watt * Total Watts of panels
-            // Real dealer logic: (Price per watt * Panel Wattage) * Qty
             const costPerPanel = item.price * item.watts;
             totalBase = costPerPanel * qty;
             modelName = item.model;
         }
     }
 
-    // Margin
     const common = getCommonMargin();
     const margin = (common !== null) ? common : n('panelMargin');
     const withMargin = totalBase + (totalBase * margin / 100);
 
-    // GST
-    const gstRate = getGstFor('panel');
+    const gstRate = getGstFor('panel'); // 5%
     const tax = withMargin * gstRate;
     const final = withMargin + tax;
 
-    $('panelTotal').textContent = "₹" + fmt(Math.round(final));
+    const el = document.getElementById('panelTotal');
+    if(el) el.textContent = "₹" + fmt(Math.round(final));
 
     return { name: modelName, qty: qty, base: totalBase, marginAmt: withMargin - totalBase, tax: tax, total: final, type: 'panel' };
 }
 
-// 4. Structure
 function updateStructureData() {
-    const isManual = $('structure-manual-toggle').checked;
+    const isManual = safeGet('structure-manual-toggle').checked;
     const sysKW = n('systemKW');
     let totalBase = 0;
-    let typeName = $('structureSelect').value;
+    let typeName = safeGet('structureSelect').value;
 
     if (isManual) {
         totalBase = n('structureManualPrice');
     } else {
-        const rate = n('structureRate'); // per KW
+        const rate = n('structureRate'); 
         totalBase = rate * sysKW;
     }
 
@@ -398,20 +421,20 @@ function updateStructureData() {
     const tax = withMargin * getGstFor('structure');
     const final = withMargin + tax;
 
-    $('structureTotal').textContent = "₹" + fmt(Math.round(final));
-    return { name: "Module Mounting Structure (" + typeName + ")", qty: 1, base: totalBase, marginAmt: withMargin - totalBase, tax: tax, total: final, type: 'structure' };
+    const el = document.getElementById('structureTotal');
+    if(el) el.textContent = "₹" + fmt(Math.round(final));
+    return { name: "Structure (" + typeName + ")", qty: 1, base: totalBase, marginAmt: withMargin - totalBase, tax: tax, total: final, type: 'structure' };
 }
 
-// 5. Installation
 function updateInstallData() {
-    const isManual = $('install-manual-toggle').checked;
+    const isManual = safeGet('install-manual-toggle').checked;
     const sysKW = n('systemKW');
     let totalBase = 0;
 
     if (isManual) {
         totalBase = n('installManualPrice');
     } else {
-        const rate = n('installRate'); // per KW
+        const rate = n('installRate'); 
         totalBase = rate * sysKW;
     }
 
@@ -422,25 +445,27 @@ function updateInstallData() {
     const tax = withMargin * getGstFor('install');
     const final = withMargin + tax;
 
-    $('installTotal').textContent = "₹" + fmt(Math.round(final));
+    const el = document.getElementById('installTotal');
+    if(el) el.textContent = "₹" + fmt(Math.round(final));
     return { name: "I&C, Transport", qty: 1, base: totalBase, marginAmt: withMargin - totalBase, tax: tax, total: final, type: 'other' };
 }
 
-// 6. BOS (Boxes, Cables, Safety) - Simplified Grouping
 function updateBosData() {
     const common = getCommonMargin();
     const bosItems = [];
     
     // ACDB/DCDB
-    const acdbP = acdbList.find(a => a.model === $('acdbSelect').value)?.price || 0;
-    const dcdbP = dcdbList.find(d => d.model === $('dcdbSelect').value)?.price || 0;
+    const acdbP = acdbList.find(a => a.model === safeGet('acdbSelect').value)?.price || 0;
+    const dcdbP = dcdbList.find(d => d.model === safeGet('dcdbSelect').value)?.price || 0;
     const acdbTotal = acdbP * n('acdbQty');
     const dcdbTotal = dcdbP * n('dcdbQty');
     const boxBase = acdbTotal + dcdbTotal;
     const boxMargin = (common !== null) ? common : n('boxesMargin');
     const boxSell = boxBase + (boxBase * boxMargin / 100);
     const boxTax = boxSell * 0.18;
-    $('boxesTotal').textContent = "₹" + fmt(Math.round(boxSell + boxTax));
+    
+    const boxEl = document.getElementById('boxesTotal');
+    if(boxEl) boxEl.textContent = "₹" + fmt(Math.round(boxSell + boxTax));
     
     bosItems.push({name: "ACDB / DCDB", total: boxSell + boxTax, tax: boxTax, base: boxSell});
 
@@ -451,36 +476,60 @@ function updateBosData() {
     const cabMargin = (common !== null) ? common : n('cableMargin');
     const cabSell = cabBase + (cabBase * cabMargin / 100);
     const cabTax = cabSell * 0.18;
-    $('cableTotal').textContent = "₹" + fmt(Math.round(cabSell + cabTax));
+    
+    const cabEl = document.getElementById('cableTotal');
+    if(cabEl) cabEl.textContent = "₹" + fmt(Math.round(cabSell + cabTax));
     
     bosItems.push({name: "DC/AC Cables", total: cabSell + cabTax, tax: cabTax, base: cabSell});
 
-    // Safety
+    // Net Meter
+    const isMeterManual = safeGet('netmeter-manual-toggle').checked;
+    let meterBase = 0;
+    if (isMeterManual) {
+        meterBase = n('netmeterManualPrice');
+    } else {
+        const mSel = safeGet('netMeterSelect').value;
+        const mItem = meterOptions.find(m => m.model === mSel);
+        meterBase = (mItem ? mItem.price : 0) * n('netMeterQty');
+    }
+    const meterMargin = (common !== null) ? common : n('netmeterMargin');
+    const meterSell = meterBase + (meterBase * meterMargin / 100);
+    const meterTax = meterSell * 0.18;
+
+    const nmEl = document.getElementById('netMeterTotal');
+    if(nmEl) nmEl.textContent = "₹" + fmt(Math.round(meterSell + meterTax));
+    
+    bosItems.push({name: "Net Metering/Liasoning", total: meterSell + meterTax, tax: meterTax, base: meterSell});
+
+    // Earthing
     const earth = n('earthingQty') * n('earthingRate');
     const la = n('laQty') * n('laRate');
     const safeBase = earth + la;
     const safeMargin = (common !== null) ? common : n('safetyMargin');
     const safeSell = safeBase + (safeBase * safeMargin / 100);
     const safeTax = safeSell * 0.18;
-    $('safetyTotal').textContent = "₹" + fmt(Math.round(safeSell + safeTax));
+    
+    const safeEl = document.getElementById('safetyTotal');
+    if(safeEl) safeEl.textContent = "₹" + fmt(Math.round(safeSell + safeTax));
 
     bosItems.push({name: "Earthing & LA", total: safeSell + safeTax, tax: safeTax, base: safeSell});
 
     return bosItems;
 }
 
-// 7. Custom Products
+// Custom Products
 let customItems = [];
 function addCustomProduct() {
-    const container = $('custom-products-container');
+    const container = document.getElementById('customProductList');
+    if(!container) return; // safety
     const id = Date.now();
     const div = document.createElement('div');
-    div.className = "grid-3 custom-row";
+    div.className = "row custom-row";
     div.id = `custom-${id}`;
     div.innerHTML = `
-        <input type="text" placeholder="Item Name" class="c-name">
-        <input type="number" placeholder="Cost" class="c-cost" oninput="recalcAllCards()">
-        <button class="btn-danger" onclick="removeCustom('${id}')">X</button>
+        <div class="col"><input type="text" placeholder="Item Name" class="c-name"></div>
+        <div class="col"><input type="number" placeholder="Cost" class="c-cost" oninput="recalcAllCards()"></div>
+        <button style="background:red; color:white; border:none; padding:5px 10px; cursor:pointer;" onclick="removeCustom('${id}')">X</button>
     `;
     container.appendChild(div);
 }
@@ -493,49 +542,45 @@ function removeCustom(id) {
 
 function getCustomData() {
     const rows = document.querySelectorAll('.custom-row');
-    let total = 0;
     let items = [];
     rows.forEach(r => {
         const name = r.querySelector('.c-name').value;
         const cost = parseFloat(r.querySelector('.c-cost').value) || 0;
         if(name && cost) {
-            // Assume manual cost is final selling price for simplicity, or add margin logic
-            // Assuming 18% GST on custom items for safety
             const tax = cost * 0.18; 
             const final = cost + tax; 
-            total += final;
             items.push({ name: name, qty: 1, base: cost, tax: tax, total: final, type: 'custom' });
         }
     });
-    $('customTotal').textContent = "₹" + fmt(Math.round(total));
     return items;
 }
 
-// --- MASTER CALCULATION ---
+/* ===========================
+   5. MASTER RECALCULATION
+   =========================== */
 
 let currentQuoteData = {};
 
 function recalcAllCards() {
     const invData = updateInverterData();
-    const batData = updateBatteryData(); // NEW
+    const batData = updateBatteryData(); // Include Battery
     const pnlData = updatePanelData();
     const strData = updateStructureData();
     const instData = updateInstallData();
-    const bosDataArray = updateBosData(); // returns array of sub-objects
+    const bosDataArray = updateBosData(); 
     const custDataArray = getCustomData();
 
-    // Aggregate for Floating Bar
+    // Aggregate
     let grandSub = 0;
     let grandTax = 0;
 
-    // Sum Function
     const add = (item) => {
-        grandSub += item.base; // Base selling price (inc margin, exc tax)
+        grandSub += item.base; 
         grandTax += item.tax;
     };
 
     add(invData);
-    add(batData); // NEW
+    add(batData); // Add Battery
     add(pnlData);
     add(strData);
     add(instData);
@@ -544,11 +589,6 @@ function recalcAllCards() {
 
     const total = grandSub + grandTax;
 
-    $('grandSubtotal').textContent = "₹" + fmt(Math.round(grandSub));
-    $('grandGst').textContent = "₹" + fmt(Math.round(grandTax));
-    $('grandTotal').textContent = "₹" + fmt(Math.round(total));
-
-    // Store for PDF generation
     currentQuoteData = {
         inv: invData,
         bat: batData, // NEW
@@ -561,71 +601,61 @@ function recalcAllCards() {
     };
 }
 
-/* =========================================
-   4. PDF GENERATION
-   ========================================= */
+/* ===========================
+   6. PDF GENERATION
+   =========================== */
 
 function generateDetailedQuote() {
-    const element = document.createElement('div');
-    element.innerHTML = buildDetailedQuotationHtml();
-    
-    // PDF Config
-    const opt = {
-        margin: 0, // No margin for full background
-        filename: `OffGrid_Quote_${$('customerName').value || 'Client'}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-
-    // Generate
-    html2pdf().set(opt).from(element).save();
+    const html = buildDetailedQuotationHtml();
+    openInNewWindow(html);
 }
-
 function generateSummaryQuote() {
-    // Similar to detailed but fewer pages (simplified for brevity)
-    generateDetailedQuote(); 
+     const html = buildDetailedQuotationHtml(); 
+     openInNewWindow(html);
+}
+function generateShortQuote() {
+    alert("Short quote feature coming soon!");
 }
 
-// HTML TEMPLATE BUILDER
 function buildDetailedQuotationHtml() {
     const d = currentQuoteData;
     const date = new Date().toLocaleDateString('en-IN');
-    const custName = $('customerName').value || "Valued Customer";
-    const sysSize = $('systemKW').value;
+    const custName = safeGet('customerName').value || "Valued Customer";
+    const custAddr = safeGet('customerAddress').value || "";
+    const sysSize = safeGet('systemKW').value;
 
-    // 1. Build Item Rows
+    // --- LINE ITEMS ---
     let rowsHtml = "";
     let i = 1;
 
-    // Inverter Row
-    rowsHtml += `<tr><td>${i++}</td><td>Solar Inverter</td><td>${d.inv.name}</td><td>${d.inv.qty}</td><td>₹${fmt(d.inv.total)}</td></tr>`;
+    // 1. Inverter
+    rowsHtml += `<tr><td>${i++}</td><td>Solar Inverter</td><td>${escapeHtml(d.inv.name)}</td><td>${d.inv.qty}</td><td>₹${fmt(d.inv.total)}</td></tr>`;
     
-    // Battery Row (NEW)
-    if(d.bat.qty > 0) {
-        rowsHtml += `<tr><td>${i++}</td><td>Solar Battery</td><td>${d.bat.name}</td><td>${d.bat.qty}</td><td>₹${fmt(d.bat.total)}</td></tr>`;
+    // 2. Battery (Conditionally added)
+    if (d.bat.qty > 0) {
+        rowsHtml += `<tr><td>${i++}</td><td>Solar Battery</td><td>${escapeHtml(d.bat.name)}</td><td>${d.bat.qty}</td><td>₹${fmt(d.bat.total)}</td></tr>`;
     }
 
-    // Panel Row
-    rowsHtml += `<tr><td>${i++}</td><td>Solar Modules</td><td>${d.pnl.name} (${d.pnl.qty} Nos)</td><td>${d.pnl.qty}</td><td>₹${fmt(d.pnl.total)}</td></tr>`;
+    // 3. Panels
+    rowsHtml += `<tr><td>${i++}</td><td>Solar Modules</td><td>${escapeHtml(d.pnl.name)} (${d.pnl.qty} Nos)</td><td>${d.pnl.qty}</td><td>₹${fmt(d.pnl.total)}</td></tr>`;
 
-    // Structure
-    rowsHtml += `<tr><td>${i++}</td><td>Structure</td><td>GI Module Mounting Structure</td><td>1 Set</td><td>₹${fmt(d.str.total)}</td></tr>`;
+    // 4. Structure
+    rowsHtml += `<tr><td>${i++}</td><td>Structure</td><td>Module Mounting Structure</td><td>1 Set</td><td>₹${fmt(d.str.total)}</td></tr>`;
     
-    // BOS Combined
+    // 5. BOS
     let bosTotal = 0;
-    d.bos.forEach(b => bosTotal += b.total);
-    rowsHtml += `<tr><td>${i++}</td><td>BOS (Balance of System)</td><td>ACDB, DCDB, Cables, Earthing, LA</td><td>1 Lot</td><td>₹${fmt(bosTotal)}</td></tr>`;
+    d.bos.forEach(b => { bosTotal += b.total; });
+    rowsHtml += `<tr><td>${i++}</td><td>BOS (Balance of System)</td><td>ACDB, DCDB, Cables, Net Meter, Earthing, LA</td><td>1 Lot</td><td>₹${fmt(bosTotal)}</td></tr>`;
     
-    // Installation
-    rowsHtml += `<tr><td>${i++}</td><td>I&C</td><td>Installation, Transport & Commisioning</td><td>1 Job</td><td>₹${fmt(d.inst.total)}</td></tr>`;
+    // 6. Installation
+    rowsHtml += `<tr><td>${i++}</td><td>I&C</td><td>Installation, Transport & Commissioning</td><td>1 Job</td><td>₹${fmt(d.inst.total)}</td></tr>`;
 
-    // Customs
+    // 7. Custom
     d.cust.forEach(c => {
-        rowsHtml += `<tr><td>${i++}</td><td>Extra</td><td>${c.name}</td><td>1</td><td>₹${fmt(c.total)}</td></tr>`;
+        rowsHtml += `<tr><td>${i++}</td><td>Extra</td><td>${escapeHtml(c.name)}</td><td>1</td><td>₹${fmt(c.total)}</td></tr>`;
     });
 
-    // Total Row
+    // Grand Total
     rowsHtml += `
         <tr style="font-weight:bold; background:#eef;">
             <td colspan="4" style="text-align:right;">Grand Total (Inc GST)</td>
@@ -633,66 +663,107 @@ function buildDetailedQuotationHtml() {
         </tr>
     `;
 
-    // 2. Return Full HTML String
-    // We use inline CSS for PDF generation consistency
     return `
-    <div style="font-family: Arial, sans-serif; color: #333; width: 210mm; min-height: 297mm; position: relative;">
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Off-Grid Quotation - ${escapeHtml(custName)}</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; background: #555; }
+        .page { width: 210mm; min-height: 297mm; background: white; margin: 20px auto; padding: 40px; box-sizing: border-box; position: relative; }
+        @media print { body { background: white; } .page { margin: 0; width: 100%; height: auto; page-break-after: always; } }
         
-        <div style="width:100%; height:1120px; background: url('../Uplodes/bg 3.png') no-repeat center center; background-size: cover; position: relative;">
-            <div style="position: absolute; top: 300px; left: 50px; color: white;">
-                <h1 style="font-size: 50px; margin: 0;">OFF-GRID<br>SOLAR PROPOSAL</h1>
-                <h3 style="font-size: 24px; margin-top: 20px;">Prepared For: ${custName}</h3>
-                <p style="font-size: 18px;">Date: ${date}</p>
-            </div>
-            <div style="position: absolute; bottom: 50px; right: 50px; color: white; text-align: right;">
-                <h2>${sysSize} KW System</h2>
-                <p>Reliable Power Backup Solution</p>
-            </div>
-        </div>
-
-        <div style="padding: 40px; page-break-before: always;">
-            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid #ff9800; padding-bottom: 10px;">
-                <img src="../Uplodes/v sustain logo.png" style="height: 60px;">
-                <h2 style="color: #1e3c72;">Commercial Offer</h2>
-            </div>
-            
-            <div style="margin-top: 30px;">
-                <table style="width: 100%; border-collapse: collapse;">
-                    <thead>
-                        <tr style="background-color: #1e3c72; color: white;">
-                            <th style="padding: 10px; border: 1px solid #ccc;">S.No</th>
-                            <th style="padding: 10px; border: 1px solid #ccc;">Item Category</th>
-                            <th style="padding: 10px; border: 1px solid #ccc;">Description / Model</th>
-                            <th style="padding: 10px; border: 1px solid #ccc;">Qty</th>
-                            <th style="padding: 10px; border: 1px solid #ccc;">Price (Inc GST)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${rowsHtml}
-                    </tbody>
-                </table>
-            </div>
-
-            <div style="margin-top: 40px; background: #f9f9f9; padding: 20px; border-radius: 8px;">
-                <h3 style="color: #ff9800;">Terms & Conditions</h3>
-                <ul style="font-size: 12px; line-height: 1.6;">
-                    <li><strong>Validity:</strong> This offer is valid for 7 days.</li>
-                    <li><strong>Payment:</strong> 50% Advance, 40% Before Dispatch, 10% After Installation.</li>
-                    <li><strong>Warranty:</strong> 
-                        <ul>
-                            <li>Panels: 25 Years Performance Warranty</li>
-                            <li>Inverter: As per OEM (usually 2-5 Years)</li>
-                            <li>Battery: As per OEM (usually 3-5 Years)</li>
-                        </ul>
-                    </li>
-                    <li><strong>Scope:</strong> Client to provide roof access and internet for monitoring.</li>
-                </ul>
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #ff9800; padding-bottom: 20px; margin-bottom: 30px; }
+        .logo { height: 80px; }
+        .title h1 { color: #1e3c72; margin: 0; font-size: 28px; text-transform: uppercase; }
+        .title p { margin: 5px 0 0; color: #666; }
+        
+        .client-info { background: #f4f4f4; padding: 20px; border-radius: 8px; margin-bottom: 30px; display: flex; justify-content: space-between; }
+        .client-info div { width: 48%; }
+        .label { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+        .val { font-size: 16px; font-weight: 600; color: #333; margin-top: 5px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+        th { background: #1e3c72; color: white; padding: 12px; text-align: left; font-size: 14px; }
+        td { padding: 12px; border-bottom: 1px solid #eee; color: #444; font-size: 14px; }
+        
+        .terms { margin-top: 40px; padding: 20px; border: 1px solid #eee; border-radius: 8px; }
+        .terms h3 { color: #ff9800; margin-top: 0; }
+        .terms ul { padding-left: 20px; margin: 0; font-size: 12px; color: #555; line-height: 1.6; }
+        
+        .footer { margin-top: 50px; text-align: center; font-size: 12px; color: #999; border-top: 1px solid #eee; padding-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="header">
+            <img src="../Uplodes/v sustain logo.png" class="logo" alt="Logo">
+            <div class="title" style="text-align:right;">
+                <h1>OFF-GRID PROPOSAL</h1>
+                <p>Date: ${date}</p>
             </div>
         </div>
 
-        <div style="width:100%; height:1120px; background: url('../Uplodes/on grid plannnt explained.png') no-repeat center center; background-size: contain; page-break-before: always;">
+        <div class="client-info">
+            <div>
+                <div class="label">Customer Details</div>
+                <div class="val">${escapeHtml(custName)}</div>
+                <div style="font-size:14px; margin-top:2px;">${escapeHtml(custAddr)}</div>
             </div>
+            <div style="text-align:right;">
+                <div class="label">System Capacity</div>
+                <div class="val">${sysSize} KW (Off-Grid)</div>
+                <div style="font-size:14px; color:green; margin-top:5px;">With Battery Backup</div>
+            </div>
+        </div>
 
+        <table>
+            <thead>
+                <tr>
+                    <th width="5%">#</th>
+                    <th width="20%">Category</th>
+                    <th width="40%">Description / Model</th>
+                    <th width="10%">Qty</th>
+                    <th width="25%">Price (Inc GST)</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${rowsHtml}
+            </tbody>
+        </table>
+
+        <div class="terms">
+            <h3>Terms & Conditions</h3>
+            <ul>
+                <li><strong>Payment:</strong> 50% Advance along with PO, 40% before dispatch, 10% after installation.</li>
+                <li><strong>Validity:</strong> This quotation is valid for 7 days from the date of issue.</li>
+                <li><strong>Warranty (Panels):</strong> 25 Years Performance Warranty.</li>
+                <li><strong>Warranty (Inverter):</strong> As per Manufacturer Policy (Typ. 2-5 Years).</li>
+                <li><strong>Warranty (Battery):</strong> As per Manufacturer Policy (Typ. 3-5 Years).</li>
+                <li><strong>Delivery:</strong> 2-3 Weeks from the date of confirmed order.</li>
+                <li><strong>Scope:</strong> Client to provide roof access, water, and electricity during installation.</li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            <p>V-Sustain Solar Solutions | Bengaluru, Karnataka | +91 99-000-00476</p>
+            <p>Thank you for choosing green energy!</p>
+        </div>
     </div>
-    `;
+</body>
+</html>`;
+}
+
+function openInNewWindow(html) {
+  const w = window.open("", "_blank");
+  if (!w) { alert("Popup blocked. Allow popups to see quote."); return; }
+  w.document.open();
+  w.document.write(html);
+  w.document.close();
+}
+
+function escapeHtml(text) {
+  return String(text || '').replace(/[&<>"']/g, function (m) {
+    return ({ '&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'\":'&#39;' })[m];
+  });
 }
