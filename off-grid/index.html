@@ -1,361 +1,506 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Off-Grid Solar Quotation Generator</title>
-    <link rel="stylesheet" href="../style.css">
-    <style>
-        /* Small override to distinguish Off-Grid visually if needed */
-        header { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); }
-    </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Off-Grid Solar Quotation Builder</title>
+
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="../on-grid/style.css" />
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
+
 <body>
+    <header class="page-header">
+        <h1>Off-Grid Solar Quotation Builder</h1>
+        <a class="back-home" href="../index.html">← Back to Home</a>
+    </header>
 
-<header>
-    <div class="header-content">
-        <h1>Off-Grid Solar Quotation</h1>
-        <p>Generate precise off-grid solar quotes with battery backup.</p>
-    </div>
-</header>
+    <main class="container">
 
-<div class="container">
+        <!-- ========================= -->
+        <!--   CUSTOMER INFORMATION    -->
+        <!-- ========================= -->
+        <section class="card">
+            <h2>Customer Information</h2>
 
-    <div class="card full-width">
-        <div class="card-header">
-            <h3><img src="../assets/icons/info.svg" alt=""> Project Details & Common Margin</h3>
-        </div>
-        <div class="card-body grid-3">
-            <div class="form-group">
-                <label>Customer Name</label>
-                <input type="text" id="customerName" placeholder="Enter Client Name">
-            </div>
-            <div class="form-group">
-                <label>System Size (kW)</label>
-                <input type="number" id="systemKW" step="0.1" value="3">
-            </div>
-            <div class="form-group">
-                <label>Common Margin (%)</label>
-                <input type="number" id="commonMargin" value="10">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="useCommonMargin" checked>
-                    <label for="useCommonMargin" style="font-size: 0.9rem; font-weight: normal;">Apply to all</label>
+            <div class="row">
+                <div class="col">
+                    <label>Customer Name</label>
+                    <input type="text" id="customerName" placeholder="Enter customer name" />
+                </div>
+
+                <div class="col">
+                    <label>Customer Address</label>
+                    <input type="text" id="customerAddress" placeholder="Enter customer address" />
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div class="card">
-        <div class="card-header">
-            <div class="header-title">
-                <img src="../assets/icons/inverter.svg" alt="">
-                <h3>Solar Inverter (Off-Grid)</h3>
-            </div>
-            <label class="switch">
-                <input type="checkbox" id="inverter-manual-toggle" onchange="toggleOverrideUI('inverter')">
-                <span class="slider round"></span>
-            </label>
-        </div>
-        <div class="card-body">
-            <div class="form-group">
-                <label>Select Inverter Model</label>
-                <select id="inverterSelect"></select>
-            </div>
-            <div class="form-group">
-                <label>Quantity</label>
-                <input type="number" id="inverterQty" value="1">
+            <div class="row">
+                <div class="col">
+                    <label>Customer Email</label>
+                    <input type="email" id="customerEmail" placeholder="example@email.com" />
+                </div>
+                <div class="col">
+                    <label>Customer Phone</label>
+                    <input type="tel" id="customerPhone" placeholder="+91 98765 43210" />
+                </div>
             </div>
             
-            <div class="form-group hidden" id="inverter-override-group">
-                <label>Manual Price (Per Unit)</label>
-                <input type="number" id="inverterManualPrice" placeholder="Enter Dealer Price">
+            <div class="row">
+                 <div class="col">
+                    <label>System Size (kW)</label>
+                    <input type="number" id="systemKW" step="0.1" value="3" placeholder="e.g. 3" />
+                </div>
+                <div class="col">
+                    <label>Common Margin (%)</label>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="number" id="commonMargin" value="10" style="width: 80px;" />
+                        <label style="margin:0; font-weight: normal; font-size: 0.9rem;">
+                            <input type="checkbox" id="useCommonMargin" checked /> Apply to all
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================= -->
+        <!--   1. INVERTER SECTION     -->
+        <!-- ========================= -->
+        <section class="card" id="inverterSection">
+            <div class="card-header">
+                <h2>1. Solar Inverter (Off-Grid)</h2>
+                <div class="toggle-wrapper">
+                    <label class="switch-label">Manual Override</label>
+                    <label class="switch">
+                        <input type="checkbox" id="inverter-manual-toggle" onchange="toggleOverrideUI('inverter')" />
+                        <span class="slider round"></span>
+                    </label>
+                </div>
             </div>
 
-            <div class="form-group margin-group disabled" id="inverter-margin-group">
-                <label>Margin (%)</label>
-                <input type="number" id="inverterMargin" value="0">
+            <div class="row">
+                <div class="col">
+                    <label>Select Inverter Model</label>
+                    <select id="inverterSelect"></select>
+                </div>
+                <div class="col">
+                    <label>Quantity</label>
+                    <input type="number" id="inverterQty" value="1" />
+                </div>
             </div>
 
-            <div class="result-row">
-                <span>Total Cost (Inc. GST 5%):</span>
-                <span id="inverterTotal" class="price-display">₹0</span>
+            <!-- Manual Override Fields (Hidden by default) -->
+            <div class="row hidden-row" id="inverter-override-group">
+                <div class="col">
+                     <label>Manual Price (₹ Per Unit)</label>
+                     <input type="number" id="inverterManualPrice" placeholder="Enter dealer price" />
+                </div>
             </div>
-        </div>
-    </div>
 
-    <div class="card" style="border-left: 5px solid #ff9800;">
-        <div class="card-header">
-            <div class="header-title">
-                <img src="../assets/icons/battery.svg" alt="">
-                <h3>Solar Battery</h3>
+            <!-- Margin & Total Display -->
+            <div class="row calculation-row">
+                <div class="col margin-col disabled" id="inverter-margin-group">
+                    <label>Margin (%)</label>
+                    <input type="number" id="inverterMargin" value="0" />
+                </div>
+                <div class="col total-col">
+                    <label>Total (Inc. GST 5%)</label>
+                    <div class="price-display" id="inverterTotal">₹0</div>
+                </div>
             </div>
-            <label class="switch">
-                <input type="checkbox" id="battery-manual-toggle" onchange="toggleOverrideUI('battery')">
-                <span class="slider round"></span>
-            </label>
-        </div>
-        <div class="card-body">
-            <div class="form-group">
-                <label>Select Battery Model</label>
-                <select id="batterySelect"></select>
+        </section>
+
+        <!-- ========================= -->
+        <!--   2. BATTERY SECTION (NEW)-->
+        <!-- ========================= -->
+        <section class="card" id="batterySection" style="border-left: 4px solid #ff9800;">
+            <div class="card-header">
+                <h2>2. Solar Battery</h2>
+                <div class="toggle-wrapper">
+                    <label class="switch-label">Manual Override</label>
+                    <label class="switch">
+                        <input type="checkbox" id="battery-manual-toggle" onchange="toggleOverrideUI('battery')" />
+                        <span class="slider round"></span>
+                    </label>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Quantity</label>
-                <input type="number" id="batteryQty" value="1">
+
+            <div class="row">
+                <div class="col">
+                    <label>Select Battery Model</label>
+                    <select id="batterySelect"></select>
+                </div>
+                <div class="col">
+                    <label>Quantity</label>
+                    <input type="number" id="batteryQty" value="1" />
+                </div>
+            </div>
+
+            <!-- Manual Override Fields (Hidden by default) -->
+            <div class="row hidden-row" id="battery-override-group">
+                <div class="col">
+                     <label>Manual Price (₹ Per Unit)</label>
+                     <input type="number" id="batteryManualPrice" placeholder="Enter dealer price" />
+                </div>
+            </div>
+
+            <!-- Margin & Total Display -->
+            <div class="row calculation-row">
+                <div class="col margin-col disabled" id="battery-margin-group">
+                    <label>Margin (%)</label>
+                    <input type="number" id="batteryMargin" value="0" />
+                </div>
+                <div class="col total-col">
+                    <label>Total (Inc. GST 5%)</label>
+                    <div class="price-display" id="batteryTotal">₹0</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================= -->
+        <!--   3. SOLAR PANELS         -->
+        <!-- ========================= -->
+        <section class="card" id="panelSection">
+            <div class="card-header">
+                <h2>3. Solar Panels</h2>
+                <div class="toggle-wrapper">
+                    <label class="switch-label">Manual Override</label>
+                    <label class="switch">
+                        <input type="checkbox" id="panel-manual-toggle" onchange="toggleOverrideUI('panel')" />
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Select Panel Model</label>
+                    <select id="panelSelect"></select>
+                </div>
+                <div class="col">
+                    <label>Quantity (Auto-calc from KW)</label>
+                    <input type="number" id="panelQty" value="0" />
+                </div>
+            </div>
+
+            <div class="row hidden-row" id="panel-override-group">
+                <div class="col">
+                     <label>Manual Price (₹ Per Watt)</label>
+                     <input type="number" id="panelManualPrice" placeholder="e.g. 22" />
+                </div>
+            </div>
+
+            <div class="row calculation-row">
+                <div class="col margin-col disabled" id="panel-margin-group">
+                    <label>Margin (%)</label>
+                    <input type="number" id="panelMargin" value="0" />
+                </div>
+                <div class="col total-col">
+                    <label>Total (Inc. GST 5%)</label>
+                    <div class="price-display" id="panelTotal">₹0</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================= -->
+        <!--   4. STRUCTURE            -->
+        <!-- ========================= -->
+        <section class="card" id="structureSection">
+            <div class="card-header">
+                <h2>4. Module Mounting Structure</h2>
+                <div class="toggle-wrapper">
+                    <label class="switch-label">Manual Override</label>
+                    <label class="switch">
+                        <input type="checkbox" id="structure-manual-toggle" onchange="toggleOverrideUI('structure')" />
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Structure Type</label>
+                    <select id="structureSelect">
+                        <option value="Normal (GI)">Normal (GI)</option>
+                        <option value="High Rise">High Rise</option>
+                        <option value="Tin Shed">Tin Shed</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label>Base Rate (₹ Per KW)</label>
+                    <input type="number" id="structureRate" value="5000" />
+                </div>
+            </div>
+
+             <div class="row hidden-row" id="structure-override-group">
+                <div class="col">
+                     <label>Total Manual Cost (₹)</label>
+                     <input type="number" id="structureManualPrice" placeholder="Enter total cost" />
+                </div>
+            </div>
+
+            <div class="row calculation-row">
+                <div class="col margin-col disabled" id="structure-margin-group">
+                    <label>Margin (%)</label>
+                    <input type="number" id="structureMargin" value="0" />
+                </div>
+                <div class="col total-col">
+                    <label>Total (Inc. GST 18%)</label>
+                    <div class="price-display" id="structureTotal">₹0</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================= -->
+        <!--   5. INSTALLATION         -->
+        <!-- ========================= -->
+        <section class="card" id="installSection">
+            <div class="card-header">
+                <h2>5. Installation & Transport</h2>
+                <div class="toggle-wrapper">
+                    <label class="switch-label">Manual Override</label>
+                    <label class="switch">
+                        <input type="checkbox" id="install-manual-toggle" onchange="toggleOverrideUI('install')" />
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Base Rate (₹ Per KW)</label>
+                    <input type="number" id="installRate" value="4000" />
+                </div>
+            </div>
+
+             <div class="row hidden-row" id="install-override-group">
+                <div class="col">
+                     <label>Total Manual Cost (₹)</label>
+                     <input type="number" id="installManualPrice" placeholder="Enter total cost" />
+                </div>
+            </div>
+
+            <div class="row calculation-row">
+                <div class="col margin-col disabled" id="install-margin-group">
+                    <label>Margin (%)</label>
+                    <input type="number" id="installMargin" value="0" />
+                </div>
+                <div class="col total-col">
+                    <label>Total (Inc. GST 18%)</label>
+                    <div class="price-display" id="installTotal">₹0</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================= -->
+        <!--   6. ACDB & DCDB          -->
+        <!-- ========================= -->
+        <section class="card" id="bosSection">
+            <div class="card-header">
+                <h2>6. ACDB & DCDB</h2>
             </div>
             
-            <div class="form-group hidden" id="battery-override-group">
-                <label>Manual Price (Per Unit)</label>
-                <input type="number" id="batteryManualPrice" placeholder="Enter Dealer Price">
-            </div>
-
-            <div class="form-group margin-group disabled" id="battery-margin-group">
-                <label>Margin (%)</label>
-                <input type="number" id="batteryMargin" value="0">
-            </div>
-
-            <div class="result-row">
-                <span>Total Cost (Inc. GST 5%):</span>
-                <span id="batteryTotal" class="price-display">₹0</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header">
-            <div class="header-title">
-                <img src="../assets/icons/solar-panel.svg" alt="">
-                <h3>Solar Panels</h3>
-            </div>
-            <label class="switch">
-                <input type="checkbox" id="panel-manual-toggle" onchange="toggleOverrideUI('panel')">
-                <span class="slider round"></span>
-            </label>
-        </div>
-        <div class="card-body">
-            <div class="form-group">
-                <label>Select Panel</label>
-                <select id="panelSelect"></select>
-            </div>
-            <div class="form-group">
-                <label>Quantity (Auto/Manual)</label>
-                <input type="number" id="panelQty" value="0">
-            </div>
-            
-            <div class="form-group hidden" id="panel-override-group">
-                <label>Manual Price (Per Watt)</label>
-                <input type="number" id="panelManualPrice" step="0.01" placeholder="Price/Watt">
-            </div>
-
-            <div class="form-group margin-group disabled" id="panel-margin-group">
-                <label>Margin (%)</label>
-                <input type="number" id="panelMargin" value="0">
-            </div>
-
-            <div class="result-row">
-                <span>Total Cost (Inc. GST 5%):</span>
-                <span id="panelTotal" class="price-display">₹0</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header">
-            <div class="header-title">
-                <img src="../assets/icons/structure.svg" alt="">
-                <h3>Structure & Hardware</h3>
-            </div>
-            <label class="switch">
-                <input type="checkbox" id="structure-manual-toggle" onchange="toggleOverrideUI('structure')">
-                <span class="slider round"></span>
-            </label>
-        </div>
-        <div class="card-body">
-            <div class="form-group">
-                <label>Cost Calculation</label>
-                <select id="structureSelect">
-                    <option value="normal">GI Structure (Normal)</option>
-                    <option value="highrise">High Rise (Custom)</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Base Rate (Per KW)</label>
-                <input type="number" id="structureRate" value="5000"> 
-            </div>
-
-            <div class="form-group hidden" id="structure-override-group">
-                <label>Total Manual Cost</label>
-                <input type="number" id="structureManualPrice">
-            </div>
-
-            <div class="form-group margin-group disabled" id="structure-margin-group">
-                <label>Margin (%)</label>
-                <input type="number" id="structureMargin" value="0">
-            </div>
-
-            <div class="result-row">
-                <span>Total Cost (Inc. GST 18%):</span>
-                <span id="structureTotal" class="price-display">₹0</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header">
-            <div class="header-title">
-                <img src="../assets/icons/installation.svg" alt="">
-                <h3>Installation & Transport</h3>
-            </div>
-            <label class="switch">
-                <input type="checkbox" id="install-manual-toggle" onchange="toggleOverrideUI('install')">
-                <span class="slider round"></span>
-            </label>
-        </div>
-        <div class="card-body">
-            <div class="form-group">
-                <label>Base Rate (Per KW)</label>
-                <input type="number" id="installRate" value="4000">
-            </div>
-            
-            <div class="form-group hidden" id="install-override-group">
-                <label>Total Manual Cost</label>
-                <input type="number" id="installManualPrice">
-            </div>
-
-            <div class="form-group margin-group disabled" id="install-margin-group">
-                <label>Margin (%)</label>
-                <input type="number" id="installMargin" value="0">
-            </div>
-
-            <div class="result-row">
-                <span>Total Cost (Inc. GST 18%):</span>
-                <span id="installTotal" class="price-display">₹0</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header">
-            <div class="header-title">
-                <img src="../assets/icons/acdb.svg" alt="">
-                <h3>ACDB & DCDB</h3>
-            </div>
-        </div>
-        <div class="card-body grid-2">
-            <div>
-                <label>ACDB Model</label>
-                <select id="acdbSelect"></select>
-                <label class="sub-label">Qty: <input type="number" id="acdbQty" value="1" style="width:50px; display:inline-block"></label>
-            </div>
-            <div>
-                <label>DCDB Model</label>
-                <select id="dcdbSelect"></select>
-                <label class="sub-label">Qty: <input type="number" id="dcdbQty" value="1" style="width:50px; display:inline-block"></label>
-            </div>
-            <div class="full-width margin-group disabled" id="boxes-margin-group">
-                 <label>Margin (%)</label>
-                 <input type="number" id="boxesMargin" value="0">
-            </div>
-            <div class="full-width result-row">
-                <span>Total Cost (Inc. GST 18%):</span>
-                <span id="boxesTotal" class="price-display">₹0</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header">
-            <div class="header-title">
-                <img src="../assets/icons/cable.svg" alt="">
-                <h3>Cables (DC & AC)</h3>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="grid-2">
-                <div>
-                    <label>DC Cable (4sqmm) mtrs</label>
-                    <input type="number" id="dcCableQty" value="30">
-                    <label class="sub-label">Rate: <input type="number" id="dcCableRate" value="45"></label>
+            <div class="row">
+                <div class="col">
+                    <label>ACDB Model</label>
+                    <select id="acdbSelect"></select>
                 </div>
-                <div>
-                    <label>AC Cable (4sqmm) mtrs</label>
-                    <input type="number" id="acCableQty" value="20">
-                    <label class="sub-label">Rate: <input type="number" id="acCableRate" value="85"></label>
+                <div class="col-small">
+                     <label>Qty</label>
+                     <input type="number" id="acdbQty" value="1" />
                 </div>
             </div>
-            <div class="form-group margin-group disabled" id="cable-margin-group">
-                 <label>Margin (%)</label>
-                 <input type="number" id="cableMargin" value="0">
-            </div>
-            <div class="result-row">
-                <span>Total Cost (Inc. GST 18%):</span>
-                <span id="cableTotal" class="price-display">₹0</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header">
-            <div class="header-title">
-                <img src="../assets/icons/lightning.svg" alt="">
-                <h3>Earthing & Lightning Arrestor</h3>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="grid-2">
-                <div>
-                    <label>Earthing Sets</label>
-                    <input type="number" id="earthingQty" value="2">
-                    <label class="sub-label">Rate: <input type="number" id="earthingRate" value="2500"></label>
+             <div class="row">
+                <div class="col">
+                    <label>DCDB Model</label>
+                    <select id="dcdbSelect"></select>
                 </div>
-                <div>
-                    <label>Lightning Arrestor</label>
-                    <input type="number" id="laQty" value="1">
-                    <label class="sub-label">Rate: <input type="number" id="laRate" value="1200"></label>
+                <div class="col-small">
+                     <label>Qty</label>
+                     <input type="number" id="dcdbQty" value="1" />
                 </div>
             </div>
-             <div class="form-group margin-group disabled" id="safety-margin-group">
-                 <label>Margin (%)</label>
-                 <input type="number" id="safetyMargin" value="0">
-            </div>
-            <div class="result-row">
-                <span>Total Cost (Inc. GST 18%):</span>
-                <span id="safetyTotal" class="price-display">₹0</span>
-            </div>
-        </div>
-    </div>
-    
-     <div class="card">
-        <div class="card-header">
-            <div class="header-title">
-                <img src="../assets/icons/custom-product.svg" alt="">
-                <h3>Add Extra Products</h3>
-            </div>
-            <button class="btn-secondary" onclick="addCustomProduct()">+ Add Item</button>
-        </div>
-        <div class="card-body" id="custom-products-container">
-            </div>
-         <div class="result-row">
-                <span>Total Custom Cost:</span>
-                <span id="customTotal" class="price-display">₹0</span>
-        </div>
-    </div>
 
-</div>
+            <div class="row calculation-row">
+                <div class="col margin-col disabled" id="boxes-margin-group">
+                    <label>Margin (%)</label>
+                    <input type="number" id="boxesMargin" value="0" />
+                </div>
+                <div class="col total-col">
+                    <label>Total (Inc. GST 18%)</label>
+                    <div class="price-display" id="boxesTotal">₹0</div>
+                </div>
+            </div>
+        </section>
 
-<div class="bottom-bar">
-    <div class="totals">
-        <div>Subtotal: <span id="grandSubtotal">₹0</span></div>
-        <div>GST: <span id="grandGst">₹0</span></div>
-        <div class="final">Total: <span id="grandTotal">₹0</span></div>
-    </div>
-    <div class="actions">
-        <button class="btn-primary" onclick="generateDetailedQuote()">Detailed PDF</button>
-        <button class="btn-outline" onclick="generateSummaryQuote()">Summary PDF</button>
-    </div>
-</div>
+        <!-- ========================= -->
+        <!--   7. CABLES               -->
+        <!-- ========================= -->
+        <section class="card" id="cableSection">
+             <div class="card-header">
+                <h2>7. Cables (DC & AC)</h2>
+            </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script src="script.js"></script>
+            <div class="row">
+                <div class="col">
+                    <label>DC Cable (mtrs)</label>
+                    <input type="number" id="dcCableQty" value="30" />
+                </div>
+                <div class="col">
+                     <label>Rate (₹/m)</label>
+                     <input type="number" id="dcCableRate" value="45" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label>AC Cable (mtrs)</label>
+                    <input type="number" id="acCableQty" value="20" />
+                </div>
+                <div class="col">
+                     <label>Rate (₹/m)</label>
+                     <input type="number" id="acCableRate" value="85" />
+                </div>
+            </div>
+
+             <div class="row calculation-row">
+                <div class="col margin-col disabled" id="cable-margin-group">
+                    <label>Margin (%)</label>
+                    <input type="number" id="cableMargin" value="0" />
+                </div>
+                <div class="col total-col">
+                    <label>Total (Inc. GST 18%)</label>
+                    <div class="price-display" id="cableTotal">₹0</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================= -->
+        <!--   8. NET METERING         -->
+        <!-- ========================= -->
+        <section class="card" id="netMeterSection">
+            <div class="card-header">
+                <h2>8. Net Metering / Liasoning</h2>
+                 <div class="toggle-wrapper">
+                    <label class="switch-label">Manual Override</label>
+                    <label class="switch">
+                        <input type="checkbox" id="netmeter-manual-toggle" onchange="toggleOverrideUI('netmeter')" />
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+
+             <div class="row">
+                <div class="col">
+                    <label>Type</label>
+                     <select id="netMeterSelect"></select>
+                </div>
+                 <div class="col">
+                    <label>Qty</label>
+                    <input type="number" id="netMeterQty" value="1" />
+                </div>
+            </div>
+
+             <div class="row hidden-row" id="netmeter-override-group">
+                <div class="col">
+                     <label>Total Manual Cost (₹)</label>
+                     <input type="number" id="netmeterManualPrice" placeholder="Enter total cost" />
+                </div>
+            </div>
+
+            <div class="row calculation-row">
+                <div class="col margin-col disabled" id="netmeter-margin-group">
+                    <label>Margin (%)</label>
+                    <input type="number" id="netmeterMargin" value="0" />
+                </div>
+                <div class="col total-col">
+                    <label>Total (Inc. GST 18%)</label>
+                    <div class="price-display" id="netMeterTotal">₹0</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================= -->
+        <!--   9. EARTHING             -->
+        <!-- ========================= -->
+        <section class="card" id="earthingSection">
+             <div class="card-header">
+                <h2>9. Earthing & LA</h2>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Earthing Sets (Qty)</label>
+                    <input type="number" id="earthingQty" value="2" />
+                </div>
+                 <div class="col">
+                     <label>Rate (₹/set)</label>
+                     <input type="number" id="earthingRate" value="2500" />
+                </div>
+            </div>
+             <div class="row">
+                <div class="col">
+                    <label>Lightning Arrestor (Qty)</label>
+                    <input type="number" id="laQty" value="1" />
+                </div>
+                 <div class="col">
+                     <label>Rate (₹/unit)</label>
+                     <input type="number" id="laRate" value="1200" />
+                </div>
+            </div>
+
+             <div class="row calculation-row">
+                <div class="col margin-col disabled" id="safety-margin-group">
+                    <label>Margin (%)</label>
+                    <input type="number" id="safetyMargin" value="0" />
+                </div>
+                <div class="col total-col">
+                    <label>Total (Inc. GST 18%)</label>
+                    <div class="price-display" id="safetyTotal">₹0</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- =================================================== -->
+        <!--            CUSTOM PRODUCT ADD SECTION               -->
+        <!-- =================================================== -->
+        <section class="card" id="customProductSection">
+            <div class="card-header">
+                <h2>Custom Products</h2>
+            </div>
+
+            <div id="customProductList"></div>
+
+            <button class="btn" onclick="addCustomProduct()">+ Add Custom Product</button>
+        </section>
+
+        <!-- =================================================== -->
+        <!--       QUOTATION GENERATION BUTTONS                  -->
+        <!-- =================================================== -->
+        <section class="card generate-card">
+            <button class="btn primary" onclick="generateDetailedQuote()">
+                Generate Detailed Quotation
+            </button>
+
+            <button class="btn secondary" onclick="generateSummaryQuote()">
+                Generate Summary Quotation
+            </button>
+
+            <button class="btn accent" onclick="generateShortQuote()">
+                Short Quotation
+            </button>
+        </section>
+
+    </main>
+
+    <!-- =================================================== -->
+    <!--                 SCRIPT IMPORTS                      -->
+    <!-- =================================================== -->
+    <script src="script.js"></script>
+
 </body>
 </html>
