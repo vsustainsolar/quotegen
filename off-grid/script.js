@@ -953,9 +953,7 @@ function generateShortQuote() {
   openInNewWindow(html);
 }
 
-/* Note: The full quotation HTML templates are very large. 
-   For now, using a simplified version. The full templates from on-grid 
-   can be adapted later if needed. This provides basic functionality. */
+/* REPLACED WITH FULL MULTI-PAGE DESIGN - ADAPTED FROM ON-GRID */
 function buildDetailedQuotationHtml(totals, systemType) {
   const plantKw = Math.max(0, n($('systemKw').value));
   const customerName = $('customerName')?.value || 'Customer Name';
@@ -966,6 +964,13 @@ function buildDetailedQuotationHtml(totals, systemType) {
   const proposalDate = date.toLocaleDateString('en-IN', { day:'2-digit', month:'long', year:'numeric' });
   const proposalNo = `VS/${date.getFullYear()}/001`;
 
+  // NO SUBSIDY FOR OFF-GRID - removed subsidy check
+
+  /* ===============================
+     1. SYSTEM SPECIFICATION ROWS
+     Matches Green header style from user design
+     Columns: Component | Description | Make | Qty | UoM
+     =============================== */
   const specRows = totals.items.map(it => `
     <tr class="odd:bg-white/50 even:bg-gray-50/50">
       <td class="p-2 border font-semibold">${it.item}</td>
@@ -1021,50 +1026,105 @@ function buildDetailedQuotationHtml(totals, systemType) {
   </tr>
 `;
 
-  // Simplified HTML template - can be enhanced with full design later
+  // BUILD SUBSIDY DISCLAIMER BLOCK - EMPTY FOR OFF-GRID (no subsidy)
+  let subsidyDisclaimerHtml = '';
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${plantKw}KW Off-Grid ${customerName}${customerEmail ? ' ' + customerEmail : ''}</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
                     colors: {
                         brand: {
-                            blue: '#005bac',
+                            blue: '#005bac', // Primary Blue
                             lightBlue: '#4fa8e0',
-                            orange: '#ff9933',
-                            green: '#8cc63f',
+                            orange: '#ff9933', // Accent Orange
+                            green: '#8cc63f', // Green for sustainability
+                            greenDark: '#7ab82e',
+                            gray: '#f3f4f6',
                         }
+                    },
+                    boxShadow: {
+                        'card': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
                     }
                 }
             }
         }
     </script>
     <style>
+        /* Print styles to ensure one section per page */
         @media print {
-            .page-break { page-break-before: always; break-before: page; }
-            body { background: white; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            .page-container { box-shadow: none; margin: 0; width: 210mm; min-height: 297mm; max-height: 297mm; overflow: hidden; border: none; }
-            [contenteditable="true"] { outline: none; }
+            .page-break { 
+                page-break-before: always; 
+                break-before: page; 
+            }
+            body {
+                background: white;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .page-container {
+                box-shadow: none;
+                margin: 0;
+                width: 210mm;
+                height: 297mm; /* Strict A4 Height */
+                max-height: 297mm;
+                overflow: hidden; /* Strict overflow hidden */
+                border: none;
+            }
+            /* Remove edit capability visual cues when printing */
+            [contenteditable="true"] {
+                outline: none;
+            }
             .no-print { display: none !important; }
+
+            /* Mobile Print Specifics */
+            body.print-mobile .page-container {
+                transform: scale(0.92); /* Shrink slightly to fit mobile viewports */
+                transform-origin: top left;
+                width: 108%; /* Compensate width */
+                height: auto;
+                overflow: visible; /* Allow flow but controlled by scale */
+                page-break-after: always;
+            }
+            
+            /* Laptop Mode: Reset to allow user control */
+            body.print-laptop .page-container {
+                width: 100%;
+                height: auto;
+                overflow: visible;
+                max-height: none;
+            }
         }
-        body { background-color: #e5e7eb; }
+
+        body {
+            background-color: #e5e7eb; /* Light gray background for web view */
+        }
+
         .page-container {
-            background-color: white;
+            /* Applied the custom background image here */
+            background-color: white; /* Fallback */
             background-image: url('https://github.com/Abhishekcodeking01/v-solar-quote/blob/8f2c0c796ba02307c87dda837a906dc9c079aa05/Uplodes/background%20v%20solar.png?raw=true');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            width: 210mm;
-            min-height: 297mm;
+            
+            width: 210mm; /* A4 width */
+            min-height: 297mm; /* A4 height */
             margin: 2rem auto;
             position: relative;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
@@ -1072,18 +1132,118 @@ function buildDetailedQuotationHtml(totals, systemType) {
             flex-direction: column;
             overflow: hidden;
         }
+
+        /* Decorative Shapes using CSS Clip-path */
+        .wave-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 200px;
+            background: #005bac;
+            clip-path: polygon(0 0, 100% 0, 100% 60%, 50% 100%, 0 60%);
+            z-index: 10;
+        }
+        
+        .wave-top-accent {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 80%;
+            height: 180px;
+            background: #ff9933;
+            clip-path: polygon(0 0, 100% 0, 80% 100%, 0 80%);
+            z-index: 5;
+        }
+
+        .wave-corner-top-left {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 60%;
+            height: 250px;
+            background-image: linear-gradient(135deg, #005bac 0%, #4fa8e0 100%);
+            border-bottom-right-radius: 100% 50%;
+            z-index: 10;
+        }
+        
+        .wave-corner-top-left-accent {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 62%;
+            height: 270px;
+            background: #ff9933;
+            border-bottom-right-radius: 100% 50%;
+            z-index: 5;
+        }
+
+        /* Bottom Pattern */
+        .dots-pattern {
+            background-image: radial-gradient(#4fa8e0 1px, transparent 1px);
+            background-size: 10px 10px;
+            width: 150px;
+            height: 100px;
+            position: absolute;
+            opacity: 0.5;
+        }
+
+        .logo-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Highlight editable areas slightly on hover in web view */
+        [contenteditable="true"]:hover {
+            background-color: rgba(254, 249, 195, 0.8); /* Light yellow with transparency */
+            cursor: text;
+            outline: 1px dashed #ccc;
+        }
+        
+        /* Ensure background image shows through but text is readable. 
+           Using semi-transparent white backgrounds on cards/content if needed. */
+        .content-card-bg {
+            background-color: rgba(255, 255, 255, 0.9);
+        }
     </style>
+    <script>
+        function printMode(mode) {
+            document.body.className = 'font-sans text-gray-800'; // Reset
+            if (mode === 'mobile') {
+                document.body.classList.add('print-mobile');
+                window.print();
+            } else if (mode === 'laptop') {
+                document.body.classList.add('print-laptop');
+                // Give user control by simply calling print, but with laptop-specific reset style
+                window.print();
+            }
+        }
+    </script>
 </head>
 <body class="font-sans text-gray-800">
+
+    <!-- FLOATING PRINT BUTTONS -->
     <div class="fixed bottom-8 right-8 z-50 no-print flex flex-col gap-3">
-        <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full shadow-2xl">Print</button>
+        <button onclick="printMode('laptop')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full shadow-2xl flex items-center gap-2 transition-all transform hover:scale-105">
+            <i class="fas fa-laptop text-xl"></i> Print (Laptop)
+        </button>
+        <button onclick="printMode('mobile')" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-full shadow-2xl flex items-center gap-2 transition-all transform hover:scale-105">
+            <i class="fas fa-mobile-alt text-xl"></i> Print (Mobile)
+        </button>
     </div>
 
-    <div class="page-container relative flex flex-col justify-between p-8">
+    <!-- PAGE 1: COVER -->
+    <div class="page-container relative flex flex-col justify-between">
+        <!-- Header Design (Reduced Height to 13% and Padding to p-2) -->
         <div class="h-[13%] w-full flex justify-between items-start p-2 relative z-20 bg-white/90">
-            <div class="w-36">
+             <!-- Logo (TOP LEFT) -->
+             <div class="w-36">
                 <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
             </div>
+
+            <!-- Header Text -->
             <div class="text-right text-brand-blue">
                 <h2 class="font-bold text-xl">V-Sustain Solar Solutions</h2>
                 <p class="text-sm">Authorized Luminous Partner</p>
@@ -1093,43 +1253,573 @@ function buildDetailedQuotationHtml(totals, systemType) {
             </div>
         </div>
 
-        <div class="flex-1 p-8">
-            <h1 class="text-3xl font-bold text-brand-blue mb-4">${plantKw} KW Off-Grid Solar System</h1>
-            <p class="text-lg mb-4"><strong>Customer:</strong> ${customerName}</p>
-            <p class="text-lg mb-4"><strong>Address:</strong> ${customerAddress} ${customerCity}</p>
+        <!-- Main Image Area (Reduced to 45% height) -->
+        <div class="h-[45%] w-full overflow-hidden relative">
+            <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=2072&auto=format&fit=crop" alt="Solar Panels" class="w-full h-full object-cover">
             
-            <h3 class="text-lg font-bold text-brand-green mb-3 mt-8">System Specifications</h3>
-            <table class="w-full text-sm border-collapse shadow-sm bg-white/90">
-                <thead>
-                    <tr class="bg-brand-green text-white">
-                        <th class="p-3 border border-brand-green text-left">Component</th>
-                        <th class="p-3 border border-brand-green text-left">Description</th>
-                        <th class="p-3 border border-brand-green text-left">Make</th>
-                        <th class="p-3 border border-brand-green text-center">Qty</th>
-                        <th class="p-3 border border-brand-green text-center">UoM</th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-800">
-                    ${specRows}
-                </tbody>
-            </table>
+            <!-- 2025 Badge -->
+            <div class="absolute top-0 right-16 bg-brand-orange text-white font-bold text-2xl py-4 px-3 shadow-lg" style="clip-path: polygon(0% 0%, 100% 0%, 100% 85%, 50% 100%, 0% 85%);">
+                2025
+            </div>
+        </div>
 
-            <h3 class="text-lg font-bold text-brand-blue mb-3 mt-8">Commercial Proposal</h3>
-            <table class="w-full text-sm border-collapse shadow-lg bg-white/90">
-                <thead>
-                    <tr class="bg-brand-blue text-white">
-                        <th class="p-3 border border-white text-center w-12">#</th>
-                        <th class="p-3 border border-white text-left">Description</th>
-                        <th class="p-3 border border-white text-center">UOM</th>
-                        <th class="p-3 border border-white text-center">Qty</th>
-                        <th class="p-3 border border-white text-right">Price (INR)</th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-800">
-                    ${commercialRows}
-                    ${footerRows}
-                </tbody>
-            </table>
+        <!-- Footer Dark Blue Block (Increased to 42% to balance layout) -->
+        <div class="h-[42%] w-full bg-[#001f3f] text-white p-12 flex flex-col justify-center relative overflow-hidden">
+            <!-- Decorative Dots -->
+            <div class="dots-pattern bottom-20 left-10"></div>
+            <div class="dots-pattern bottom-20 right-10"></div>
+
+            <div class="relative z-10 border-l-4 border-brand-lightBlue pl-6">
+                <h1 class="text-4xl font-bold mb-2">Techno-commercial</h1>
+                <h1 class="text-4xl font-bold mb-8">Offer</h1>
+                
+                <div class="space-y-1">
+                    <h3 class="text-xl font-bold">${plantKw} KW Rooftop Solar</h3>
+                    <h3 class="text-xl font-bold border-b border-gray-500 pb-2 mb-2 w-1/2">Solution</h3>
+                    <p class="text-xl text-gray-300">Proposal for</p>
+                    <p class="text-2xl font-semibold">${customerName}</p>
+                    <p class="text-lg text-gray-300">${customerCity || 'Bengaluru'}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 2: PROJECT EXPLANATION -->
+    <div class="page-container page-break relative">
+        <!-- Header Shape -->
+        <div class="wave-corner-top-left-accent h-[150px]"></div>
+        <div class="wave-corner-top-left h-[130px]"></div>
+        
+        <!-- Logo (TOP RIGHT) -->
+        <div class="absolute top-8 right-8 z-30 w-32">
+            <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
+        </div>
+
+        <!-- Content Container -->
+        <div class="relative z-20 pt-40 px-12 pb-12 flex flex-col h-full justify-between">
+            
+            <div>
+                <!-- Header -->
+                <div class="flex items-center gap-3 mb-8">
+                    <i class="far fa-arrow-alt-circle-right text-3xl text-brand-blue"></i>
+                    <h2 class="text-3xl font-bold text-brand-blue">Project Explanation</h2>
+                </div>
+                
+                <!-- DIAGRAM (Reduced Height to 350px) -->
+                <div class="flex items-center justify-center mb-8 relative h-[350px]">
+                    <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/d2ac544338d64714fdc75e8008f2a733bb61ab83/Uplodes/on%20grid%20plannnt%20explained.png?raw=true" alt="Off Grid Plant Explained" class="h-full w-full object-contain shadow-lg rounded-lg bg-white/50">
+                </div>
+
+                <!-- Project Details - Centered and Enlarged -->
+                <div class="space-y-6 bg-white/90 p-8 rounded-xl shadow-lg border-l-4 border-brand-green">
+                    <div>
+                        <h4 class="font-bold text-2xl mb-2 text-brand-blue flex items-center gap-2">
+                            <i class="fas fa-solar-panel"></i> ${plantKw} KW Rooftop Solar Solution
+                        </h4>
+                        <ul class="list-none space-y-1 text-gray-700 ml-2">
+                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-green"></i> Residential Solar System</li>
+                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-green"></i> Off-grid System (Battery Backup)</li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-bold text-2xl mb-2 text-brand-blue flex items-center gap-2">
+                             <i class="fas fa-map-marker-alt"></i> Location
+                        </h4>
+                        <p class="text-gray-700 ml-2 text-lg">${customerAddress} ${customerCity}</p>
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-2xl mb-2 text-brand-blue flex items-center gap-2">
+                             <i class="fas fa-calendar-alt"></i> Validity
+                        </h4>
+                        <p class="text-gray-700 ml-2">Quotation is valid for <span class="font-bold text-brand-orange">15 Days</span> from the date of submission.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Right Image -->
+            <div class="self-end w-[250px] h-[250px] overflow-hidden rounded-full border-4 border-white shadow-2xl z-10 mt-4 translate-x-12 translate-y-12">
+                <img src="https://images.unsplash.com/photo-1624397640148-949b1732bb0a?q=80&w=2000&auto=format&fit=crop" alt="Aerial Solar" class="w-full h-full object-cover">
+           </div>
+        </div>
+    </div>
+
+    <!-- PAGE 3: TECHNO-COMMERCIAL OFFER (SYSTEM SPECS ONLY) -->
+    <div class="page-container page-break relative flex flex-col">
+        <!-- Minimal Header Shape -->
+        <div class="absolute top-0 left-0 w-full h-12 bg-gradient-to-r from-brand-blue to-brand-lightBlue z-10"></div>
+        
+        <!-- Logo (TOP RIGHT) -->
+        <div class="absolute top-4 right-8 z-30 w-32">
+            <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
+        </div>
+
+        <div class="relative z-20 mt-16 px-12 h-full flex flex-col justify-start pb-12">
+           <!-- Header with Shortened Line -->
+           <div class="flex items-center justify-between mb-8 border-b-2 border-brand-orange pb-2 w-[80%]">
+               <div class="flex items-center gap-3">
+                    <i class="far fa-file-alt text-3xl text-brand-blue"></i>
+                    <h2 class="text-3xl font-bold text-brand-blue">Techno-Commercial Offer</h2>
+               </div>
+           </div>
+
+           <!-- 1. System Specifications Table -->
+           <div class="mb-8" contenteditable="true">
+               <h3 class="text-lg font-bold text-brand-green mb-3 pl-2 border-l-4 border-brand-green">1. System Specifications</h3>
+               <table class="w-full text-sm border-collapse shadow-sm bg-white/90">
+                   <thead>
+                       <tr class="bg-brand-green text-white">
+                           <th class="p-3 border border-brand-green text-left">Component</th>
+                           <th class="p-3 border border-brand-green text-left">Description</th>
+                           <th class="p-3 border border-brand-green text-left">Make</th>
+                           <th class="p-3 border border-brand-green text-center">Qty</th>
+                           <th class="p-3 border border-brand-green text-center">UoM</th>
+                       </tr>
+                   </thead>
+                   <tbody class="text-gray-800">
+                       ${specRows}
+                   </tbody>
+               </table>
+           </div>
+        </div>
+    </div>
+
+    <!-- PAGE 4: COMMERCIAL PROPOSAL (SEPARATE PAGE) -->
+    <div class="page-container page-break relative flex flex-col">
+        <!-- Minimal Header Shape -->
+        <div class="absolute top-0 left-0 w-full h-12 bg-gradient-to-r from-brand-blue to-brand-lightBlue z-10"></div>
+        
+        <!-- Logo (TOP RIGHT) -->
+        <div class="absolute top-4 right-8 z-30 w-32">
+            <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
+        </div>
+
+        <div class="relative z-20 mt-16 px-12 h-full flex flex-col justify-between pb-12">
+             <!-- Header with Shortened Line -->
+           <div class="flex items-center justify-between mb-8 border-b-2 border-brand-orange pb-2 w-[80%]">
+               <div class="flex items-center gap-3">
+                    <i class="fas fa-rupee-sign text-3xl text-brand-blue"></i>
+                    <h2 class="text-3xl font-bold text-brand-blue">Commercial Proposal</h2>
+               </div>
+           </div>
+
+           <!-- 2. Commercial Offer Table -->
+           <div class="mb-8" contenteditable="true">
+                <table class="w-full text-sm border-collapse shadow-lg bg-white/90">
+                    <thead>
+                        <tr class="bg-brand-blue text-white">
+                            <th class="p-3 border border-white text-center w-12">#</th>
+                            <th class="p-3 border border-white text-left">Description</th>
+                            <th class="p-3 border border-white text-center">UOM</th>
+                            <th class="p-3 border border-white text-center">Qty</th>
+                            <th class="p-3 border border-white text-right">Price (INR)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-800">
+                        ${commercialRows}
+                        ${footerRows}
+                    </tbody>
+                </table>
+           </div>
+
+           <!-- 3. Chargeable Services & Notes Row -->
+           <div class="flex gap-6 mt-auto">
+               <div class="w-2/3" contenteditable="true">
+                    <h3 class="text-sm font-bold text-brand-green mb-2">Optional Services</h3>
+                    <table class="w-full text-xs border-collapse shadow-sm bg-white/90">
+                        <thead>
+                            <tr class="bg-gray-600 text-white">
+                                <th class="p-2 text-left">Description</th>
+                                <th class="p-2 text-center">Tenure</th>
+                                <th class="p-2 text-right">Cost (INR)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-gray-800">
+                            <tr class="bg-gray-50/50 border-b">
+                                <td class="p-2 font-semibold">Comprehensive AMC</td>
+                                <td class="p-2 text-center">5 Years</td>
+                                <td class="p-2 text-right">10,000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <!-- NO SUBSIDY FOR OFF-GRID -->
+                    ${subsidyDisclaimerHtml}
+               </div>
+
+               <!-- Notes -->
+               <div class="w-1/3 border border-gray-300 bg-yellow-50/90 p-3 text-xs" contenteditable="true">
+                    <p class="font-bold mb-2 border-b border-gray-300 pb-1">Notes / Inclusions:</p>
+                    <ul class="list-disc list-inside text-gray-600 space-y-1">
+                        <li>Prices inclusive of Bengaluru transport.</li>
+                        <li>Standard structure height.</li>
+                        <li>Elevated structure extra.</li>
+                    </ul>
+               </div>
+           </div>
+        </div>
+    </div>
+
+    <!-- PAGE 5: WHY CHOOSE US -->
+    <div class="page-container page-break relative">
+        <!-- Abstract Top Shape -->
+        <div class="wave-corner-top-left-accent h-[150px]"></div>
+        <div class="wave-corner-top-left h-[130px]"></div>
+        
+        <!-- Logo (TOP RIGHT) -->
+        <div class="absolute top-8 right-8 z-30 w-32">
+            <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
+        </div>
+
+        <!-- Shifted Header -->
+        <div class="absolute top-8 left-12 z-30 flex items-center gap-3">
+             <i class="far fa-star text-3xl text-white"></i>
+             <h2 class="text-3xl font-bold text-white">Why Choose Us?</h2>
+        </div>
+
+        <div class="relative z-20 mt-40 px-12 h-full pb-12 flex flex-col">
+            
+            <p class="text-lg text-gray-600 mb-12 border-l-4 border-brand-orange pl-4 italic bg-white/60 p-2 rounded">
+                Empowering your home with eco-friendly solutions and a sustainable future through trusted technology.
+            </p>
+
+            <!-- Grid Layout (Unchanged) -->
+            <div class="grid grid-cols-2 gap-y-12 gap-x-12">
+                <!-- Item 1 -->
+                <div class="flex items-start gap-5 content-card-bg p-4 rounded-lg shadow-sm">
+                    <div class="flex-shrink-0 w-16 h-16 rounded-full bg-brand-green/10 flex items-center justify-center text-brand-green border border-brand-green/20">
+                        <i class="fas fa-drafting-compass text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-xl text-brand-blue mb-2">Customized Solution</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            We don't believe in one-size-fits-all. Our team designs a solar power system tailored specifically to your roof structure and energy needs, ensuring maximum efficiency.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="flex items-start gap-5 content-card-bg p-4 rounded-lg shadow-sm">
+                    <div class="flex-shrink-0 w-16 h-16 rounded-full bg-brand-blue/10 flex items-center justify-center text-brand-blue border border-brand-blue/20">
+                        <i class="fas fa-tools text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-xl text-brand-blue mb-2">Minimal Maintenance</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            Our systems are built to last with minimal upkeep. High-quality components and optional anti-dust coatings mean you spend less time cleaning and more time saving.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="flex items-start gap-5 content-card-bg p-4 rounded-lg shadow-sm">
+                    <div class="flex-shrink-0 w-16 h-16 rounded-full bg-brand-orange/10 flex items-center justify-center text-brand-orange border border-brand-orange/20">
+                        <i class="fas fa-medal text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-xl text-brand-blue mb-2">Quality Assurance</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            We use only Tier-1 modules and top-rated inverters from trusted global brands. Every installation undergoes rigorous quality checks before commissioning.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Item 4 -->
+                <div class="flex items-start gap-5 content-card-bg p-4 rounded-lg shadow-sm">
+                    <div class="flex-shrink-0 w-16 h-16 rounded-full bg-brand-green/10 flex items-center justify-center text-brand-green border border-brand-green/20">
+                        <i class="fas fa-shield-alt text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-xl text-brand-blue mb-2">Highest Safety</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            Safety is our priority. We adhere to strict electrical safety standards, using advanced protection devices (ACDB/DCDB) to safeguard your home and family.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Item 5 -->
+                <div class="flex items-start gap-5 content-card-bg p-4 rounded-lg shadow-sm">
+                    <div class="flex-shrink-0 w-16 h-16 rounded-full bg-brand-blue/10 flex items-center justify-center text-brand-blue border border-brand-blue/20">
+                        <i class="fas fa-chart-line text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-xl text-brand-blue mb-2">Quick ROI</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            Start saving from day one. With substantial electricity bill reductions, most of our customers recover their initial investment within just 3-4 years.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Item 6 -->
+                <div class="flex items-start gap-5 content-card-bg p-4 rounded-lg shadow-sm">
+                    <div class="flex-shrink-0 w-16 h-16 rounded-full bg-brand-orange/10 flex items-center justify-center text-brand-orange border border-brand-orange/20">
+                        <i class="fas fa-hand-holding-usd text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-xl text-brand-blue mb-2">Smart Investment</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            Solar is an asset that appreciates. Increase your property value while hedging against future hikes in utility electricity tariffs.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 6: PAYMENT & WARRANTY -->
+    <div class="page-container page-break relative">
+        <!-- Top Wave -->
+        <div class="wave-top-accent"></div>
+        <div class="wave-top"></div>
+        
+        <!-- Logo (CENTERED) -->
+        <div class="absolute top-4 left-1/2 -translate-x-1/2 z-30 w-32">
+            <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
+        </div>
+
+        <div class="relative z-20 pt-48 px-12 pb-12">
+            <!-- Payment Terms - Shifted Down -->
+            <div class="flex items-center gap-3 mb-16 mt-8">
+                <i class="far fa-credit-card text-3xl text-brand-blue"></i>
+                <h2 class="text-3xl font-bold text-brand-blue">Payment Terms</h2>
+            </div>
+
+            <!-- Redesigned Payment Steps with FontAwesome Icons -->
+            <div class="relative px-4 mb-20">
+                <!-- Connecting Line Base -->
+                <div class="absolute top-[35%] left-0 w-full h-1 bg-gray-200 z-0 -translate-y-1/2 rounded-full"></div>
+                <!-- Connecting Line Highlight -->
+                <div class="absolute top-[35%] left-0 w-2/3 h-1 bg-brand-lightBlue/50 z-0 -translate-y-1/2 rounded-full"></div>
+
+                <div class="flex justify-between items-start relative z-10">
+                    <!-- Step 1 -->
+                    <div class="flex flex-col items-center w-1/3">
+                        <div class="bg-white p-2 rounded-full shadow-lg border-4 border-brand-blue w-32 h-32 flex items-center justify-center mb-6 transform hover:scale-105 transition-transform duration-300">
+                             <i class="fas fa-file-contract text-5xl text-brand-blue"></i>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-md border-b-4 border-brand-blue w-4/5 text-center">
+                            <span class="block text-3xl font-bold text-brand-blue leading-none mb-1">25%</span>
+                            <span class="block font-bold text-gray-700 text-sm uppercase tracking-wider mb-1">Advance</span>
+                            <span class="block text-xs text-gray-500 font-medium">With Purchase Order</span>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="flex flex-col items-center w-1/3">
+                        <div class="bg-white p-2 rounded-full shadow-lg border-4 border-brand-orange w-32 h-32 flex items-center justify-center mb-6 transform hover:scale-105 transition-transform duration-300">
+                            <i class="fas fa-truck-fast text-5xl text-brand-orange"></i>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-md border-b-4 border-brand-orange w-4/5 text-center">
+                             <span class="block text-3xl font-bold text-brand-orange leading-none mb-1">65%</span>
+                             <span class="block font-bold text-gray-700 text-sm uppercase tracking-wider mb-1">Delivery</span>
+                             <span class="block text-xs text-gray-500 font-medium">On Material Arrival</span>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="flex flex-col items-center w-1/3">
+                        <div class="bg-white p-2 rounded-full shadow-lg border-4 border-brand-green w-32 h-32 flex items-center justify-center mb-6 transform hover:scale-105 transition-transform duration-300">
+                            <i class="fas fa-clipboard-check text-5xl text-brand-green"></i>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-md border-b-4 border-brand-green w-4/5 text-center">
+                             <span class="block text-3xl font-bold text-brand-green leading-none mb-1">10%</span>
+                             <span class="block font-bold text-gray-700 text-sm uppercase tracking-wider mb-1">Completion</span>
+                             <span class="block text-xs text-gray-500 font-medium">After Installation</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Warranty Terms -->
+            <div class="flex items-center gap-3 mb-8">
+                <i class="fas fa-shield-alt text-3xl text-brand-blue"></i>
+                <h2 class="text-3xl font-bold text-brand-blue">Warranty Terms</h2>
+            </div>
+
+            <div class="bg-gradient-to-r from-brand-blue to-[#004080] w-full p-8 rounded-2xl flex justify-between items-center text-white mb-8 shadow-2xl relative overflow-hidden">
+                <!-- Background decorative icons -->
+                <i class="fas fa-shield-alt absolute -right-10 -bottom-10 text-9xl text-white opacity-10"></i>
+
+                <!-- Item 1 -->
+                <div class="flex flex-col items-center flex-1 relative z-10">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-solar-panel text-3xl text-brand-orange"></i>
+                        <span class="text-4xl font-bold">25+</span>
+                    </div>
+                    <span class="font-semibold tracking-wide text-center">YEARS PERFORMANCE</span>
+                    <span class="text-xs opacity-75 mt-1">On PV Modules</span>
+                </div>
+                 <!-- Divider -->
+                 <div class="h-16 w-px bg-white/30"></div>
+                 <!-- Item 2 -->
+                 <div class="flex flex-col items-center flex-1 relative z-10">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-charging-station text-3xl text-brand-orange"></i>
+                        <span class="text-4xl font-bold">8</span>
+                    </div>
+                    <span class="font-semibold tracking-wide text-center">YEARS WARRANTY</span>
+                    <span class="text-xs opacity-75 mt-1">On Inverter</span>
+                </div>
+                 <!-- Divider -->
+                 <div class="h-16 w-px bg-white/30"></div>
+                 <!-- Item 3 -->
+                 <div class="flex flex-col items-center flex-1 relative z-10">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-tools text-3xl text-brand-orange"></i>
+                        <span class="text-4xl font-bold">5</span>
+                    </div>
+                    <span class="font-semibold tracking-wide text-center">YEARS SERVICE</span>
+                    <span class="text-xs opacity-75 mt-1">On System</span>
+                </div>
+            </div>
+
+            <p class="text-xs text-gray-500 bg-gray-50 p-4 rounded-lg border border-gray-200 leading-relaxed">
+                <strong class="text-brand-blue">Note:</strong> Please refer to the T&C and warranty documents for further details. Warranty is as per OEM terms & conditions. The warranty period depends on the make of the specific inverter selected.
+            </p>
+        </div>
+    </div>
+
+     <!-- PAGE 7: TERMS & CONDITIONS -->
+     <div class="page-container page-break relative">
+        <!-- Top Wave -->
+        <div class="wave-top-accent h-[120px]"></div>
+        <div class="wave-top h-[140px]"></div>
+
+        <!-- Logo (CENTERED) -->
+        <div class="absolute top-4 left-1/2 -translate-x-1/2 z-30 w-32">
+            <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
+        </div>
+
+        <div class="relative z-20 mt-40 px-12">
+            <!-- Header -->
+            <div class="flex items-center gap-3 mb-6">
+                <i class="fas fa-gavel text-3xl text-brand-blue"></i>
+                <h2 class="text-3xl font-bold text-brand-blue">General Terms & Conditions</h2>
+            </div>
+
+            <p class="text-sm text-gray-600 mb-6 italic border-b pb-2">These General Terms and Conditions have been agreed between the customer/consumer and the Channel Partner only.</p>
+
+            <div class="grid grid-cols-1 gap-4 text-xs text-gray-800 text-justify leading-relaxed bg-white/80 p-4 rounded">
+                <div class="bg-gray-50/80 p-3 rounded border border-gray-100">
+                    <h4 class="font-bold text-brand-blue mb-1">1. Validity</h4>
+                    <p>Quotation is valid for <span class="font-bold">15 Days</span> from the date of submission.</p>
+                </div>
+
+                <div class="bg-gray-50/80 p-3 rounded border border-gray-100">
+                    <h4 class="font-bold text-brand-blue mb-1">2. Taxes & Duties</h4>
+                    <p>On Materials, if acceptance of Purchase Order due to change of government policy if any new taxes are applicable, such rates will be to the Consumer's account. Prices are inclusive of Standard Packing.</p>
+                </div>
+
+                <div class="bg-gray-50/80 p-3 rounded border border-gray-100">
+                    <h4 class="font-bold text-brand-blue mb-1">3. Delivery Period</h4>
+                    <p>The goods will be delivered as per the agreed terms & conditions as per duly accepted PO. Deliveries are subject to "Force Majeure".</p>
+                </div>
+
+                <div class="bg-gray-50/80 p-3 rounded border border-gray-100">
+                    <h4 class="font-bold text-brand-blue mb-1">4. Cancellation</h4>
+                    <p>Order received and acknowledged by us shall not be subject to cancellation, either wholly or partly for any reason whatsoever, without our consent. Cancellation may attract cancellation charges as per company policy.</p>
+                </div>
+
+                <div class="bg-gray-50/80 p-3 rounded border border-gray-100">
+                    <h4 class="font-bold text-brand-blue mb-1">5. Exclusions</h4>
+                    <p class="mb-1">The warranty shall not apply to defects resulting from:</p>
+                    <ul class="list-disc list-inside pl-2 space-y-1 text-gray-600">
+                        <li>Any materials, components, tools, design, or software provided by Consumers.</li>
+                        <li>Negligence or willful misconduct of Consumers.</li>
+                        <li>Parts, accessories or attachments other than those supplied by Consumers</li>
+                        <li>Improper service work carried out by Consumers without written consent.</li>
+                        <li>Use of unsuitable material or consumables by Consumers.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 8: PROPOSAL BY / CONTACT (Enhanced) -->
+    <div class="page-container page-break relative flex flex-col">
+        <!-- Top Image Section REPLACED WITH BG 3.png -->
+        <div class="h-[40%] w-full relative overflow-hidden">
+            <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/8f2c0c796ba02307c87dda837a906dc9c079aa05/Uplodes/bg%203.png?raw=true" alt="Office Meeting" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-brand-blue/80 to-transparent"></div>
+            
+            <div class="absolute inset-0 flex flex-col items-center justify-center text-white z-10 text-center p-8">
+                <i class="fas fa-check-circle text-5xl mb-4 text-brand-green drop-shadow-lg"></i>
+                <h1 class="text-4xl font-bold mb-2 drop-shadow-md">Let's Go Solar</h1>
+                <p class="text-xl opacity-90 font-light max-w-lg drop-shadow-md">Thank you for considering our proposal. We look forward to powering your journey to sustainability.</p>
+            </div>
+        </div>
+
+         <!-- Logo (CENTERED) -->
+         <div class="absolute top-4 left-1/2 -translate-x-1/2 z-30 w-32 bg-white/90 p-2 rounded shadow-lg">
+            <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
+        </div>
+
+        <!-- Bottom Content -->
+        <div class="h-[60%] w-full bg-white px-12 pt-16 relative flex flex-col items-center">
+            
+            <!-- Contact Card - Floating overlapping the image boundary -->
+            <div class="w-full max-w-2xl bg-white rounded-2xl shadow-2xl p-8 -mt-24 z-20 flex items-start gap-8 border-t-8 border-brand-orange">
+                
+                <!-- Profile Photo Placeholder -->
+                <div class="flex-shrink-0">
+                    <div class="w-28 h-28 bg-gray-200 rounded-full overflow-hidden border-4 border-white shadow-md">
+                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1000&auto=format&fit=crop" alt="Profile" class="w-full h-full object-cover">
+                    </div>
+                </div>
+
+                <div class="flex-grow">
+                    <p class="text-sm text-gray-500 uppercase tracking-wide font-bold mb-1">Proposal Submitted By</p>
+                    <h2 class="text-2xl font-bold text-brand-blue">V-Sustain Solar Solutions</h2>
+                    <p class="text-xs text-white bg-brand-green px-2 py-1 rounded inline-block mb-6 font-semibold">Authorized Luminous Partner</p>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4 group">
+                            <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-brand-blue group-hover:bg-brand-blue group-hover:text-white transition-colors">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-400 font-bold uppercase">Contact Person</p>
+                                <p class="text-gray-800 font-bold">Pravesh Kumar Tiwari</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4 group">
+                             <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-brand-blue group-hover:bg-brand-blue group-hover:text-white transition-colors">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-400 font-bold uppercase">Email</p>
+                                <p class="text-gray-800">vsustainsolarsolutions@gmail.com</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4 group">
+                             <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-brand-blue group-hover:bg-brand-blue group-hover:text-white transition-colors">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-400 font-bold uppercase">Phone</p>
+                                <p class="text-gray-800 font-mono text-lg">+91 99-000-00476</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Address Footer -->
+            <div class="mt-auto mb-8 text-center w-full border-t border-gray-200 pt-6">
+                 <p class="text-xs text-gray-400 mb-2">Office Address</p>
+                 <p class="text-sm text-gray-600 max-w-lg mx-auto leading-relaxed">NO.33/1, 6th main, Kanteerava Studio Peenya, Rajagopalnagar Main Rd, Nandini Layout, Bengaluru, Karnataka 560096</p>
+                 
+                 <div class="flex justify-center gap-4 mt-6 opacity-50">
+                     <i class="fab fa-facebook text-xl text-brand-blue"></i>
+                     <i class="fab fa-instagram text-xl text-brand-blue"></i>
+                     <i class="fab fa-linkedin text-xl text-brand-blue"></i>
+                     <i class="fab fa-whatsapp text-xl text-brand-green"></i>
+                 </div>
+            </div>
         </div>
     </div>
 </body>
@@ -1137,15 +1827,34 @@ function buildDetailedQuotationHtml(totals, systemType) {
 }
 
 function buildSummaryQuotationHtml(totals, systemType) {
-  // Similar to detailed but with prices hidden
-  return buildDetailedQuotationHtml(totals, systemType).replace(/fmt\(amount\)/g, '"-"');
+  // Generate detailed quote HTML first
+  let html = buildDetailedQuotationHtml(totals, systemType);
+  
+  // Replace individual item prices with "-" in the commercial table
+  // Match pattern: <td class="p-3 border text-right">₹X,XXX.XX</td> for line items
+  html = html.replace(
+    /(<td class="p-3 border text-center">\d+<\/td>\s*<td class="p-3 border">[^<]+<\/td>\s*<td class="p-3 border text-center">[^<]+<\/td>\s*<td class="p-3 border text-center">[^<]+<\/td>\s*<td class="p-3 border text-right">)₹[\d,]+\.\d{2}(<\/td>)/g,
+    '$1-$2'
+  );
+  
+  // Also replace GST @ 5% and GST @ 18% rows, keep only Total GST
+  html = html.replace(
+    /<tr class="bg-white\/50">\s*<td class="p-3 border"><\/td>\s*<td class="p-3 border text-right font-medium">GST @ 5%<\/td>[\s\S]*?<\/tr>\s*<tr class="bg-white\/50">\s*<td class="p-3 border"><\/td>\s*<td class="p-3 border text-right font-medium">GST @ 18%<\/td>[\s\S]*?<\/tr>/,
+    ''
+  );
+  
+  return html;
 }
 
 function buildShortQuotationHtml(totals, systemType) {
   const plantKw = Math.max(0, n($('systemKw').value));
   const customerName = $('customerName')?.value || 'Customer Name';
+  const customerEmail = $('customerEmail')?.value || '';
   const proposalDate = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'long', year:'numeric' });
   const proposalNo = `VS/${new Date().getFullYear()}/001`;
+
+  // NO SUBSIDY FOR OFF-GRID - removed subsidy check
+  let subsidyBlock = '';
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -1183,8 +1892,8 @@ function buildShortQuotationHtml(totals, systemType) {
 
         <div class="flex justify-between mb-10 bg-gray-50 p-6 rounded-xl">
             <div>
-                <h3 class="text-xs font-bold text-gray-400 uppercase mb-1">Proposal For</h3>
-                <p class="text-lg font-bold text-brand-blue">${customerName}</p>
+                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wide mb-1">Proposal For</h3>
+                <p class="text-lg font-bold text-brand-blue">${escapeHtml(customerName)}</p>
                 <p class="text-sm text-gray-600">${$('customerAddress')?.value || ''}</p>
                 <p class="text-sm text-gray-600">${$('customerCity')?.value || 'Bengaluru'}</p>
             </div>
@@ -1196,21 +1905,26 @@ function buildShortQuotationHtml(totals, systemType) {
             </div>
         </div>
 
+        <!-- Commercial Offer (Simplified) -->
         <div class="mb-8">
-            <h3 class="text-lg font-bold text-brand-blue mb-4">Commercial Offer</h3>
+            <h3 class="text-lg font-bold text-brand-blue mb-4 border-l-4 border-brand-blue pl-3">Commercial Offer</h3>
             <table class="w-full text-sm border-collapse">
                 <tr class="bg-gray-100 border-b border-gray-200">
                     <td class="p-4 font-medium">Supply & Installation of ${plantKw} KW Off-Grid Solar System</td>
                     <td class="p-4 text-right font-bold">${fmt(totals.grandTotal)}</td>
                 </tr>
             </table>
+            
             <div class="mt-2 text-right">
                 <p class="text-xs text-gray-500">* Price is inclusive of GST, Installation, and Commissioning.</p>
             </div>
         </div>
 
+        ${subsidyBlock}
+
+        <!-- Key Inclusions -->
         <div class="mt-8">
-            <h3 class="text-lg font-bold text-brand-blue mb-4">Key Inclusions</h3>
+            <h3 class="text-lg font-bold text-brand-blue mb-4 border-l-4 border-brand-orange pl-3">Key Inclusions</h3>
             <div class="grid grid-cols-2 gap-4 text-sm text-gray-700">
                 <div class="flex items-center gap-2"><i class="fas fa-check text-brand-green"></i> Tier-1 Solar Modules</div>
                 <div class="flex items-center gap-2"><i class="fas fa-check text-brand-green"></i> Luminous Off-Grid Inverter</div>
@@ -1218,6 +1932,21 @@ function buildShortQuotationHtml(totals, systemType) {
                 <div class="flex items-center gap-2"><i class="fas fa-check text-brand-green"></i> Standard Mounting Structure</div>
                 <div class="flex items-center gap-2"><i class="fas fa-check text-brand-green"></i> ACDB & DCDB Protection</div>
                 <div class="flex items-center gap-2"><i class="fas fa-check text-brand-green"></i> Installation & Commissioning</div>
+            </div>
+        </div>
+
+        <!-- Footer / Contact -->
+        <div class="absolute bottom-0 left-0 w-full bg-[#001f3f] text-white p-8">
+            <div class="flex justify-between items-center max-w-4xl mx-auto">
+                <div>
+                    <h4 class="font-bold text-lg mb-1">V-Sustain Solar Solutions</h4>
+                    <p class="text-xs opacity-75">Authorized Luminous Partner</p>
+                </div>
+                <div class="text-right text-sm">
+                    <p><i class="fas fa-phone-alt mr-2"></i> +91 99-000-00476</p>
+                    <p><i class="fas fa-envelope mr-2"></i> vsustainsolarsolutions@gmail.com</p>
+                    <p class="text-xs opacity-50 mt-1">Bengaluru, Karnataka 560096</p>
+                </div>
             </div>
         </div>
     </div>
