@@ -5,305 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Off-Grid Solar Quotation Builder</title>
 
-    <style>
-        /* MODERN CLEAN STYLESHEET */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #2d3748;
-            line-height: 1.6;
-            padding: 20px;
-        }
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="../on-grid/style.css" />
 
-        .page-header {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .page-header h1 {
-            color: #667eea;
-            font-size: 2rem;
-            font-weight: 700;
-        }
-
-        .back-home {
-            background: #667eea;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-
-        .back-home:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 25px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-            transition: transform 0.3s;
-        }
-
-        .card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #e2e8f0;
-        }
-
-        .card h2 {
-            color: #2d3748;
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .col {
-            display: flex;
-            flex-direction: column;
-        }
-
-        label {
-            font-weight: 500;
-            color: #4a5568;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-        }
-
-        input[type="text"],
-        input[type="number"],
-        input[type="email"],
-        select {
-            padding: 12px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s;
-            background: #f7fafc;
-        }
-
-        input:focus,
-        select:focus {
-            outline: none;
-            border-color: #667eea;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        input[readonly] {
-            background: #edf2f7;
-            cursor: not-allowed;
-        }
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #cbd5e0;
-            transition: .4s;
-            border-radius: 34px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider {
-            background-color: #667eea;
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
-
-        .switch-small {
-            position: relative;
-            display: inline-block;
-            width: 44px;
-            height: 24px;
-        }
-
-        .slider-small {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #cbd5e0;
-            transition: .4s;
-            border-radius: 24px;
-        }
-
-        .slider-small:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider-small {
-            background-color: #48bb78;
-        }
-
-        input:checked + .slider-small:before {
-            transform: translateX(20px);
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin: 5px;
-        }
-
-        .btn.primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn.primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn.secondary {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-        }
-
-        .btn.secondary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(245, 87, 108, 0.4);
-        }
-
-        .btn.accent {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-        }
-
-        .btn.accent:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(79, 172, 254, 0.4);
-        }
-
-        .btn.danger {
-            background: #fc8181;
-            color: white;
-            padding: 8px 16px;
-            font-size: 0.9rem;
-        }
-
-        .btn.danger:hover {
-            background: #f56565;
-        }
-
-        .result-row {
-            background: #f7fafc;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
-        }
-
-        .generate-card {
-            text-align: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .generate-card .btn {
-            margin: 10px;
-            min-width: 250px;
-        }
-
-        .custom-row {
-            background: #f7fafc;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            border-left: 4px solid #ed8936;
-        }
-
-        @media (max-width: 768px) {
-            .page-header {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-
-            .row {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -314,24 +20,30 @@
 
     <main class="container">
 
-        <!-- CUSTOMER INFORMATION -->
+        <!-- ========================= -->
+        <!--   CUSTOMER INFORMATION    -->
+        <!-- ========================= -->
         <section class="card">
             <h2>Customer Information</h2>
+
             <div class="row">
                 <div class="col">
                     <label>Customer Name</label>
                     <input type="text" id="customerName" placeholder="Enter customer name" />
                 </div>
+
                 <div class="col">
                     <label>Customer Address</label>
                     <input type="text" id="customerAddress" placeholder="Enter customer address" />
                 </div>
             </div>
+
             <div class="row">
                 <div class="col">
                     <label>Customer Email</label>
                     <input type="email" id="customerEmail" placeholder="example@email.com" />
                 </div>
+
                 <div class="col">
                     <label>Customer City</label>
                     <input type="text" id="customerCity" placeholder="City" />
@@ -339,14 +51,18 @@
             </div>
         </section>
 
-        <!-- SYSTEM CAPACITY -->
+        <!-- ========================= -->
+        <!--     SYSTEM CAPACITY       -->
+        <!-- ========================= -->
         <section class="card">
             <h2>System Capacity</h2>
+
             <div class="row">
                 <div class="col">
                     <label>Required System Size (kW)</label>
                     <input type="number" id="systemKw" min="1" placeholder="Enter kW (e.g., 3)" />
                 </div>
+
                 <div class="col">
                     <label>Common Margin (%)</label>
                     <input type="number" id="commonMargin" min="0" max="100" value="20" />
@@ -354,64 +70,76 @@
             </div>
         </section>
 
-        <!-- INVERTER CARD -->
+        <!-- =================================================== -->
+        <!--      PRODUCT CARD — INVERTER (FULL FIELD CARD)      -->
+        <!-- =================================================== -->
         <section class="card" id="inverterCard">
             <div class="card-header">
                 <h2>Inverter</h2>
                 <label class="switch">
-                    <input type="checkbox" id="enableInverter" checked>
+                    <input type="checkbox" id="enableInverter" checked onclick="toggleProduct('inverter')">
                     <span class="slider round"></span>
                 </label>
             </div>
+
             <div class="row">
                 <div class="col">
                     <label>Choose Inverter Model</label>
-                    <select id="inverterModel">
+                    <select id="inverterModel" onchange="updateInverterData()">
                         <option value="">-- Select Inverter --</option>
+                        <!-- OPTIONS COME FROM script.js -->
                     </select>
                 </div>
+
                 <div class="col">
                     <label>Quantity</label>
-                    <input type="number" id="inverterQty" value="1" min="1" />
+                    <input type="number" id="inverterQty" value="1" min="1" oninput="updateInverterData()" />
                 </div>
             </div>
+
             <div class="row">
                 <div class="col">
                     <label>Dealer Price (Auto)</label>
                     <input type="number" id="inverterDealer" readonly />
                 </div>
+
                 <div class="col">
                     <label>Manual Price Override</label>
                     <label class="switch-small">
-                        <input type="checkbox" id="inverterOverrideToggle">
+                        <input type="checkbox" id="inverterOverrideToggle" onclick="toggleOverride('inverter')">
                         <span class="slider-small round"></span>
                     </label>
-                    <input type="number" id="inverterOverridePrice" class="hidden" placeholder="Enter manual price" />
+                    <input type="number" id="inverterOverridePrice" class="hidden" placeholder="Enter manual price" oninput="updateInverterData()" />
                 </div>
             </div>
+
             <div class="row">
                 <div class="col">
                     <label>Use Common Margin?</label>
                     <label class="switch-small">
-                        <input type="checkbox" id="inverterUseCommonMargin" checked>
+                        <input type="checkbox" id="inverterUseCommonMargin" checked onclick="updateInverterData()">
                         <span class="slider-small round"></span>
                     </label>
                 </div>
+
                 <div class="col">
                     <label>Custom Margin (%)</label>
-                    <input type="number" id="inverterCustomMargin" value="0" disabled />
+                    <input type="number" id="inverterCustomMargin" value="0" disabled oninput="updateInverterData()" />
                 </div>
             </div>
+
             <div class="row result-row">
                 <div class="col">
                     <label>Effective Rate (After Margin)</label>
                     <input type="number" id="inverterFinalRate" readonly />
                 </div>
+
                 <div class="col">
                     <label>GST (18%)</label>
                     <input type="number" id="inverterGST" readonly />
                 </div>
             </div>
+
             <div class="row result-row">
                 <div class="col">
                     <label>Total Amount</label>
@@ -420,64 +148,76 @@
             </div>
         </section>
 
-        <!-- BATTERY CARD (NEW) -->
+        <!-- =================================================== -->
+        <!--      PRODUCT CARD — BATTERY (OFF-GRID SPECIFIC)    -->
+        <!-- =================================================== -->
         <section class="card" id="batteryCard">
             <div class="card-header">
                 <h2>Solar Batteries</h2>
                 <label class="switch">
-                    <input type="checkbox" id="enableBattery" checked>
+                    <input type="checkbox" id="enableBattery" checked onclick="toggleProduct('battery')">
                     <span class="slider round"></span>
                 </label>
             </div>
+
             <div class="row">
                 <div class="col">
                     <label>Choose Battery Model</label>
-                    <select id="batteryModel">
+                    <select id="batteryModel" onchange="updateBatteryData()">
                         <option value="">-- Select Battery --</option>
+                        <!-- BATTERY OPTIONS FROM script.js -->
                     </select>
                 </div>
+
                 <div class="col">
                     <label>Quantity</label>
-                    <input type="number" id="batteryQty" value="1" min="1" />
+                    <input type="number" id="batteryQty" value="1" min="1" oninput="updateBatteryData()" />
                 </div>
             </div>
+
             <div class="row">
                 <div class="col">
                     <label>Dealer Price (Auto)</label>
                     <input type="number" id="batteryDealer" readonly />
                 </div>
+
                 <div class="col">
                     <label>Manual Price Override</label>
                     <label class="switch-small">
-                        <input type="checkbox" id="batteryOverrideToggle">
+                        <input type="checkbox" id="batteryOverrideToggle" onclick="toggleOverride('battery')">
                         <span class="slider-small round"></span>
                     </label>
-                    <input type="number" id="batteryOverridePrice" class="hidden" placeholder="Enter manual price" />
+                    <input type="number" id="batteryOverridePrice" class="hidden" placeholder="Enter manual price" oninput="updateBatteryData()" />
                 </div>
             </div>
+
             <div class="row">
                 <div class="col">
                     <label>Use Common Margin?</label>
                     <label class="switch-small">
-                        <input type="checkbox" id="batteryUseCommonMargin" checked>
+                        <input type="checkbox" id="batteryUseCommonMargin" checked onclick="updateBatteryData()">
                         <span class="slider-small round"></span>
                     </label>
                 </div>
+
                 <div class="col">
                     <label>Custom Margin (%)</label>
-                    <input type="number" id="batteryCustomMargin" value="0" disabled />
+                    <input type="number" id="batteryCustomMargin" value="0" disabled oninput="updateBatteryData()" />
                 </div>
             </div>
+
             <div class="row result-row">
                 <div class="col">
                     <label>Effective Rate (After Margin)</label>
                     <input type="number" id="batteryFinalRate" readonly />
                 </div>
+
                 <div class="col">
                     <label>GST (18%)</label>
                     <input type="number" id="batteryGST" readonly />
                 </div>
             </div>
+
             <div class="row result-row">
                 <div class="col">
                     <label>Total Amount</label>
@@ -486,69 +226,83 @@
             </div>
         </section>
 
-        <!-- SOLAR PANELS CARD -->
-        <section class="card" id="panelsCard">
+        <!-- =================================================== -->
+        <!--      PRODUCT CARD — SOLAR PANELS (AUTO QTY)         -->
+        <!-- =================================================== -->
+        <section class="card" id="panelCard">
             <div class="card-header">
                 <h2>Solar Panels</h2>
                 <label class="switch">
-                    <input type="checkbox" id="enablePanels" checked>
+                    <input type="checkbox" id="enablePanels" checked onclick="toggleProduct('panels')">
                     <span class="slider round"></span>
                 </label>
             </div>
+
             <div class="row">
                 <div class="col">
                     <label>Select Panel Model</label>
-                    <select id="panelModel">
+                    <select id="panelModel" onchange="updatePanelData()">
                         <option value="">-- Select Solar Panel --</option>
+                        <!-- PANEL OPTIONS FROM script.js -->
                     </select>
                 </div>
+
                 <div class="col">
                     <label>Panel Quantity (Editable)</label>
-                    <input type="number" id="panelQty" />
+                    <!-- Make editable and add handler -->
+                    <input type="number" id="panelQty" oninput="updatePanelData(true)" />
                 </div>
             </div>
+
             <div class="row">
                 <div class="col">
                     <label>Total DC Capacity (Watt)</label>
                     <input type="number" id="panelCapacity" readonly />
                 </div>
+
                 <div class="col">
                     <label>Dealer Price (Auto)</label>
                     <input type="number" id="panelDealer" readonly />
                 </div>
             </div>
+
             <div class="row">
                 <div class="col">
                     <label>Manual Price Override</label>
                     <label class="switch-small">
-                        <input type="checkbox" id="panelOverrideToggle">
+                        <input type="checkbox" id="panelOverrideToggle" onclick="toggleOverride('panel')">
                         <span class="slider-small round"></span>
                     </label>
-                    <input type="number" id="panelOverridePrice" class="hidden" placeholder="Enter override price" />
+                    <input type="number" id="panelOverridePrice" class="hidden" placeholder="Enter override price" oninput="updatePanelData()" />
                 </div>
+
                 <div class="col">
                     <label>Use Common Margin?</label>
                     <label class="switch-small">
-                        <input type="checkbox" id="panelsUseCommonMargin" checked>
+                        <input type="checkbox" id="panelsUseCommonMargin" checked onclick="updatePanelData()">
                         <span class="slider-small round"></span>
                     </label>
                 </div>
             </div>
+
             <div class="row">
                 <div class="col">
                     <label>Custom Margin (%)</label>
-                    <input type="number" id="panelsCustomMargin" value="0" disabled />
+                    <input type="number" id="panelsCustomMargin" value="0" disabled oninput="updatePanelData()" />
                 </div>
+
                 <div class="col">
                     <label>GST (5%)</label>
                     <input type="number" id="panelGST" readonly />
                 </div>
             </div>
+
             <div class="row result-row">
                 <div class="col">
                     <label>Effective Rate (After Margin)</label>
                     <input type="number" id="panelFinalRate" readonly />
                 </div>
+
                 <div class="col">
                     <label>Total Amount</label>
                     <input type="number" id="panelTotal" readonly />
@@ -556,17 +310,448 @@
             </div>
         </section>
 
-        <!-- REMAINING CARDS (ACDB, DCDB, etc.) - Same as on-grid -->
-        <!-- For brevity, I'm including just the structure. Copy from original for complete cards -->
+        <!-- =================================================== -->
+        <!--            ACDB PRODUCT CARD                        -->
+        <!-- =================================================== -->
+        <section class="card" id="acdbCard">
+            <div class="card-header">
+                <h2>ACDB</h2>
+                <label class="switch">
+                    <input type="checkbox" id="enableACDB" checked onclick="toggleProduct('acdb')">
+                    <span class="slider round"></span>
+                </label>
+            </div>
 
-        <!-- QUOTATION BUTTONS -->
+            <div class="row">
+                <div class="col">
+                    <label>ACDB Model</label>
+                    <select id="acdbModel" onchange="updateACDBData()">
+                        <option value="">-- Select ACDB --</option>
+                        <!-- ACDB OPTIONS FROM script.js -->
+                    </select>
+                </div>
+
+                <div class="col">
+                    <label>Quantity</label>
+                    <input type="number" id="acdbQty" value="1" min="1" oninput="updateACDBData()" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Dealer Price</label>
+                    <input type="number" id="acdbDealer" readonly />
+                </div>
+
+                <div class="col">
+                    <label>Manual Override</label>
+                    <label class="switch-small">
+                        <input type="checkbox" id="acdbOverrideToggle" onclick="toggleOverride('acdb')">
+                        <span class="slider-small round"></span>
+                    </label>
+                    <input id="acdbOverridePrice" class="hidden" type="number" placeholder="Override price" oninput="updateACDBData()">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Use Common Margin?</label>
+                    <label class="switch-small">
+                        <input type="checkbox" id="acdbUseCommonMargin" checked onclick="updateACDBData()">
+                        <span class="slider-small round"></span>
+                    </label>
+                </div>
+
+                <div class="col">
+                    <label>Custom Margin (%)</label>
+                    <input type="number" id="acdbCustomMargin" value="0" disabled oninput="updateACDBData()" />
+                </div>
+            </div>
+
+            <div class="row result-row">
+                <div class="col">
+                    <label>GST (18%)</label>
+                    <input type="number" id="acdbGST" readonly />
+                </div>
+
+                <div class="col">
+                    <label>Total</label>
+                    <input type="number" id="acdbTotal" readonly />
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================================== -->
+        <!--                DCDB PRODUCT CARD                    -->
+        <!-- =================================================== -->
+        <section class="card" id="dcdbCard">
+            <div class="card-header">
+                <h2>DCDB</h2>
+                <label class="switch">
+                    <input type="checkbox" id="enableDCDB" checked onclick="toggleProduct('dcdb')">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>DCDB Model</label>
+                    <select id="dcdbModel" onchange="updateDCDBData()">
+                        <option value="">-- Select DCDB --</option>
+                        <!-- OPTIONS FROM script.js -->
+                    </select>
+                </div>
+
+                <div class="col">
+                    <label>Quantity</label>
+                    <input type="number" id="dcdbQty" value="1" min="1" oninput="updateDCDBData()" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Dealer Price</label>
+                    <input type="number" id="dcdbDealer" readonly />
+                </div>
+
+                <div class="col">
+                    <label>Manual Override</label>
+                    <label class="switch-small">
+                        <input type="checkbox" id="dcdbOverrideToggle" onclick="toggleOverride('dcdb')">
+                        <span class="slider-small round"></span>
+                    </label>
+                    <input id="dcdbOverridePrice" class="hidden" type="number" placeholder="Override price" oninput="updateDCDBData()">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Use Common Margin?</label>
+                    <label class="switch-small">
+                        <input type="checkbox" id="dcdbUseCommonMargin" checked onclick="updateDCDBData()">
+                        <span class="slider-small round"></span>
+                    </label>
+                </div>
+
+                <div class="col">
+                    <label>Custom Margin (%)</label>
+                    <input type="number" id="dcdbCustomMargin" value="0" disabled oninput="updateDCDBData()" />
+                </div>
+            </div>
+
+            <div class="row result-row">
+                <div class="col">
+                    <label>GST (18%)</label>
+                    <input type="number" id="dcdbGST" readonly />
+                </div>
+
+                <div class="col">
+                    <label>Total</label>
+                    <input type="number" id="dcdbTotal" readonly />
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================================== -->
+        <!--             AC CABLE (SIMPLE FIELD)                 -->
+        <!-- =================================================== -->
+        <section class="card" id="acCableCard">
+            <div class="card-header">
+                <h2>AC Cable</h2>
+                <label class="switch">
+                    <input type="checkbox" id="enableACCable" checked onclick="toggleProduct('acCable')">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Cable Gauge</label>
+                    <input type="text" id="acCableGauge" placeholder="e.g., 4 sqmm" oninput="updateACCableData()" />
+                </div>
+
+                <div class="col">
+                    <label>Quantity (meters)</label>
+                    <input type="number" id="acCableQty" value="0" oninput="updateACCableData()" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Price per Meter</label>
+                    <input type="number" id="acCablePrice" oninput="updateACCableData()" />
+                </div>
+
+                <div class="col">
+                    <label>Total</label>
+                    <input type="number" id="acCableTotal" readonly />
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================================== -->
+        <!--          EARTHING CABLE (SIMPLE FIELD)              -->
+        <!-- =================================================== -->
+        <section class="card" id="earthCableCard">
+            <div class="card-header">
+                <h2>Earthing Cable</h2>
+                <label class="switch">
+                    <input type="checkbox" id="enableEarthCable" checked onclick="toggleProduct('earthCable')">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Cable Gauge</label>
+                    <input type="text" id="earthCableGauge" placeholder="e.g., 6 sqmm" oninput="updateEarthCableData()" />
+                </div>
+
+                <div class="col">
+                    <label>Quantity (meters)</label>
+                    <input type="number" id="earthCableQty" value="0" oninput="updateEarthCableData()" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Price per Meter</label>
+                    <input type="number" id="earthCablePrice" oninput="updateEarthCableData()" />
+                </div>
+
+                <div class="col">
+                    <label>Total</label>
+                    <input type="number" id="earthCableTotal" readonly />
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================================== -->
+        <!--         LIGHTNING ARRESTOR (SIMPLE FIELD)           -->
+        <!-- =================================================== -->
+        <section class="card" id="laCard">
+            <div class="card-header">
+                <h2>Lightning Arrestor</h2>
+                <label class="switch">
+                    <input type="checkbox" id="enableLA" checked onclick="toggleProduct('la')">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Quantity</label>
+                    <input type="number" id="laQty" value="0" oninput="updateLAData()" />
+                </div>
+
+                <div class="col">
+                    <label>Price</label>
+                    <input type="number" id="laPrice" oninput="updateLAData()" />
+                </div>
+            </div>
+
+            <div class="row result-row">
+                <div class="col">
+                    <label>Total</label>
+                    <input type="number" id="laTotal" readonly />
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================================== -->
+        <!--          EARTHING SET (COMPLETE KIT)                -->
+        <!-- =================================================== -->
+        <section class="card" id="earthingSetCard">
+            <div class="card-header">
+                <h2>Earthing Set (Complete Kit)</h2>
+                <label class="switch">
+                    <input type="checkbox" id="enableEarthingSet" checked onclick="toggleProduct('earthingSet')">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Quantity</label>
+                    <input type="number" id="earthingSetQty" value="1" min="1" oninput="updateEarthingSetData()" />
+                </div>
+
+                <div class="col">
+                    <label>Dealer Price (Auto)</label>
+                    <input type="number" id="earthingSetDealer" value="3000" readonly />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Manual Price Override</label>
+                    <label class="switch-small">
+                        <input type="checkbox" id="earthingSetOverrideToggle" onclick="toggleOverrideUI('earthingSet')">
+                        <span class="slider-small round"></span>
+                    </label>
+                    <input type="number" id="earthingSetOverridePrice" class="hidden"
+                           placeholder="Enter override price" oninput="updateEarthingSetData()" />
+                </div>
+
+                <div class="col">
+                    <label>Use Common Margin?</label>
+                    <label class="switch-small">
+                        <input type="checkbox" id="earthingSetUseCommonMargin" checked onclick="updateEarthingSetData()">
+                        <span class="slider-small round"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Custom Margin (%)</label>
+                    <input type="number" id="earthingSetCustomMargin" value="0" disabled
+                           oninput="updateEarthingSetData()" />
+                </div>
+
+                <div class="col">
+                    <label>GST (18%)</label>
+                    <input type="number" id="earthingSetGST" readonly />
+                </div>
+            </div>
+
+            <div class="row result-row">
+                <div class="col">
+                    <label>Total Amount</label>
+                    <input type="number" id="earthingSetTotal" readonly />
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================================== -->
+        <!--        INSTALLATION CHARGES (FULL CARD)             -->
+        <!-- =================================================== -->
+        <section class="card" id="installationCard">
+            <div class="card-header">
+                <h2>Installation Charges</h2>
+                <label class="switch">
+                    <input type="checkbox" id="enableInstallation" checked onclick="toggleProduct('installation')">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Base Rate (Auto) = kW × 5000</label>
+                    <input type="number" id="installBase" readonly />
+                </div>
+
+                <div class="col">
+                    <label>Editable Base Rate</label>
+                    <input type="number" id="installEditable" oninput="updateInstallationData()" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Use Common Margin?</label>
+                    <label class="switch-small">
+                        <input type="checkbox" id="installUseCommonMargin" checked onclick="updateInstallationData()">
+                        <span class="slider-small round"></span>
+                    </label>
+                </div>
+
+                <div class="col">
+                    <label>Custom Margin (%)</label>
+                    <input type="number" id="installCustomMargin" value="0" disabled oninput="updateInstallationData()" />
+                </div>
+            </div>
+
+            <div class="row result-row">
+                <div class="col">
+                    <label>GST (18%)</label>
+                    <input type="number" id="installGST" readonly />
+                </div>
+
+                <div class="col">
+                    <label>Total</label>
+                    <input type="number" id="installTotal" readonly />
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================================== -->
+        <!--            STRUCTURE CHARGES (FULL CARD)            -->
+        <!-- =================================================== -->
+        <section class="card" id="structureCard">
+            <div class="card-header">
+                <h2>Structure Charges</h2>
+                <label class="switch">
+                    <input type="checkbox" id="enableStructure" checked onclick="toggleProduct('structure')">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Base Rate (Auto) = kW × 8000</label>
+                    <input type="number" id="structBase" readonly />
+                </div>
+
+                <div class="col">
+                    <label>Editable Base Rate</label>
+                    <input type="number" id="structEditable" oninput="updateStructureData()" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Use Common Margin?</label>
+                    <label class="switch-small">
+                        <input type="checkbox" id="structUseCommonMargin" checked onclick="updateStructureData()">
+                        <span class="slider-small round"></span>
+                    </label>
+                </div>
+
+                <div class="col">
+                    <label>Custom Margin (%)</label>
+                    <input type="number" id="structCustomMargin" value="0" disabled oninput="updateStructureData()" />
+                </div>
+            </div>
+
+            <div class="row result-row">
+                <div class="col">
+                    <label>GST (18%)</label>
+                    <input type="number" id="structGST" readonly />
+                </div>
+
+                <div class="col">
+                    <label>Total</label>
+                    <input type="number" id="structTotal" readonly />
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================================== -->
+        <!--            CUSTOM PRODUCT ADD SECTION               -->
+        <!-- =================================================== -->
+        <section class="card" id="customProductSection">
+            <div class="card-header">
+                <h2>Custom Products</h2>
+            </div>
+
+            <div id="customProductList"></div>
+
+            <button class="btn" onclick="addCustomProduct()">+ Add Custom Product</button>
+        </section>
+
+        <!-- =================================================== -->
+        <!--       QUOTATION GENERATION BUTTONS                  -->
+        <!-- =================================================== -->
         <section class="card generate-card">
             <button class="btn primary" onclick="generateDetailedQuote()">
                 Generate Detailed Quotation
             </button>
+
             <button class="btn secondary" onclick="generateSummaryQuote()">
                 Generate Summary Quotation
             </button>
+
             <button class="btn accent" onclick="generateShortQuote()">
                 Short Quotation
             </button>
@@ -574,6 +759,10 @@
 
     </main>
 
+    <!-- =================================================== -->
+    <!--                 SCRIPT IMPORTS                      -->
+    <!-- =================================================== -->
     <script src="script.js"></script>
+
 </body>
 </html>
