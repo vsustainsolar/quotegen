@@ -1010,38 +1010,31 @@ function buildDetailedQuotationHtml(totals, systemType) {
     `;
   }).join('');
 
-  // Add GST and Grand Total rows
-  const footerRows = `
-  <tr class="bg-white/50">
-    <td class="p-3 border"></td>
-    <td class="p-3 border text-right font-medium">GST @ 5%</td>
-    <td class="p-3 border"></td>
-    <td class="p-3 border"></td>
-    <td class="p-3 border text-right">${fmt(totals.gst5Total)}</td>
-  </tr>
-
-  <tr class="bg-white/50">
-    <td class="p-3 border"></td>
-    <td class="p-3 border text-right font-medium">GST @ 18%</td>
-    <td class="p-3 border"></td>
-    <td class="p-3 border"></td>
-    <td class="p-3 border text-right">${fmt(totals.gst18Total)}</td>
-  </tr>
-
-  <tr class="bg-white/50 border-t">
-    <td class="p-3 border"></td>
-    <td class="p-3 border text-right font-semibold">Total GST</td>
-    <td class="p-3 border"></td>
-    <td class="p-3 border"></td>
-    <td class="p-3 border text-right">${fmt(totals.totalGst)}</td>
-  </tr>
-
+  // Add Grand Total row and subsidy row if applicable
+  let footerRows = `
   <tr class="bg-blue-50/80 font-bold border-t-2 border-brand-blue">
     <td class="p-4 border"></td>
-    <td class="p-4 border text-right text-base" colspan="3">GRAND TOTAL (INR)</td>
+    <td class="p-4 border text-right text-base" colspan="3">GRAND TOTAL (Inclusive of all taxes)</td>
     <td class="p-4 border text-right text-xl text-brand-blue">${fmt(totals.grandTotal)}</td>
   </tr>
 `;
+
+  // Add subsidy row if subsidy is selected
+  if (isSubsidyYes && totals.subsidy > 0) {
+    const amountAfterSubsidy = totals.grandTotal - totals.subsidy;
+    footerRows += `
+  <tr class="bg-green-50/80 font-semibold border-t">
+    <td class="p-4 border"></td>
+    <td class="p-4 border text-right text-sm" colspan="3">Less: PM Surya Ghar Subsidy</td>
+    <td class="p-4 border text-right text-lg text-green-700">- ${fmt(totals.subsidy)}</td>
+  </tr>
+  <tr class="bg-orange-50/80 font-bold border-t-2 border-brand-orange">
+    <td class="p-4 border"></td>
+    <td class="p-4 border text-right text-base" colspan="3">AMOUNT PAYABLE</td>
+    <td class="p-4 border text-right text-xl text-brand-orange">${fmt(amountAfterSubsidy)}</td>
+  </tr>
+`;
+  }
 
 
   // BUILD SUBSIDY DISCLAIMER BLOCK
@@ -1054,7 +1047,7 @@ function buildDetailedQuotationHtml(totals, systemType) {
               <li><strong>₹60,000 subsidy</strong> for 2kW systems.</li>
               <li><strong>₹78,000 subsidy</strong> for 3kW and above systems.</li>
           </ul>
-          <div class="mt-2 italic text-[10px] text-green-700">*Subject to government approval and DBT transfer directly to customer. Not deducted from invoice.</div>
+          <div class="mt-2 italic text-[10px] text-green-700">*The subsidy amount will be credited directly to your bank account by the government through Direct Benefit Transfer (DBT). Subject to government approval. Not deducted from invoice.</div>
       </div>
     `;
   }
@@ -1931,7 +1924,7 @@ function buildSummaryQuotationHtml(totals, systemType) {
               <li><strong>₹60,000 subsidy</strong> for 2kW systems.</li>
               <li><strong>₹78,000 subsidy</strong> for 3kW and above systems.</li>
           </ul>
-          <div class="mt-2 italic text-[10px] text-green-700">*Subject to government approval and DBT transfer directly to customer. Not deducted from invoice.</div>
+          <div class="mt-2 italic text-[10px] text-green-700">*The subsidy amount will be credited directly to your bank account by the government through Direct Benefit Transfer (DBT). Subject to government approval. Not deducted from invoice.</div>
       </div>
     `;
   }
