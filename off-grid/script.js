@@ -995,33 +995,9 @@ function buildDetailedQuotationHtml(totals, systemType) {
   }).join('');
 
   const footerRows = `
-  <tr class="bg-white/50">
-    <td class="p-3 border"></td>
-    <td class="p-3 border text-right font-medium">GST @ 5%</td>
-    <td class="p-3 border"></td>
-    <td class="p-3 border"></td>
-    <td class="p-3 border text-right">${fmt(totals.gst5Total)}</td>
-  </tr>
-
-  <tr class="bg-white/50">
-    <td class="p-3 border"></td>
-    <td class="p-3 border text-right font-medium">GST @ 18%</td>
-    <td class="p-3 border"></td>
-    <td class="p-3 border"></td>
-    <td class="p-3 border text-right">${fmt(totals.gst18Total)}</td>
-  </tr>
-
-  <tr class="bg-white/50 border-t">
-    <td class="p-3 border"></td>
-    <td class="p-3 border text-right font-semibold">Total GST</td>
-    <td class="p-3 border"></td>
-    <td class="p-3 border"></td>
-    <td class="p-3 border text-right">${fmt(totals.totalGst)}</td>
-  </tr>
-
   <tr class="bg-blue-50/80 font-bold border-t-2 border-brand-blue">
     <td class="p-4 border"></td>
-    <td class="p-4 border text-right text-base" colspan="3">GRAND TOTAL (INR)</td>
+    <td class="p-4 border text-right text-base" colspan="3">GRAND TOTAL (Inclusive of all taxes)</td>
     <td class="p-4 border text-right text-xl text-brand-blue">${fmt(totals.grandTotal)}</td>
   </tr>
 `;
@@ -1255,7 +1231,7 @@ function buildDetailedQuotationHtml(totals, systemType) {
 
         <!-- Main Image Area (Reduced to 45% height) -->
         <div class="h-[45%] w-full overflow-hidden relative">
-            <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=2072&auto=format&fit=crop" alt="Solar Panels" class="w-full h-full object-cover">
+            <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/84f533bd655985e404e7314c38217f6a03a4f91a/Uplodes/Off-Grid-2-1024x537.png?raw=true" alt="Solar Panels" class="w-full h-full object-cover">
             
             <!-- 2025 Badge -->
             <div class="absolute top-0 right-16 bg-brand-orange text-white font-bold text-2xl py-4 px-3 shadow-lg" style="clip-path: polygon(0% 0%, 100% 0%, 100% 85%, 50% 100%, 0% 85%);">
@@ -1836,13 +1812,7 @@ function buildSummaryQuotationHtml(totals, systemType) {
     /(<td class="p-3 border text-center">\d+<\/td>\s*<td class="p-3 border">[^<]+<\/td>\s*<td class="p-3 border text-center">[^<]+<\/td>\s*<td class="p-3 border text-center">[^<]+<\/td>\s*<td class="p-3 border text-right">)₹[\d,]+\.\d{2}(<\/td>)/g,
     '$1-$2'
   );
-  
-  // Also replace GST @ 5% and GST @ 18% rows, keep only Total GST
-  html = html.replace(
-    /<tr class="bg-white\/50">\s*<td class="p-3 border"><\/td>\s*<td class="p-3 border text-right font-medium">GST @ 5%<\/td>[\s\S]*?<\/tr>\s*<tr class="bg-white\/50">\s*<td class="p-3 border"><\/td>\s*<td class="p-3 border text-right font-medium">GST @ 18%<\/td>[\s\S]*?<\/tr>/,
-    ''
-  );
-  
+
   return html;
 }
 
