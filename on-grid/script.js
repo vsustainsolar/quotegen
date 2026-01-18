@@ -1030,7 +1030,7 @@ function buildDetailedQuotationHtml(totals, systemType) {
   </tr>
   <tr class="bg-orange-50/80 font-bold border-t-2 border-brand-orange">
     <td class="p-4 border"></td>
-    <td class="p-4 border text-right text-base" colspan="3">AMOUNT PAYABLE</td>
+    <td class="p-4 border text-right text-base" colspan="3">TOTAL AMOUNT</td>
     <td class="p-4 border text-right text-xl text-brand-orange">${fmt(amountAfterSubsidy)}</td>
   </tr>
 `;
