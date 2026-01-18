@@ -1231,7 +1231,7 @@ function buildDetailedQuotationHtml(totals, systemType) {
 
         <!-- Main Image Area (Reduced to 45% height) -->
         <div class="h-[45%] w-full overflow-hidden relative">
-            <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/84f533bd655985e404e7314c38217f6a03a4f91a/Uplodes/Off-Grid-2-1024x537.png?raw=true" alt="Solar Panels" class="w-full h-full object-cover">
+            <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=2072&auto=format&fit=crop" alt="Solar Panels" class="w-full h-full object-cover">
             
             <!-- 2025 Badge -->
             <div class="absolute top-0 right-16 bg-brand-orange text-white font-bold text-2xl py-4 px-3 shadow-lg" style="clip-path: polygon(0% 0%, 100% 0%, 100% 85%, 50% 100%, 0% 85%);">
@@ -1283,7 +1283,7 @@ function buildDetailedQuotationHtml(totals, systemType) {
                 
                 <!-- DIAGRAM (Reduced Height to 350px) -->
                 <div class="flex items-center justify-center mb-8 relative h-[350px]">
-                    <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/d2ac544338d64714fdc75e8008f2a733bb61ab83/Uplodes/on%20grid%20plannnt%20explained.png?raw=true" alt="Off Grid Plant Explained" class="h-full w-full object-contain shadow-lg rounded-lg bg-white/50">
+                    <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/84f533bd655985e404e7314c38217f6a03a4f91a/Uplodes/Off-Grid-2-1024x537.png?raw=true" alt="Off Grid Plant Explained" class="h-full w-full object-contain shadow-lg rounded-lg bg-white/50">
                 </div>
 
                 <!-- Project Details - Centered and Enlarged -->
