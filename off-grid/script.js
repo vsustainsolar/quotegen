@@ -135,6 +135,7 @@ function populateSelects() {
       const o = document.createElement('option');
       o.value = a.sku;
       o.dataset.price = a.price;
+      o.dataset.desc = a.desc;
       o.textContent = `${a.desc} — ${fmt(a.price)}`;
       acdbSel.appendChild(o);
     });
@@ -147,6 +148,7 @@ function populateSelects() {
       const o = document.createElement('option');
       o.value = d.sku;
       o.dataset.price = d.price;
+      o.dataset.desc = d.desc;
       o.textContent = `${d.desc} — ${fmt(d.price)}`;
       dcdbSel.appendChild(o);
     });
@@ -321,9 +323,44 @@ function applyMarginTo(base, sectionId) {
   }
 }
 
+// Determine which main components are enabled
+function getEnabledMainComponents() {
+  return {
+    inverter: isEnabled('inverter'),
+    battery: isEnabled('battery'),
+    panels: isEnabled('panels')
+  };
+}
+
+// NEW TAX LOGIC FOR OFF-GRID:
+// - If ALL THREE (inverter + battery + panels) selected → 5% on all three
+// - If Panel + Battery (no inverter) → 5% on panel, 18% on battery
+// - If Inverter + Panel (no battery) → 5% on panel, 18% on inverter
+// - If Inverter + Battery (no panels) → 18% on both
+// - All other items (ACDB, DCDB, cables, etc.) always 18%
 function getGstFor(type) {
-  if (type === 'panels') return 5;
-  return 18; // inverter, battery, and all others
+  const enabled = getEnabledMainComponents();
+  const allThree = enabled.inverter && enabled.battery && enabled.panels;
+
+  if (type === 'panels') {
+    // Panels always 5% if panels are enabled
+    return 5;
+  }
+
+  if (type === 'inverter') {
+    // Inverter 5% only if ALL THREE are selected
+    if (allThree) return 5;
+    return 18;
+  }
+
+  if (type === 'battery') {
+    // Battery 5% only if ALL THREE are selected
+    if (allThree) return 5;
+    return 18;
+  }
+
+  // All other items (ACDB, DCDB, cables, structure, installation, etc.) always 18%
+  return 18;
 }
 
 function isEnabled(sectionId) {
@@ -804,7 +841,10 @@ function buildLineItemsForQuotation() {
       const dealer = n(sel.dataset.price);
       const base = computeBasePrice('acdb', dealer);
       const rate = applyMarginTo(base, 'acdb');
-      items.push({ type:'acdb', item: sel.value, desc: sel.value, qty, unit:'Nos', baseRate: rate, gstPercent: getGstFor('acdb') });
+      // Format: "ACDB - [model details]" - remove "ACDB " prefix from desc if present
+      const rawDesc = sel.dataset.desc || sel.value;
+      const modelDetails = rawDesc.replace(/^ACDB\s*/i, '');
+      items.push({ type:'acdb', item: 'ACDB', desc: `ACDB - ${modelDetails}`, qty, unit:'Nos', baseRate: rate, gstPercent: getGstFor('acdb') });
     }
   }
 
@@ -816,7 +856,10 @@ function buildLineItemsForQuotation() {
       const dealer = n(sel.dataset.price);
       const base = computeBasePrice('dcdb', dealer);
       const rate = applyMarginTo(base, 'dcdb');
-      items.push({ type:'dcdb', item: sel.value, desc: sel.value, qty, unit:'Nos', baseRate: rate, gstPercent: getGstFor('dcdb') });
+      // Format: "DCDB - [model details]" - remove "DCDB " prefix from desc if present
+      const rawDesc = sel.dataset.desc || sel.value;
+      const modelDetails = rawDesc.replace(/^DCDB\s*/i, '');
+      items.push({ type:'dcdb', item: 'DCDB', desc: `DCDB - ${modelDetails}`, qty, unit:'Nos', baseRate: rate, gstPercent: getGstFor('dcdb') });
     }
   }
 
