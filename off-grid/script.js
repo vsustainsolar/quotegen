@@ -1024,15 +1024,15 @@ function buildDetailedQuotationHtml(totals, systemType) {
     </tr>
   `).join('');
 
-  // Detailed quote: Hide individual prices, show only grand total
   const commercialRows = totals.items.map((it, idx) => {
+    const amount = round2(it.qty * it.baseRate);
     return `
       <tr class="odd:bg-white/50 even:bg-gray-50/50">
         <td class="p-3 border text-center">${idx + 1}</td>
         <td class="p-3 border">${it.item}</td>
         <td class="p-3 border text-center">${it.unit}</td>
         <td class="p-3 border text-center">${it.qty}</td>
-        <td class="p-3 border text-right">-</td>
+        <td class="p-3 border text-right">${fmt(amount)}</td>
       </tr>
     `;
   }).join('');
