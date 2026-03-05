@@ -1280,9 +1280,9 @@ function buildDetailedQuotationHtml(totals, systemType) {
         <div class="h-[45%] w-full overflow-hidden relative">
             <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=2072&auto=format&fit=crop" alt="Solar Panels" class="w-full h-full object-cover">
             
-            <!-- 2025 Badge -->
+            <!-- 2026 Badge -->
             <div class="absolute top-0 right-16 bg-brand-orange text-white font-bold text-2xl py-4 px-3 shadow-lg" style="clip-path: polygon(0% 0%, 100% 0%, 100% 85%, 50% 100%, 0% 85%);">
-                2025
+                2026
             </div>
         </div>
 
@@ -1789,7 +1789,7 @@ function buildDetailedQuotationHtml(totals, systemType) {
                 <!-- Profile Photo Placeholder -->
                 <div class="flex-shrink-0">
                     <div class="w-28 h-28 bg-gray-200 rounded-full overflow-hidden border-4 border-white shadow-md">
-                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1000&auto=format&fit=crop" alt="Profile" class="w-full h-full object-cover">
+                        <img src="https://github.com/vsustainsolar/quotegen/blob/main/Uplodes/profile.png?raw=true" alt="Profile" class="w-full h-full object-cover">
                     </div>
                 </div>
 
@@ -1898,21 +1898,30 @@ function buildSummaryQuotationHtml(totals, systemType) {
     `;
   }).join('');
 
-  // Add GST and Grand Total rows
-  const footerRows = `
-    <tr class="bg-white/50">
-      <td class="p-3 border"></td>
-      <td class="p-3 border text-right font-semibold">Total GST</td>
-      <td class="p-3 border"></td>
-      <td class="p-3 border"></td>
-      <td class="p-3 border text-right">${fmt(totals.totalGst)}</td>
-    </tr>
-    <tr class="bg-blue-50/80 font-bold border-t-2 border-brand-blue">
-      <td class="p-4 border"></td>
-      <td class="p-4 border text-right text-base" colspan="3">GRAND TOTAL (INR)</td>
-      <td class="p-4 border text-right text-xl text-brand-blue">${fmt(totals.grandTotal)}</td>
-    </tr>
-  `;
+  // Add Grand Total row and subsidy row if applicable
+  let footerRows = `
+  <tr class="bg-blue-50/80 font-bold border-t-2 border-brand-blue">
+    <td class="p-4 border"></td>
+    <td class="p-4 border text-right text-base" colspan="3">GRAND TOTAL (Inclusive of all taxes)</td>
+    <td class="p-4 border text-right text-xl text-brand-blue">${fmt(totals.grandTotal)}</td>
+  </tr>
+`;
+
+  if (isSubsidyYes && totals.subsidy > 0) {
+    const amountAfterSubsidy = totals.grandTotal - totals.subsidy;
+    footerRows += `
+  <tr class="bg-green-50/80 font-semibold border-t">
+    <td class="p-4 border"></td>
+    <td class="p-4 border text-right text-sm" colspan="3">Less: PM Surya Ghar Subsidy</td>
+    <td class="p-4 border text-right text-lg text-green-700">- ${fmt(totals.subsidy)}</td>
+  </tr>
+  <tr class="bg-orange-50/80 font-bold border-t-2 border-brand-orange">
+    <td class="p-4 border"></td>
+    <td class="p-4 border text-right text-base" colspan="3">TOTAL AMOUNT</td>
+    <td class="p-4 border text-right text-xl text-brand-orange">${fmt(amountAfterSubsidy)}</td>
+  </tr>
+`;
+  }
 
   // BUILD SUBSIDY DISCLAIMER BLOCK
   let subsidyDisclaimerHtml = '';
@@ -2154,9 +2163,9 @@ function buildSummaryQuotationHtml(totals, systemType) {
         <div class="h-[45%] w-full overflow-hidden relative">
             <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=2072&auto=format&fit=crop" alt="Solar Panels" class="w-full h-full object-cover">
             
-            <!-- 2025 Badge -->
+            <!-- 2026 Badge -->
             <div class="absolute top-0 right-16 bg-brand-orange text-white font-bold text-2xl py-4 px-3 shadow-lg" style="clip-path: polygon(0% 0%, 100% 0%, 100% 85%, 50% 100%, 0% 85%);">
-                2025
+                2026
             </div>
         </div>
 
@@ -2663,7 +2672,7 @@ function buildSummaryQuotationHtml(totals, systemType) {
                 <!-- Profile Photo Placeholder -->
                 <div class="flex-shrink-0">
                     <div class="w-28 h-28 bg-gray-200 rounded-full overflow-hidden border-4 border-white shadow-md">
-                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1000&auto=format&fit=crop" alt="Profile" class="w-full h-full object-cover">
+                        <img src="https://github.com/vsustainsolar/quotegen/blob/main/Uplodes/profile.png?raw=true" alt="Profile" class="w-full h-full object-cover">
                     </div>
                 </div>
 
