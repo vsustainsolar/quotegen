@@ -1141,7 +1141,7 @@ function buildDetailedQuotationHtml(totals, systemType) {
         .page-container {
             /* Applied the custom background image here */
             background-color: white; /* Fallback */
-            background-image: url('https://github.com/Abhishekcodeking01/v-solar-quote/blob/8f2c0c796ba02307c87dda837a906dc9c079aa05/Uplodes/background%20v%20solar.png?raw=true');
+            background-image: url('https://github.com/vsustainsolar/quotegen/blob/8f2c0c796ba02307c87dda837a906dc9c079aa05/Uplodes/background%20v%20solar.png?raw=true');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -1263,7 +1263,7 @@ function buildDetailedQuotationHtml(totals, systemType) {
         <div class="h-[13%] w-full flex justify-between items-start p-2 relative z-20 bg-white/90">
              <!-- Logo (TOP LEFT) -->
              <div class="w-36">
-                <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
+                <img src="https://github.com/vsustainsolar/quotegen/blob/f079f0ae77e388c7c8747b26688ade236b61cbd1/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
             </div>
 
             <!-- Header Text -->
@@ -1315,7 +1315,7 @@ function buildDetailedQuotationHtml(totals, systemType) {
         
         <!-- Logo (TOP RIGHT) -->
         <div class="absolute top-8 right-8 z-30 w-32">
-            <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
+            <img src="https://github.com/vsustainsolar/quotegen/blob/f079f0ae77e388c7c8747b26688ade236b61cbd1/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
         </div>
 
         <!-- Content Container -->
@@ -1330,7 +1330,7 @@ function buildDetailedQuotationHtml(totals, systemType) {
                 
                 <!-- DIAGRAM (Reduced Height to 350px) -->
                 <div class="flex items-center justify-center mb-8 relative h-[350px]">
-                    <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/d2ac544338d64714fdc75e8008f2a733bb61ab83/Uplodes/on%20grid%20plannnt%20explained.png?raw=true" alt="On Grid Plant Explained" class="h-full w-full object-contain shadow-lg rounded-lg bg-white/50">
+                    <img src="https://github.com/vsustainsolar/quotegen/blob/d2ac544338d64714fdc75e8008f2a733bb61ab83/Uplodes/on%20grid%20plannnt%20explained.png?raw=true" alt="On Grid Plant Explained" class="h-full w-full object-contain shadow-lg rounded-lg bg-white/50">
                 </div>
 
                 <!-- Project Details - Centered and Enlarged -->
@@ -1375,7 +1375,7 @@ function buildDetailedQuotationHtml(totals, systemType) {
         
         <!-- Logo (TOP RIGHT) -->
         <div class="absolute top-4 right-8 z-30 w-32">
-            <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
+            <img src="https://github.com/vsustainsolar/quotegen/blob/f079f0ae77e388c7c8747b26688ade236b61cbd1/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
         </div>
 
         <div class="relative z-20 mt-16 px-12 h-full flex flex-col justify-start pb-12">
@@ -1415,7 +1415,7 @@ function buildDetailedQuotationHtml(totals, systemType) {
         
         <!-- Logo (TOP RIGHT) -->
         <div class="absolute top-4 right-8 z-30 w-32">
-            <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
+            <img src="https://github.com/vsustainsolar/quotegen/blob/f079f0ae77e388c7c8747b26688ade236b61cbd1/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
         </div>
 
         <div class="relative z-20 mt-16 px-12 h-full flex flex-col justify-between pb-12">
@@ -1493,7 +1493,7 @@ function buildDetailedQuotationHtml(totals, systemType) {
         
         <!-- Logo (TOP RIGHT) -->
         <div class="absolute top-8 right-8 z-30 w-32">
-            <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
+            <img src="https://github.com/vsustainsolar/quotegen/blob/f079f0ae77e388c7c8747b26688ade236b61cbd1/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
         </div>
 
         <!-- Shifted Header -->
@@ -1600,7 +1600,7 @@ function buildDetailedQuotationHtml(totals, systemType) {
         
         <!-- Logo (CENTERED) -->
         <div class="absolute top-4 left-1/2 -translate-x-1/2 z-30 w-32">
-            <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
+            <img src="https://github.com/vsustainsolar/quotegen/blob/f079f0ae77e388c7c8747b26688ade236b61cbd1/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
         </div>
 
         <div class="relative z-20 pt-48 px-12 pb-12">
@@ -1713,7 +1713,7 @@ function buildDetailedQuotationHtml(totals, systemType) {
 
         <!-- Logo (CENTERED) -->
         <div class="absolute top-4 left-1/2 -translate-x-1/2 z-30 w-32">
-            <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
+            <img src="https://github.com/vsustainsolar/quotegen/blob/f079f0ae77e388c7c8747b26688ade236b61cbd1/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
         </div>
 
         <div class="relative z-20 mt-40 px-12">
@@ -1765,7 +1765,7 @@ function buildDetailedQuotationHtml(totals, systemType) {
     <div class="page-container page-break relative flex flex-col">
         <!-- Top Image Section REPLACED WITH BG 3.png -->
         <div class="h-[40%] w-full relative overflow-hidden">
-            <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/8f2c0c796ba02307c87dda837a906dc9c079aa05/Uplodes/bg%203.png?raw=true" alt="Office Meeting" class="w-full h-full object-cover">
+            <img src="https://github.com/vsustainsolar/quotegen/blob/8f2c0c796ba02307c87dda837a906dc9c079aa05/Uplodes/bg%203.png?raw=true" alt="Office Meeting" class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-t from-brand-blue/80 to-transparent"></div>
             
             <div class="absolute inset-0 flex flex-col items-center justify-center text-white z-10 text-center p-8">
@@ -1777,7 +1777,7 @@ function buildDetailedQuotationHtml(totals, systemType) {
 
          <!-- Logo (CENTERED) -->
          <div class="absolute top-4 left-1/2 -translate-x-1/2 z-30 w-32 bg-white/90 p-2 rounded shadow-lg">
-            <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
+            <img src="https://github.com/vsustainsolar/quotegen/blob/f079f0ae77e388c7c8747b26688ade236b61cbd1/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
         </div>
 
         <!-- Bottom Content -->
@@ -2019,7 +2019,7 @@ function buildSummaryQuotationHtml(totals, systemType) {
         .page-container {
             /* Applied the custom background image here */
             background-color: white; /* Fallback */
-            background-image: url('https://github.com/Abhishekcodeking01/v-solar-quote/blob/8f2c0c796ba02307c87dda837a906dc9c079aa05/Uplodes/background%20v%20solar.png?raw=true');
+            background-image: url('https://github.com/vsustainsolar/quotegen/blob/8f2c0c796ba02307c87dda837a906dc9c079aa05/Uplodes/background%20v%20solar.png?raw=true');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -2137,7 +2137,7 @@ function buildSummaryQuotationHtml(totals, systemType) {
         <div class="h-[13%] w-full flex justify-between items-start p-2 relative z-20 bg-white/90">
              <!-- Logo (TOP LEFT) -->
              <div class="w-36">
-                <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
+                <img src="https://github.com/vsustainsolar/quotegen/blob/f079f0ae77e388c7c8747b26688ade236b61cbd1/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
             </div>
 
             <!-- Header Text -->
@@ -2189,7 +2189,7 @@ function buildSummaryQuotationHtml(totals, systemType) {
         
         <!-- Logo (TOP RIGHT) -->
         <div class="absolute top-8 right-8 z-30 w-32">
-            <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
+            <img src="https://github.com/vsustainsolar/quotegen/blob/f079f0ae77e388c7c8747b26688ade236b61cbd1/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
         </div>
 
         <!-- Content Container -->
@@ -2204,7 +2204,7 @@ function buildSummaryQuotationHtml(totals, systemType) {
                 
                 <!-- DIAGRAM (Reduced Height to 350px) -->
                 <div class="flex items-center justify-center mb-8 relative h-[350px]">
-                    <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/d2ac544338d64714fdc75e8008f2a733bb61ab83/Uplodes/on%20grid%20plannnt%20explained.png?raw=true" alt="On Grid Plant Explained" class="h-full w-full object-contain shadow-lg rounded-lg bg-white/50">
+                    <img src="https://github.com/vsustainsolar/quotegen/blob/d2ac544338d64714fdc75e8008f2a733bb61ab83/Uplodes/on%20grid%20plannnt%20explained.png?raw=true" alt="On Grid Plant Explained" class="h-full w-full object-contain shadow-lg rounded-lg bg-white/50">
                 </div>
 
                 <!-- Project Details - Centered and Enlarged -->
@@ -2249,7 +2249,7 @@ function buildSummaryQuotationHtml(totals, systemType) {
         
         <!-- Logo (TOP RIGHT) -->
         <div class="absolute top-4 right-8 z-30 w-32">
-            <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
+            <img src="https://github.com/vsustainsolar/quotegen/blob/f079f0ae77e388c7c8747b26688ade236b61cbd1/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
         </div>
 
         <div class="relative z-20 mt-16 px-12 h-full flex flex-col justify-start pb-12">
@@ -2289,7 +2289,7 @@ function buildSummaryQuotationHtml(totals, systemType) {
         
         <!-- Logo (TOP RIGHT) -->
         <div class="absolute top-4 right-8 z-30 w-32">
-            <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
+            <img src="https://github.com/vsustainsolar/quotegen/blob/f079f0ae77e388c7c8747b26688ade236b61cbd1/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
         </div>
 
         <div class="relative z-20 mt-16 px-12 h-full flex flex-col justify-between pb-12">
@@ -2367,7 +2367,7 @@ function buildSummaryQuotationHtml(totals, systemType) {
         
         <!-- Logo (TOP RIGHT) -->
         <div class="absolute top-8 right-8 z-30 w-32">
-            <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
+            <img src="https://github.com/vsustainsolar/quotegen/blob/f079f0ae77e388c7c8747b26688ade236b61cbd1/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
         </div>
 
         <!-- Shifted Header -->
@@ -2474,7 +2474,7 @@ function buildSummaryQuotationHtml(totals, systemType) {
         
         <!-- Logo (CENTERED) -->
         <div class="absolute top-4 left-1/2 -translate-x-1/2 z-30 w-32">
-            <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
+            <img src="https://github.com/vsustainsolar/quotegen/blob/f079f0ae77e388c7c8747b26688ade236b61cbd1/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
         </div>
 
         <div class="relative z-20 pt-48 px-12 pb-12">
@@ -2587,7 +2587,7 @@ function buildSummaryQuotationHtml(totals, systemType) {
 
         <!-- Logo (CENTERED) -->
         <div class="absolute top-4 left-1/2 -translate-x-1/2 z-30 w-32">
-            <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
+            <img src="https://github.com/vsustainsolar/quotegen/blob/f079f0ae77e388c7c8747b26688ade236b61cbd1/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
         </div>
 
         <div class="relative z-20 mt-40 px-12">
@@ -2639,7 +2639,7 @@ function buildSummaryQuotationHtml(totals, systemType) {
     <div class="page-container page-break relative flex flex-col">
         <!-- Top Image Section REPLACED WITH BG 3.png -->
         <div class="h-[40%] w-full relative overflow-hidden">
-            <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/8f2c0c796ba02307c87dda837a906dc9c079aa05/Uplodes/bg%203.png?raw=true" alt="Office Meeting" class="w-full h-full object-cover">
+            <img src="https://github.com/vsustainsolar/quotegen/blob/8f2c0c796ba02307c87dda837a906dc9c079aa05/Uplodes/bg%203.png?raw=true" alt="Office Meeting" class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-t from-brand-blue/80 to-transparent"></div>
             
             <div class="absolute inset-0 flex flex-col items-center justify-center text-white z-10 text-center p-8">
@@ -2651,7 +2651,7 @@ function buildSummaryQuotationHtml(totals, systemType) {
 
          <!-- Logo (CENTERED) -->
          <div class="absolute top-4 left-1/2 -translate-x-1/2 z-30 w-32 bg-white/90 p-2 rounded shadow-lg">
-            <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
+            <img src="https://github.com/vsustainsolar/quotegen/blob/f079f0ae77e388c7c8747b26688ade236b61cbd1/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full object-contain">
         </div>
 
         <!-- Bottom Content -->
@@ -2795,7 +2795,7 @@ function buildShortQuotationHtml(totals, systemType) {
         <!-- Header -->
         <div class="flex justify-between items-start border-b-2 border-brand-orange pb-6 mb-8">
             <div class="w-40">
-                <img src="https://github.com/Abhishekcodeking01/v-solar-quote/blob/9ae39ab1ba9eb2eedc38678b5d67f65a93283d84/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full">
+                <img src="https://github.com/vsustainsolar/quotegen/blob/f079f0ae77e388c7c8747b26688ade236b61cbd1/Uplodes/v%20sustain%20logo.png?raw=true" alt="V Sustain Logo" class="w-full">
             </div>
             <div class="text-right">
                 <h1 class="text-3xl font-bold text-brand-blue mb-1">Quotation</h1>
