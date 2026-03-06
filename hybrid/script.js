@@ -28,9 +28,24 @@ const inverterList = [
   { model: "SOLARVERTER PRO 5KVA (MPPT)", price: 40666 },
   { model: "SOLARVERTER PRO 6KVA (MPPT)", price: 47247 },
   { model: "SOLARVERTER PRO 7.5KVA (MPPT)", price: 64266 },
-  { model: "SOLARVERTER PRO 10.1KVA (MPPT)", price: 82817 }
+  { model: "SOLARVERTER PRO 10.1KVA (MPPT)", price: 82817 },
+  // Newly Added Hybrid Models
+  { model: "HYBRID TX 3KVA + Dongle (PV 3 KW)", price: 34290 },
+  { model: "HYBRID TX 4KVA + Dongle (PV 4 KW)", price: 45257 },
+  { model: "HYBRID TX 5KVA + Dongle (PV 5 KW)", price: 48058 },
+  { model: "HYBRID TX 3.75KVA/48V", price: 34290 },
+  { model: "Hybrid Feston Single Phase 3KW", price: 66000 },
+  { model: "Hybrid Feston Single Phase 3.6KW", price: 74000 },
+  { model: "Hybrid Feston Single Phase 5kW", price: 78000 },
+  { model: "Hybrid Feston Single Phase 6KW", price: 82000 },
+  { model: "Hybrid Feston Single Phase 8KW", price: 119000 },
+  { model: "Hybrid Feston Three phase 8KW", price: 155000 },
+  { model: "Hybrid Feston Three phase 10KW", price: 161000 },
+  { model: "Hybrid Feston Three phase 12KW", price: 170000 },
+  { model: "Hybrid Feston Three phase 15KW", price: 220000 },
+  { model: "Hybrid Feston Three phase 20KW", price: 285000 },
+  { model: "Hybrid Feston Three phase 30KW", price: 380000 }
 ];
-
 // SOLAR BATTERIES
 const batteryList = [
   { model: "LPT 1240L (40Ah, 60M*)", price: 4300 },
