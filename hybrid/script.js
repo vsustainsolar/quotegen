@@ -44,7 +44,13 @@ const inverterList = [
   { model: "Hybrid Feston Three phase 12KW", price: 170000 },
   { model: "Hybrid Feston Three phase 15KW", price: 220000 },
   { model: "Hybrid Feston Three phase 20KW", price: 285000 },
-  { model: "Hybrid Feston Three phase 30KW", price: 380000 }
+  { model: "Hybrid Feston Three phase 30KW", price: 380000 },
+  { model: "SOLAR HYBRID HF NXH 130 A48 3kW (1 phase) Wall Mount", price: 74300 },
+  { model: "SOLAR HYBRID HF NXH 150 A48 5KW (1 phase) Wall Mount", price: 88615 },
+  { model: "SOLAR HYBRID HF NXH 308 A 8KW (3 phase) Wall Mount", price: 191841 },
+  { model: "SOLAR HYBRID HF NXH 310 A 10KW (3 phase) Wall Mount", price: 205269 },
+  { model: "SOLAR HYBRID HF NXH 312 A 12KW (3 phase) Wall Mount", price: 216033 }
+  
 ];
 // SOLAR BATTERIES
 const batteryList = [
