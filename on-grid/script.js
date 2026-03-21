@@ -44,7 +44,11 @@ const panelList = [
    { model: "NON DCR LUM 620TG132 BI-GL", watt: 620, price: 11203 },
   { model: "NON DCR LUM 625TG132 BI-GL", watt: 625, price: 11293 },
   { model: "NON DCR LUM 630TG132 BI-GL", watt: 630, price: 11384 },
-  { model: "NON DCR LUM 635TG132 BI-GL", watt: 635, price: 11474 }
+  { model: "NON DCR LUM 635TG132 BI-GL", watt: 635, price: 11474 },
+   { model: "DCR LUM 620TG132 BI-GL", watt: 620, price: 16554 },
+  { model: "DCR LUM 625TG132 BI-GL", watt: 625, price: 16687 },
+  { model: "DCR LUM 630TG132 BI-GL", watt: 630, price: 16821 },
+  { model: "DCR LUM 635TG132 BI-GL", watt: 635, price: 16954 }
    
 ];
 
@@ -67,7 +71,8 @@ const dcdbList = [
   { sku: "TSADDC600V11F", desc: "DCDB 1 In 1 Out With Fuse (A)", price: 1711.00 },
   { sku: "TSADC600V21F", desc: "DCDB 2 In 1 Out With Fuse", price: 2383.60 },
   { sku: "TSADC600V31F", desc: "DCDB 3 In 1 Out With Fuse", price: 2725.80 },
-  { sku: "TSADC600V41F", desc: "DCDB 4 In 1 Out With Fuse", price: 3103.40 }
+  { sku: "TSADC600V41F", desc: "DCDB 4 In 1 Out With Fuse", price: 3103.40 },
+   
 ];
 
 // Meter Options
