@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B2B UPS Quotation | V-Sustain Solar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="builder-container">
+        <header class="builder-header">
+            <div class="header-left">
+                <!-- Fallback paths handling whether opened locally or via server -->
+                <img src="../Uplodes/v sustain logo.png" alt="V-Sustain" class="logo" onerror="this.src='../Uplodes/v sustain logo (1).png'">
+            </div>
+            <div class="header-right">
+                <h1>B2B UPS Solutions Builder</h1>
+                <a href="../index.html" class="back-link">← Back to Main Menu</a>
+            </div>
+        </header>
+
+        <main class="builder-content">
+            <!-- Customer Details Form -->
+            <section class="panel">
+                <h2>1. Customer Information</h2>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Customer/Company Name</label>
+                        <input type="text" id="cust-name" placeholder="E.g. TechCorp India Pvt Ltd">
+                    </div>
+                    <div class="input-group">
+                        <label>Contact Number</label>
+                        <input type="text" id="cust-phone" placeholder="+91 ">
+                    </div>
+                    <div class="input-group">
+                        <label>Email Address</label>
+                        <input type="email" id="cust-email" placeholder="client@company.com">
+                    </div>
+                    <div class="input-group">
+                        <label>Installation Address</label>
+                        <input type="text" id="cust-address" placeholder="Site Address">
+                    </div>
+                </div>
+            </section>
+
+            <!-- UPS Section -->
+            <section class="panel">
+                <h2>2. UPS Configuration</h2>
+                <p class="helper-text">Add one or multiple UPS systems. You can configure different models, quantities, and margins.</p>
+                <div id="ups-container" class="dynamic-container">
+                    <!-- Dynamic UPS rows injected here -->
+                </div>
+                <button type="button" class="btn-add" id="add-ups-btn">+ Add Another UPS Model</button>
+            </section>
+
+            <!-- Battery Section -->
+            <section class="panel">
+                <h2>3. Battery Configuration</h2>
+                <p class="helper-text">Add the required battery banks. Supports multiple battery models if needed.</p>
+                <div id="battery-container" class="dynamic-container">
+                    <!-- Dynamic Battery rows injected here -->
+                </div>
+                <button type="button" class="btn-add" id="add-battery-btn">+ Add Another Battery Model</button>
+            </section>
+
+            <!-- Trolley / Accessories Section -->
+            <section class="panel">
+                <h2>4. Accessories</h2>
+                <div class="item-row" id="trolley-row">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="trolley-active" checked>
+                        <span class="slider"></span>
+                    </label>
+                    <select id="trolley-select" class="item-select">
+                        <!-- Options injected by JS -->
+                    </select>
+                    <div class="input-group-inline">
+                        <label>Qty:</label>
+                        <input type="number" id="trolley-qty" class="item-qty" value="1" min="1">
+                    </div>
+                    <div class="input-group-inline">
+                        <label>Margin(%):</label>
+                        <input type="number" id="trolley-margin" class="item-margin" value="15" min="0">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Installation & Socket Requirements -->
+            <section class="panel highlight-panel">
+                <h2>5. Site Requirements</h2>
+                <div class="socket-wrapper">
+                    <div class="socket-info">
+                        <h3>UPS Socket Required?</h3>
+                        <p>Does the site require a dedicated 15A/20A socket to be arranged by the client?</p>
+                    </div>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="ups_socket" value="yes" checked>
+                            <span class="radio-btn">YES</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="ups_socket" value="no">
+                            <span class="radio-btn">NO</span>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Generate Action -->
+            <div class="action-footer">
+                <button type="button" id="generate-btn" class="btn-generate">Generate Professional Quotation</button>
+            </div>
+        </main>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
