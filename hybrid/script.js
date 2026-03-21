@@ -70,7 +70,11 @@ const panelList = [
   { model: "POLY 170W/12V", watt: 170, price: 3815 },
   { model: "PV MOD LUM24550M DCR BI-TS EXWH31", watt: 550, price: 14025 },
   { model: "PV MOD LUM 24585T144 TCHC 144C EXWH31", watt: 585, price: 9694 },
-  { model: "PV MOD LUM 24590T144 BI-TS-31", watt: 590, price: 9694 }
+  { model: "PV MOD LUM 24590T144 BI-TS-31", watt: 590, price: 9694 },
+   { model: "NON DCR LUM 620TG132 BI-GL", watt: 620, price: 11203 },
+  { model: "NON DCR LUM 625TG132 BI-GL", watt: 625, price: 11293 },
+  { model: "NON DCR LUM 630TG132 BI-GL", watt: 630, price: 11384 },
+  { model: "NON DCR LUM 635TG132 BI-GL", watt: 635, price: 11474 }
 ];
 
 // ACDB / DCDB
