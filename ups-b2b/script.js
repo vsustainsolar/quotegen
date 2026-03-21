@@ -24,19 +24,93 @@ const trolleyCatalog = [
 
 // --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Populate Trolley
+    // 1. Inject Global Pricing Settings Dynamically via JS
+    const upsPanel = document.getElementById('ups-container').closest('.panel');
+    const globalPanel = document.createElement('section');
+    globalPanel.className = 'panel highlight-panel';
+    globalPanel.innerHTML = `
+        <h2>2. Global Pricing Settings</h2>
+        <p class="helper-text">Set a common margin for all products. Turn on "Reduce Margin" to apply a discount instead of a markup.</p>
+        <div class="form-grid" style="align-items: center;">
+            <div class="input-group">
+                <label>Common Margin (%)</label>
+                <input type="number" id="global-margin" value="15" min="0">
+            </div>
+            <div class="input-group" style="display: flex; align-items: center; gap: 15px; margin-top: 15px;">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="global-margin-reduce">
+                    <span class="slider"></span>
+                </label>
+                <span id="margin-mode-text" style="font-weight: bold; font-size: 15px;">Add Margin (Markup)</span>
+            </div>
+        </div>
+    `;
+    // Insert Global Panel before the UPS section
+    upsPanel.parentNode.insertBefore(globalPanel, upsPanel);
+
+    // Update the numbering of subsequent panels
+    let panelIndex = 3;
+    let currentSibling = globalPanel.nextElementSibling;
+    while(currentSibling && currentSibling.classList.contains('panel')) {
+        const h2 = currentSibling.querySelector('h2');
+        if(h2) {
+            h2.innerText = h2.innerText.replace(/^\d+\./, panelIndex + '.');
+            panelIndex++;
+        }
+        currentSibling = currentSibling.nextElementSibling;
+    }
+
+    // Toggle styling & text logic for Global Margin
+    const reduceToggle = document.getElementById('global-margin-reduce');
+    const modeText = document.getElementById('margin-mode-text');
+    reduceToggle.addEventListener('change', function() {
+        if(this.checked) {
+            modeText.textContent = 'Reduce Margin (Discount)';
+            modeText.style.color = 'var(--danger)';
+        } else {
+            modeText.textContent = 'Add Margin (Markup)';
+            modeText.style.color = 'var(--success)';
+        }
+    });
+    reduceToggle.dispatchEvent(new Event('change'));
+
+    // 2. Rewrite Trolley HTML row to support Custom Margin toggling
+    const trolleyRow = document.getElementById('trolley-row');
+    trolleyRow.style.flexWrap = 'wrap';
+    trolleyRow.innerHTML = `
+        <label class="toggle-switch" title="Enable Accessories">
+            <input type="checkbox" id="trolley-active" checked>
+            <span class="slider"></span>
+        </label>
+        <select id="trolley-select" class="item-select"></select>
+        <div class="input-group-inline">
+            <label>Qty:</label>
+            <input type="number" id="trolley-qty" class="item-qty" value="1" min="1" style="width: 60px;">
+        </div>
+        <div class="input-group-inline" style="border-left: 2px solid var(--border); padding-left: 15px; margin-left: auto;">
+            <label style="cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 13px;">
+                <input type="checkbox" id="trolley-custom-margin-toggle"> Custom Margin
+            </label>
+            <input type="number" id="trolley-margin" class="item-margin" value="15" min="0" disabled style="width: 60px; opacity: 0.5;">
+        </div>
+    `;
     const trolleySelect = document.getElementById('trolley-select');
     populateDropdown(trolleySelect, trolleyCatalog);
 
-    // Add first rows
+    const trolleyMarginToggle = document.getElementById('trolley-custom-margin-toggle');
+    const trolleyMarginInput = document.getElementById('trolley-margin');
+    trolleyMarginToggle.addEventListener('change', (e) => {
+        trolleyMarginInput.disabled = !e.target.checked;
+        trolleyMarginInput.style.opacity = e.target.checked ? '1' : '0.5';
+    });
+
+    // 3. Initialize default rows
     addUpsRow();
     addBatteryRow();
 
-    // Event Listeners for Adding Rows
+    // 4. Attach Listeners
     document.getElementById('add-ups-btn').addEventListener('click', addUpsRow);
     document.getElementById('add-battery-btn').addEventListener('click', addBatteryRow);
-
-    // Event Listener for Generate Button
     document.getElementById('generate-btn').addEventListener('click', generateQuotation);
 });
 
@@ -54,26 +128,37 @@ function populateDropdown(selectElement, catalog) {
 function createRow(type, catalog) {
     const row = document.createElement('div');
     row.className = `item-row ${type}-row`;
+    row.style.flexWrap = 'wrap';
     
     row.innerHTML = `
-        <label class="toggle-switch">
+        <label class="toggle-switch" title="Enable/Disable Product">
             <input type="checkbox" class="row-active" checked>
             <span class="slider"></span>
         </label>
-        <select class="item-select model-select"></select>
+        <select class="item-select model-select" style="min-width: 200px;"></select>
         <div class="input-group-inline">
             <label>Qty:</label>
-            <input type="number" class="item-qty" value="1" min="1">
+            <input type="number" class="item-qty" value="1" min="1" style="width: 60px;">
         </div>
-        <div class="input-group-inline">
-            <label>Margin(%):</label>
-            <input type="number" class="item-margin" value="15" min="0">
+        <div class="input-group-inline" style="border-left: 2px solid var(--border); padding-left: 15px; margin-left: auto;">
+            <label style="cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 13px;">
+                <input type="checkbox" class="use-custom-margin"> Custom Margin (%)
+            </label>
+            <input type="number" class="item-margin" value="15" min="0" disabled style="width: 60px; opacity: 0.5;">
         </div>
         <button type="button" class="btn-remove" title="Remove Row">✖</button>
     `;
 
     const selectElement = row.querySelector('.model-select');
     populateDropdown(selectElement, catalog);
+
+    // Custom Margin Toggle Logic for dynamically added rows
+    const customToggle = row.querySelector('.use-custom-margin');
+    const marginInput = row.querySelector('.item-margin');
+    customToggle.addEventListener('change', (e) => {
+        marginInput.disabled = !e.target.checked;
+        marginInput.style.opacity = e.target.checked ? '1' : '0.5';
+    });
 
     // Delete button logic
     row.querySelector('.btn-remove').addEventListener('click', () => {
@@ -95,7 +180,7 @@ function addBatteryRow() {
 
 // --- CALCULATION & INVOICE GENERATION ---
 
-function extractRowData(rowSelector, catalog) {
+function extractRowData(rowSelector, catalog, globalMargin, isReduce) {
     const rows = document.querySelectorAll(rowSelector);
     let items = [];
 
@@ -103,16 +188,29 @@ function extractRowData(rowSelector, catalog) {
         const isActive = row.querySelector('.row-active').checked;
         const modelId = row.querySelector('.model-select').value;
         const qty = parseInt(row.querySelector('.item-qty').value) || 0;
-        const margin = parseFloat(row.querySelector('.item-margin').value) || 0;
+        
+        const useCustom = row.querySelector('.use-custom-margin').checked;
+        const customMarginVal = parseFloat(row.querySelector('.item-margin').value) || 0;
 
         if (isActive && modelId && qty > 0) {
             const product = catalog.find(item => item.id === modelId);
             if (product) {
                 const baseTotal = product.price * qty;
-                const marginAmount = baseTotal * (margin / 100);
-                const finalBase = baseTotal + marginAmount;
+                
+                let finalBase = baseTotal;
+                
+                // Prioritize Custom Margin if enabled, otherwise use Global settings
+                if (useCustom) {
+                    finalBase = baseTotal + (baseTotal * (customMarginVal / 100)); // Custom margin is treated as an overriding markup
+                } else {
+                    if (isReduce) {
+                        finalBase = baseTotal - (baseTotal * (globalMargin / 100)); // Apply discount
+                    } else {
+                        finalBase = baseTotal + (baseTotal * (globalMargin / 100)); // Apply markup
+                    }
+                }
+
                 const gstAmount = finalBase * (product.gst / 100);
-                const unitFinalPrice = (finalBase + gstAmount) / qty; // Extrapolate unit price with margin + GST
 
                 items.push({
                     name: product.name,
@@ -139,25 +237,38 @@ function generateQuotation() {
         date: new Date().toLocaleDateString('en-IN')
     };
 
-    // 2. Extract active line items
+    // 2. Fetch Global Pricing Settings
+    const globalMargin = parseFloat(document.getElementById('global-margin').value) || 0;
+    const isReduce = document.getElementById('global-margin-reduce').checked;
+
+    // 3. Extract active line items
     let allItems = [];
     
-    // UPS
-    allItems = allItems.concat(extractRowData('.ups-row', upsCatalog));
-    // Batteries
-    allItems = allItems.concat(extractRowData('.battery-row', batteryCatalog));
+    allItems = allItems.concat(extractRowData('.ups-row', upsCatalog, globalMargin, isReduce));
+    allItems = allItems.concat(extractRowData('.battery-row', batteryCatalog, globalMargin, isReduce));
     
-    // Trolley
+    // Trolley logic
     const trolleyActive = document.getElementById('trolley-active').checked;
     const trolleyId = document.getElementById('trolley-select').value;
     if (trolleyActive && trolleyId) {
         const qty = parseInt(document.getElementById('trolley-qty').value) || 1;
-        const margin = parseFloat(document.getElementById('trolley-margin').value) || 0;
-        const product = trolleyCatalog.find(i => i.id === trolleyId);
+        const useCustom = document.getElementById('trolley-custom-margin-toggle').checked;
+        const customMarginVal = parseFloat(document.getElementById('trolley-margin').value) || 0;
         
+        const product = trolleyCatalog.find(i => i.id === trolleyId);
         const baseTotal = product.price * qty;
-        const marginAmount = baseTotal * (margin / 100);
-        const finalBase = baseTotal + marginAmount;
+        
+        let finalBase = baseTotal;
+        if (useCustom) {
+            finalBase = baseTotal + (baseTotal * (customMarginVal / 100));
+        } else {
+            if (isReduce) {
+                finalBase = baseTotal - (baseTotal * (globalMargin / 100));
+            } else {
+                finalBase = baseTotal + (baseTotal * (globalMargin / 100));
+            }
+        }
+        
         const gstAmount = finalBase * (product.gst / 100);
         
         allItems.push({
@@ -176,7 +287,7 @@ function generateQuotation() {
         return;
     }
 
-    // 3. Socket Disclaimer Logic
+    // 4. Socket Disclaimer Logic
     const socketReq = document.querySelector('input[name="ups_socket"]:checked').value;
     let disclaimerHtml = "";
     if (socketReq === 'yes') {
@@ -190,7 +301,7 @@ function generateQuotation() {
         `;
     }
 
-    // 4. Calculate Grand Totals
+    // 5. Calculate Grand Totals
     let grandPreTax = 0;
     let grandGst = 0;
     let grandTotal = 0;
@@ -213,7 +324,7 @@ function generateQuotation() {
         `;
     });
 
-    // 5. Build HTML String
+    // 6. Build HTML String
     const quoteHtml = `
     <!DOCTYPE html>
     <html lang="en">
@@ -323,7 +434,7 @@ function generateQuotation() {
     </html>
     `;
 
-    // 6. Open Quote in new tab
+    // 7. Open Quote in new tab
     const newWin = window.open('', '_blank');
     newWin.document.write(quoteHtml);
     newWin.document.close();
