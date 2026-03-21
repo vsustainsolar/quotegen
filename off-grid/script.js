@@ -53,7 +53,11 @@ const panelList = [
    { model: "NON DCR LUM 620TG132 BI-GL", watt: 620, price: 11203 },
   { model: "NON DCR LUM 625TG132 BI-GL", watt: 625, price: 11293 },
   { model: "NON DCR LUM 630TG132 BI-GL", watt: 630, price: 11384 },
-  { model: "NON DCR LUM 635TG132 BI-GL", watt: 635, price: 11474 }
+  { model: "NON DCR LUM 635TG132 BI-GL", watt: 635, price: 11474 },
+   { model: "DCR LUM 620TG132 BI-GL", watt: 620, price: 16554 },
+  { model: "DCR LUM 625TG132 BI-GL", watt: 625, price: 16687 },
+  { model: "DCR LUM 630TG132 BI-GL", watt: 630, price: 16821 },
+  { model: "DCR LUM 635TG132 BI-GL", watt: 635, price: 16954 }
 ];
 
 // ACDB / DCDB (same as on-grid)
