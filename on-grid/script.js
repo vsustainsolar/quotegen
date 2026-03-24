@@ -1378,7 +1378,7 @@ function buildDetailedQuotationHtml(totals, systemType) {
         </div>
     </div>
 
-    <!-- PAGE 3: TECHNO-COMMERCIAL OFFER (SYSTEM SPECS ONLY) -->
+    <!-- PAGE 3: TECHNO-COMMERCIAL OFFER draft 1 (SYSTEM SPECS ONLY) -->
     <div class="page-container page-break relative flex flex-col">
         <!-- Minimal Header Shape -->
         <div class="absolute top-0 left-0 w-full h-12 bg-gradient-to-r from-brand-blue to-brand-lightBlue z-10"></div>
