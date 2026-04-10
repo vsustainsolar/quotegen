@@ -57,6 +57,83 @@ const inverterCatalog = [
     { id: 'i32', name: 'Luminous EVO D 1650 24V (Square Wave) - 3 Yrs Warranty', price: 6040, gst: 18 }
 ];
 
+const solarInverterCatalog = [
+    // NXG Series (Solar UPS)
+    { id: 'si1', name: 'Luminous NXG 850e 12V (Solar UPS)', price: 4325, gst: 18 },
+    { id: 'si2', name: 'Luminous NXG 1150e 12V (Solar UPS)', price: 5515, gst: 18 },
+    { id: 'si3', name: 'Luminous NXG 1450e 12V (Solar UPS)', price: 6667, gst: 18 },
+    { id: 'si4', name: 'Luminous NXG 1850e 24V (Solar UPS)', price: 7860, gst: 18 },
+    { id: 'si5', name: 'Luminous NXG 2350 24V (Solar UPS)', price: 9963, gst: 18 },
+
+    // NXG PRO / Solar UPS
+    { id: 'si6', name: 'Luminous NXG PRO e 1KVA 12V', price: 9356, gst: 18 },
+    { id: 'si7', name: 'Luminous NXG PRO e 1KVA 24V', price: 9356, gst: 18 },
+
+    // Solarverter Series
+    { id: 'si8', name: 'Luminous Solarverter 3KVA 48V', price: 16779, gst: 18 },
+    { id: 'si9', name: 'Luminous Solarverter 5KVA 48V (PWM)', price: 31516, gst: 18 },
+
+    // NXP Series (PWM & MPPT)
+    { id: 'si10', name: 'Luminous NXP 3500 24V (PWM)', price: 14115, gst: 18 },
+    { id: 'si11', name: 'Luminous NXP PRO 3500 24V (MPPT)', price: 23188, gst: 18 },
+
+    // Solarverter PRO Series
+    { id: 'si12', name: 'Luminous Solarverter PRO 2KVA Eco 24V', price: 16897, gst: 18 },
+    { id: 'si13', name: 'Luminous Solarverter PRO 3KVA Eco 36V', price: 24498, gst: 18 },
+    { id: 'si14', name: 'Luminous Solarverter PRO 3.5KVA 48V', price: 31629, gst: 18 },
+    { id: 'si15', name: 'Luminous Solarverter PRO 5KVA 48V', price: 41895, gst: 18 },
+    { id: 'si16', name: 'Luminous Solarverter PRO 6KVA 96V', price: 47247, gst: 18 },
+    { id: 'si17', name: 'Luminous Solarverter PRO 7.5KVA Eco 96V', price: 64266, gst: 18 },
+    { id: 'si18', name: 'Luminous Solarverter PRO 10.1KVA Eco 120V', price: 82817, gst: 18 },
+
+    // NXT+ Series (MPPT PCU)
+    { id: 'si19', name: 'Luminous PCU NXT+ 7.5KVA 96V', price: 58076, gst: 18 },
+
+    // NXE PRO Series
+    { id: 'si20', name: 'Luminous NXE PRO 15KVA 240V', price: 129602, gst: 18 },
+
+    // On-Grid Inverters (NXI / NXIT Series - 5% GST)
+    { id: 'si21', name: 'Luminous NXIT130 3kW + Dongle (On-Grid)', price: 16941, gst: 5 },
+    { id: 'si22', name: 'Luminous NXIT150 5kW + Dongle (On-Grid)', price: 28774, gst: 5 },
+    { id: 'si23', name: 'Luminous NXI 140 4kW (On-Grid)', price: 28509, gst: 5 },
+    { id: 'si24', name: 'Luminous NXI 150 5kW (On-Grid)', price: 30508, gst: 5 },
+    { id: 'si25', name: 'Luminous NXI 305 5kW (On-Grid)', price: 45696, gst: 5 },
+    { id: 'si26', name: 'Luminous NXI 306 6kW (On-Grid)', price: 51206, gst: 5 },
+    { id: 'si27', name: 'Luminous NXI 308 8kW (On-Grid)', price: 57641, gst: 5 },
+    { id: 'si28', name: 'Luminous NXI 310 10kW (On-Grid)', price: 59110, gst: 5 },
+    { id: 'si29', name: 'Luminous NXIT310 10kW + Dongle (On-Grid)', price: 55684, gst: 5 },
+    { id: 'si30', name: 'Luminous NXI 312 12kW (On-Grid)', price: 63560, gst: 5 },
+    { id: 'si31', name: 'Luminous NXI 315 15kW (On-Grid)', price: 66339, gst: 5 },
+    { id: 'si32', name: 'Luminous NXI 320 20kW (On-Grid)', price: 79429, gst: 5 },
+    { id: 'si33', name: 'Luminous NXI 325 25kW (On-Grid)', price: 97180, gst: 5 },
+    { id: 'si34', name: 'Luminous NXI 330 30kW (On-Grid)', price: 110076, gst: 5 },
+    { id: 'si35', name: 'Luminous NXI 350 50kW (On-Grid)', price: 150912, gst: 5 },
+    { id: 'si36', name: 'Luminous NXI 360 60kW (On-Grid)', price: 161198, gst: 5 },
+    { id: 'si37', name: 'Luminous NXI 380 80kW (On-Grid)', price: 251588, gst: 5 },
+    { id: 'si38', name: 'Luminous NXI 3100 100kW (On-Grid)', price: 268801, gst: 5 },
+
+    // Utility Scale Inverters
+    { id: 'si39', name: 'Luminous NXI A3250-HV 250kW (Utility Scale)', price: 417806, gst: 5 },
+    { id: 'si40', name: 'Luminous NXI A3350-HV 350kW (Utility Scale)', price: 555492, gst: 5 },
+
+    // Accessories & Dongles
+    { id: 'si41', name: 'Luminous S3 WiFi Dongle', price: 100, gst: 18 },
+    { id: 'si42', name: 'Luminous S4 WiFi USB Dongle', price: 100, gst: 18 },
+    { id: 'si43', name: 'Luminous Sync X WiFi Dongle', price: 103, gst: 18 },
+    { id: 'si44', name: 'Luminous GTI Array Management Unit AI 2000', price: 172150, gst: 18 },
+
+    // Hybrid Inverters (5% GST)
+    { id: 'si45', name: 'Luminous Hybrid TX 3KVA 48V', price: 35328, gst: 5 },
+    { id: 'si46', name: 'Luminous Hybrid TX 4KVA 48V', price: 46625, gst: 5 },
+    { id: 'si47', name: 'Luminous Hybrid TX 5KVA 48V', price: 49512, gst: 5 },
+    { id: 'si48', name: 'Luminous Hybrid TX 3.75KVA 48V', price: 35328, gst: 5 },
+
+    // High Frequency Hybrid (NXH Series - 5% GST)
+    { id: 'si49', name: 'Luminous NXH 308 A 8kW 120-600V', price: 191841, gst: 5 },
+    { id: 'si50', name: 'Luminous NXH 310 A 10kW 120-600V', price: 205269, gst: 5 },
+    { id: 'si51', name: 'Luminous NXH 312 A 12kW 120-600V', price: 216033, gst: 5 }
+];
+
 const batteryCatalog = [
     { id: 'b1', name: 'Luminous ILST 10036 (80Ah) - 24+12* Months Warranty', price: 6459, gst: 18 },
     { id: 'b2', name: 'Luminous ILST 12042 (100Ah) - 24+18* Months Warranty', price: 7849, gst: 18 },
@@ -111,93 +188,100 @@ const trolleyCatalog = [
 // --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Inject Global Pricing Settings Dynamically via JS
-    const upsPanel = document.getElementById('ups-container').closest('.panel');
-    const globalPanel = document.createElement('section');
-    globalPanel.className = 'panel highlight-panel';
-    globalPanel.innerHTML = `
-        <h2>2. Global Pricing Settings</h2>
-        <p class="helper-text">Set a common margin for all products. Turn on "Reduce Margin" to apply a discount instead of a markup.</p>
-        <div class="form-grid" style="align-items: center;">
-            <div class="input-group">
-                <label>Common Margin (%)</label>
-                <input type="number" id="global-margin" value="15" min="0">
+    const upsPanel = document.getElementById('ups-container')?.closest('.panel');
+    if (upsPanel) {
+        const globalPanel = document.createElement('section');
+        globalPanel.className = 'panel highlight-panel';
+        globalPanel.innerHTML = `
+            <h2>2. Global Pricing Settings</h2>
+            <p class="helper-text">Set a common margin for all products. Turn on "Reduce Margin" to apply a discount instead of a markup.</p>
+            <div class="form-grid" style="align-items: center;">
+                <div class="input-group">
+                    <label>Common Margin (%)</label>
+                    <input type="number" id="global-margin" value="15" min="0">
+                </div>
+                <div class="input-group" style="display: flex; align-items: center; gap: 15px; margin-top: 15px;">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="global-margin-reduce">
+                        <span class="slider"></span>
+                    </label>
+                    <span id="margin-mode-text" style="font-weight: bold; font-size: 15px;">Add Margin (Markup)</span>
+                </div>
             </div>
-            <div class="input-group" style="display: flex; align-items: center; gap: 15px; margin-top: 15px;">
-                <label class="toggle-switch">
-                    <input type="checkbox" id="global-margin-reduce">
-                    <span class="slider"></span>
-                </label>
-                <span id="margin-mode-text" style="font-weight: bold; font-size: 15px;">Add Margin (Markup)</span>
-            </div>
-        </div>
-    `;
-    upsPanel.parentNode.insertBefore(globalPanel, upsPanel);
+        `;
+        upsPanel.parentNode.insertBefore(globalPanel, upsPanel);
 
-    // Auto-renumber the H2 headings dynamically
-    let panelIndex = 3;
-    let currentSibling = globalPanel.nextElementSibling;
-    while(currentSibling && currentSibling.classList.contains('panel')) {
-        const h2 = currentSibling.querySelector('h2');
-        if(h2) {
-            h2.innerText = h2.innerText.replace(/^\d+\./, panelIndex + '.');
-            panelIndex++;
+        // Auto-renumber the H2 headings dynamically
+        let panelIndex = 3;
+        let currentSibling = globalPanel.nextElementSibling;
+        while(currentSibling && currentSibling.classList.contains('panel')) {
+            const h2 = currentSibling.querySelector('h2');
+            if(h2) {
+                h2.innerText = h2.innerText.replace(/^\d+\./, panelIndex + '.');
+                panelIndex++;
+            }
+            currentSibling = currentSibling.nextElementSibling;
         }
-        currentSibling = currentSibling.nextElementSibling;
+
+        const reduceToggle = document.getElementById('global-margin-reduce');
+        const modeText = document.getElementById('margin-mode-text');
+        reduceToggle.addEventListener('change', function() {
+            if(this.checked) {
+                modeText.textContent = 'Reduce Margin (Discount)';
+                modeText.style.color = 'var(--danger)';
+            } else {
+                modeText.textContent = 'Add Margin (Markup)';
+                modeText.style.color = 'var(--success)';
+            }
+        });
+        reduceToggle.dispatchEvent(new Event('change'));
     }
-
-    const reduceToggle = document.getElementById('global-margin-reduce');
-    const modeText = document.getElementById('margin-mode-text');
-    reduceToggle.addEventListener('change', function() {
-        if(this.checked) {
-            modeText.textContent = 'Reduce Margin (Discount)';
-            modeText.style.color = 'var(--danger)';
-        } else {
-            modeText.textContent = 'Add Margin (Markup)';
-            modeText.style.color = 'var(--success)';
-        }
-    });
-    reduceToggle.dispatchEvent(new Event('change'));
 
     // 2. Rewrite Trolley HTML row to support Custom Margin toggling
     const trolleyRow = document.getElementById('trolley-row');
-    trolleyRow.style.flexWrap = 'wrap';
-    trolleyRow.innerHTML = `
-        <label class="toggle-switch" title="Enable Accessories">
-            <input type="checkbox" id="trolley-active" checked>
-            <span class="slider"></span>
-        </label>
-        <select id="trolley-select" class="item-select"></select>
-        <div class="input-group-inline">
-            <label>Qty:</label>
-            <input type="number" id="trolley-qty" class="item-qty" value="1" min="1" style="width: 60px;">
-        </div>
-        <div class="input-group-inline" style="border-left: 2px solid var(--border); padding-left: 15px; margin-left: auto;">
-            <label style="cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 13px;">
-                <input type="checkbox" id="trolley-custom-margin-toggle"> Custom Margin
+    if (trolleyRow) {
+        trolleyRow.style.flexWrap = 'wrap';
+        trolleyRow.innerHTML = `
+            <label class="toggle-switch" title="Enable Accessories">
+                <input type="checkbox" id="trolley-active" checked>
+                <span class="slider"></span>
             </label>
-            <input type="number" id="trolley-margin" class="item-margin" value="15" min="0" disabled style="width: 60px; opacity: 0.5;">
-        </div>
-    `;
-    const trolleySelect = document.getElementById('trolley-select');
-    populateDropdown(trolleySelect, trolleyCatalog);
+            <select id="trolley-select" class="item-select"></select>
+            <div class="input-group-inline">
+                <label>Qty:</label>
+                <input type="number" id="trolley-qty" class="item-qty" value="1" min="1" style="width: 60px;">
+            </div>
+            <div class="input-group-inline" style="border-left: 2px solid var(--border); padding-left: 15px; margin-left: auto;">
+                <label style="cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 13px;">
+                    <input type="checkbox" id="trolley-custom-margin-toggle"> Custom Margin
+                </label>
+                <input type="number" id="trolley-margin" class="item-margin" value="15" min="0" disabled style="width: 60px; opacity: 0.5;">
+            </div>
+        `;
+        const trolleySelect = document.getElementById('trolley-select');
+        populateDropdown(trolleySelect, trolleyCatalog);
 
-    const trolleyMarginToggle = document.getElementById('trolley-custom-margin-toggle');
-    const trolleyMarginInput = document.getElementById('trolley-margin');
-    trolleyMarginToggle.addEventListener('change', (e) => {
-        trolleyMarginInput.disabled = !e.target.checked;
-        trolleyMarginInput.style.opacity = e.target.checked ? '1' : '0.5';
-    });
+        const trolleyMarginToggle = document.getElementById('trolley-custom-margin-toggle');
+        const trolleyMarginInput = document.getElementById('trolley-margin');
+        trolleyMarginToggle.addEventListener('change', (e) => {
+            trolleyMarginInput.disabled = !e.target.checked;
+            trolleyMarginInput.style.opacity = e.target.checked ? '1' : '0.5';
+        });
+    }
 
+    // Initialize Default Rows
     addUpsRow();
     addInverterRow();
+    addSolarInverterRow(); // Init new section
     addBatteryRow();
 
-    // 3. Attach Custom Row Logic
-    document.getElementById('add-custom-btn').addEventListener('click', addCustomRow);
-    document.getElementById('add-ups-btn').addEventListener('click', addUpsRow);
-    document.getElementById('add-inverter-btn').addEventListener('click', addInverterRow);
-    document.getElementById('add-battery-btn').addEventListener('click', addBatteryRow);
-    document.getElementById('generate-btn').addEventListener('click', generateQuotation);
+    // 3. Attach Event Listeners
+    document.getElementById('add-ups-btn')?.addEventListener('click', addUpsRow);
+    document.getElementById('add-inverter-btn')?.addEventListener('click', addInverterRow);
+    document.getElementById('add-solarinverter-btn')?.addEventListener('click', addSolarInverterRow);
+    document.getElementById('add-battery-btn')?.addEventListener('click', addBatteryRow);
+    document.getElementById('add-custom-btn')?.addEventListener('click', addCustomRow);
+    document.getElementById('generate-btn')?.addEventListener('click', generateQuotation);
 });
 
 // --- DYNAMIC ROW BUILDERS ---
@@ -298,24 +382,30 @@ function createCustomRow() {
     return row;
 }
 
+// Add row functions
 function addUpsRow() {
     const container = document.getElementById('ups-container');
-    container.appendChild(createRow('ups', upsCatalog));
+    if(container) container.appendChild(createRow('ups', upsCatalog));
 }
 
 function addInverterRow() {
     const container = document.getElementById('inverter-container');
-    container.appendChild(createRow('inverter', inverterCatalog));
+    if(container) container.appendChild(createRow('inverter', inverterCatalog));
+}
+
+function addSolarInverterRow() {
+    const container = document.getElementById('solarinverter-container');
+    if(container) container.appendChild(createRow('solarinverter', solarInverterCatalog));
 }
 
 function addBatteryRow() {
     const container = document.getElementById('battery-container');
-    container.appendChild(createRow('battery', batteryCatalog));
+    if(container) container.appendChild(createRow('battery', batteryCatalog));
 }
 
 function addCustomRow() {
     const container = document.getElementById('custom-container');
-    container.appendChild(createCustomRow());
+    if(container) container.appendChild(createCustomRow());
 }
 
 // --- CALCULATION & INVOICE GENERATION ---
@@ -426,18 +516,19 @@ function generateQuotation() {
     const globalMargin = parseFloat(document.getElementById('global-margin').value) || 0;
     const isReduce = document.getElementById('global-margin-reduce').checked;
 
-    // 3. Extract active line items
+    // 3. Extract active line items from all sections
     let allItems = [];
     allItems = allItems.concat(extractRowData('.ups-row', upsCatalog, globalMargin, isReduce));
     allItems = allItems.concat(extractRowData('.inverter-row', inverterCatalog, globalMargin, isReduce));
+    allItems = allItems.concat(extractRowData('.solarinverter-row', solarInverterCatalog, globalMargin, isReduce));
     allItems = allItems.concat(extractRowData('.battery-row', batteryCatalog, globalMargin, isReduce));
     
     // Extract custom line items
     allItems = allItems.concat(extractCustomRowData(globalMargin, isReduce));
     
     // Trolley logic
-    const trolleyActive = document.getElementById('trolley-active').checked;
-    const trolleyId = document.getElementById('trolley-select').value;
+    const trolleyActive = document.getElementById('trolley-active')?.checked;
+    const trolleyId = document.getElementById('trolley-select')?.value;
     if (trolleyActive && trolleyId) {
         const qty = parseInt(document.getElementById('trolley-qty').value) || 1;
         const useCustom = document.getElementById('trolley-custom-margin-toggle').checked;
@@ -472,7 +563,7 @@ function generateQuotation() {
     }
 
     if (allItems.length === 0) {
-        alert("Please select and activate at least one product (UPS, Inverter, Battery, or Trolley) to generate a quotation.");
+        alert("Please select and activate at least one product to generate a quotation.");
         return;
     }
 
@@ -531,7 +622,8 @@ function generateQuotation() {
     `;
 
     // 5. Socket Disclaimer Logic
-    const socketReq = document.querySelector('input[name="ups_socket"]:checked').value;
+    const socketReqNode = document.querySelector('input[name="ups_socket"]:checked');
+    const socketReq = socketReqNode ? socketReqNode.value : 'no';
     let disclaimerHtml = "";
     if (socketReq === 'yes') {
         disclaimerHtml = `
@@ -546,14 +638,14 @@ function generateQuotation() {
         `;
     }
 
-    // 6. Build the 2-Pager HTML String (Using On-Grid Styles)
+    // 6. Build the 2-Pager HTML String
     const quoteHtml = `
     <!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>UPS Quote - ${customer.name}</title>
+        <title>Quotation - ${customer.name}</title>
         <!-- Tailwind CSS -->
         <script src="https://cdn.tailwindcss.com"></script>
         <!-- Font Awesome for Icons -->
@@ -664,7 +756,7 @@ function generateQuotation() {
                     <h1 class="text-4xl font-bold mb-2">Techno-commercial</h1>
                     <h1 class="text-4xl font-bold mb-8">Offer</h1>
                     <div class="space-y-1">
-                        <h3 class="text-xl font-bold">Enterprise UPS Solution</h3>
+                        <h3 class="text-xl font-bold">Enterprise Power Solution</h3>
                         <h3 class="text-xl font-bold border-b border-gray-500 pb-2 mb-2 w-1/2">Proposal for</h3>
                         <p class="text-2xl font-semibold">${customer.name}</p>
                         <p class="text-lg text-gray-300">${customer.address}</p>
