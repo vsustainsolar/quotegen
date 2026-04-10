@@ -177,6 +177,21 @@ const batteryCatalog = [
     { id: 'b40', name: 'Luminous ECO 28060 (250Ah) - 36+24* Months Warranty', price: 18974, gst: 18 }
 ];
 
+
+const solarBatteryCatalog = [
+    // LPT Series (Tall Tubular)
+    { id: 'sb1', name: 'Luminous LPT 1240L (40Ah) - Tall Tubular Solar', price: 4552, gst: 18 },
+    { id: 'sb2', name: 'Luminous LPT 1240H (40Ah Hi-Backup) - Tall Tubular Solar', price: 5042, gst: 18 },
+    { id: 'sb3', name: 'Luminous LPT 1280H (80Ah) - Tall Tubular Solar', price: 8024, gst: 18 },
+    // LPTT Series (Tall Tubular Heavy Duty)
+    { id: 'sb4', name: 'Luminous LPTT 12100H (100Ah) - Heavy Duty Solar Tall Tubular', price: 9906, gst: 18 },
+    { id: 'sb5', name: 'Luminous LPTT 12120H (120Ah) - Heavy Duty Solar Tall Tubular', price: 10579, gst: 18 },
+    { id: 'sb6', name: 'Luminous LPTT 12150L (150Ah) - Heavy Duty Solar Tall Tubular', price: 12155, gst: 18 },
+    { id: 'sb7', name: 'Luminous LPTT 12150H (150Ah Hi-Backup) - Heavy Duty Solar Tall Tubular', price: 13269, gst: 18 },
+    { id: 'sb8', name: 'Luminous LPTT 12200L (200Ah) - Heavy Duty Solar Tall Tubular', price: 16445, gst: 18 },
+    { id: 'sb9', name: 'Luminous LPTT 12200H (200Ah Hi-Backup) - Heavy Duty Solar Tall Tubular', price: 17238, gst: 18 }
+];
+
 const trolleyCatalog = [
     { id: 't1', name: 'Single Battery Trolley', price: 1200, gst: 18 },
     { id: 't2', name: 'Double Battery Trolley', price: 2000, gst: 18 },
@@ -294,17 +309,146 @@ document.addEventListener('DOMContentLoaded', () => {
     addInverterRow();
     addSolarInverterRow(); // Init new section
     addBatteryRow();
+    addSolarBatteryRow();
 
     // 3. Attach Event Listeners
     document.getElementById('add-ups-btn')?.addEventListener('click', addUpsRow);
     document.getElementById('add-inverter-btn')?.addEventListener('click', addInverterRow);
     document.getElementById('add-solarinverter-btn')?.addEventListener('click', addSolarInverterRow);
     document.getElementById('add-battery-btn')?.addEventListener('click', addBatteryRow);
+    document.getElementById('add-solarbattery-btn')?.addEventListener('click', addSolarBatteryRow);
     document.getElementById('add-custom-btn')?.addEventListener('click', addCustomRow);
     document.getElementById('generate-btn')?.addEventListener('click', generateQuotation);
 });
 
 // --- DYNAMIC ROW BUILDERS ---
+
+// Creates a custom searchable dropdown widget and returns its container div.
+// The container exposes a `.value` property (the selected catalog id)
+// and a `.selectedCatalogItem` property (the full catalog object).
+function createSearchableSelect(catalog, placeholder) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'searchable-select-wrapper';
+    wrapper.style.cssText = 'position:relative; flex:1; min-width:220px;';
+
+    // Hidden value holder — row extraction reads `.model-select` so we keep that class
+    const hiddenInput = document.createElement('input');
+    hiddenInput.type = 'hidden';
+    hiddenInput.className = 'model-select';
+    hiddenInput.value = '';
+
+    // Visible search/display input
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.placeholder = placeholder || '🔍 Search model...';
+    searchInput.autocomplete = 'off';
+    searchInput.style.cssText = 'width:100%; box-sizing:border-box; padding:10px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px; cursor:pointer;';
+
+    // Dropdown list
+    const dropdownList = document.createElement('ul');
+    dropdownList.style.cssText = [
+        'position:absolute; top:100%; left:0; right:0; z-index:9999;',
+        'background:white; border:1px solid var(--primary); border-radius:0 0 8px 8px;',
+        'max-height:260px; overflow-y:auto; margin:0; padding:0; list-style:none;',
+        'box-shadow:0 8px 20px rgba(0,0,0,0.15); display:none;'
+    ].join('');
+
+    let selectedItem = null;
+
+    function renderOptions(filter) {
+        dropdownList.innerHTML = '';
+        const q = (filter || '').toLowerCase();
+        const filtered = catalog.filter(item => item.name.toLowerCase().includes(q));
+        if (filtered.length === 0) {
+            const li = document.createElement('li');
+            li.textContent = 'No results found';
+            li.style.cssText = 'padding:10px 14px; color:#94a3b8; font-size:13px; cursor:default;';
+            dropdownList.appendChild(li);
+            return;
+        }
+        filtered.forEach(item => {
+            const li = document.createElement('li');
+            li.dataset.id = item.id;
+            li.style.cssText = 'padding:9px 14px; font-size:13px; cursor:pointer; border-bottom:1px solid #f1f5f9; display:flex; flex-direction:column;';
+            const nameSpan = document.createElement('span');
+            nameSpan.textContent = item.name;
+            nameSpan.style.fontWeight = '600';
+            const priceSpan = document.createElement('span');
+            priceSpan.textContent = 'Base: ₹' + item.price.toLocaleString('en-IN') + '  |  GST: ' + item.gst + '%';
+            priceSpan.style.cssText = 'font-size:11px; color:#64748b; margin-top:2px;';
+            li.appendChild(nameSpan);
+            li.appendChild(priceSpan);
+            li.addEventListener('mouseenter', () => li.style.background = '#eff6ff');
+            li.addEventListener('mouseleave', () => { li.style.background = selectedItem && selectedItem.id === item.id ? '#dbeafe' : 'white'; });
+            li.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                selectedItem = item;
+                hiddenInput.value = item.id;
+                searchInput.value = item.name;
+                searchInput.style.borderColor = 'var(--success)';
+                dropdownList.style.display = 'none';
+                wrapper.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+            if (selectedItem && selectedItem.id === item.id) li.style.background = '#dbeafe';
+            dropdownList.appendChild(li);
+        });
+    }
+
+    searchInput.addEventListener('focus', () => {
+        renderOptions(searchInput.value);
+        dropdownList.style.display = 'block';
+    });
+    searchInput.addEventListener('input', () => {
+        hiddenInput.value = '';
+        selectedItem = null;
+        searchInput.style.borderColor = 'var(--border)';
+        renderOptions(searchInput.value);
+        dropdownList.style.display = 'block';
+    });
+    searchInput.addEventListener('blur', () => {
+        setTimeout(() => { dropdownList.style.display = 'none'; }, 150);
+        // If nothing selected, clear the text so user knows
+        if (!hiddenInput.value) {
+            searchInput.value = '';
+            searchInput.style.borderColor = 'var(--border)';
+        }
+    });
+
+    // Keyboard navigation
+    searchInput.addEventListener('keydown', (e) => {
+        const items = dropdownList.querySelectorAll('li[data-id]');
+        const currentHighlight = dropdownList.querySelector('li.kbd-highlight');
+        let idx = Array.from(items).indexOf(currentHighlight);
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (currentHighlight) currentHighlight.classList.remove('kbd-highlight'), currentHighlight.style.background = 'white';
+            idx = Math.min(idx + 1, items.length - 1);
+            if (items[idx]) { items[idx].classList.add('kbd-highlight'); items[idx].style.background = '#eff6ff'; items[idx].scrollIntoView({ block:'nearest' }); }
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (currentHighlight) currentHighlight.classList.remove('kbd-highlight'), currentHighlight.style.background = 'white';
+            idx = Math.max(idx - 1, 0);
+            if (items[idx]) { items[idx].classList.add('kbd-highlight'); items[idx].style.background = '#eff6ff'; items[idx].scrollIntoView({ block:'nearest' }); }
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            const highlighted = dropdownList.querySelector('li.kbd-highlight');
+            if (highlighted) highlighted.dispatchEvent(new MouseEvent('mousedown'));
+        } else if (e.key === 'Escape') {
+            dropdownList.style.display = 'none';
+        }
+    });
+
+    wrapper.appendChild(hiddenInput);
+    wrapper.appendChild(searchInput);
+    wrapper.appendChild(dropdownList);
+
+    // Expose value getter for compatibility
+    Object.defineProperty(wrapper, 'selectedItem', { get: () => selectedItem });
+
+    return wrapper;
+}
+
+// Legacy populateDropdown kept for trolley (plain select)
 function populateDropdown(selectElement, catalog) {
     selectElement.innerHTML = '<option value="">-- Select Model --</option>';
     catalog.forEach(item => {
@@ -318,39 +462,60 @@ function populateDropdown(selectElement, catalog) {
 function createRow(type, catalog) {
     const row = document.createElement('div');
     row.className = `item-row ${type}-row`;
-    row.style.flexWrap = 'wrap';
-    
-    row.innerHTML = `
-        <label class="toggle-switch" title="Enable/Disable Product">
-            <input type="checkbox" class="row-active" checked>
-            <span class="slider"></span>
-        </label>
-        <select class="item-select model-select" style="min-width: 200px;"></select>
-        <div class="input-group-inline">
-            <label>Qty:</label>
-            <input type="number" class="item-qty" value="1" min="1" style="width: 60px;">
-        </div>
-        <div class="input-group-inline">
-            <button type="button" class="btn-override-price" title="Override catalog base price for this item"
-                style="background:#eff6ff; color:var(--primary); border:2px solid var(--primary); padding:6px 12px; border-radius:6px; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap;">
-                ✏ Override Price
-            </button>
-            <span style="font-size:12px; color:var(--text-muted); margin-left:4px; display:none;" class="override-price-label">Custom ₹:</span>
-            <input type="number" class="item-override-price" placeholder="Custom base price" min="0"
-                style="width:110px; padding:8px; border:2px solid var(--primary); border-radius:6px; display:none; font-size:14px;">
-        </div>
-        <div class="input-group-inline" style="border-left: 2px solid var(--border); padding-left: 15px; margin-left: auto;">
-            <label style="cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 13px;">
-                <input type="checkbox" class="use-custom-margin"> Custom Margin (%)
-            </label>
-            <input type="number" class="item-margin" value="15" min="0" disabled style="width: 60px; opacity: 0.5;">
-        </div>
-        <button type="button" class="btn-remove" title="Remove Row">✖</button>
+    row.style.cssText = 'flex-wrap:wrap; display:flex; align-items:center; gap:12px;';
+
+    // Toggle switch
+    const toggleLabel = document.createElement('label');
+    toggleLabel.className = 'toggle-switch';
+    toggleLabel.title = 'Enable/Disable Product';
+    toggleLabel.innerHTML = '<input type="checkbox" class="row-active" checked><span class="slider"></span>';
+    row.appendChild(toggleLabel);
+
+    // Searchable select
+    const searchSelect = createSearchableSelect(catalog, '🔍 Search model...');
+    row.appendChild(searchSelect);
+
+    // Qty
+    const qtyWrap = document.createElement('div');
+    qtyWrap.className = 'input-group-inline';
+    qtyWrap.innerHTML = '<label>Qty:</label><input type="number" class="item-qty" value="1" min="1" style="width:60px;">';
+    row.appendChild(qtyWrap);
+
+    // Override price
+    const overrideWrap = document.createElement('div');
+    overrideWrap.className = 'input-group-inline';
+    overrideWrap.innerHTML = `
+        <button type="button" class="btn-override-price" title="Override catalog base price for this item"
+            style="background:#eff6ff; color:var(--primary); border:2px solid var(--primary); padding:6px 12px; border-radius:6px; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap;">
+            ✏ Override Price
+        </button>
+        <span style="font-size:12px; color:var(--text-muted); margin-left:4px; display:none;" class="override-price-label">Custom ₹:</span>
+        <input type="number" class="item-override-price" placeholder="Custom base price" min="0"
+            style="width:110px; padding:8px; border:2px solid var(--primary); border-radius:6px; display:none; font-size:14px;">
     `;
+    row.appendChild(overrideWrap);
 
-    const selectElement = row.querySelector('.model-select');
-    populateDropdown(selectElement, catalog);
+    // Custom margin
+    const marginWrap = document.createElement('div');
+    marginWrap.className = 'input-group-inline';
+    marginWrap.style.cssText = 'border-left:2px solid var(--border); padding-left:15px; margin-left:auto;';
+    marginWrap.innerHTML = `
+        <label style="cursor:pointer; display:flex; align-items:center; gap:5px; font-size:13px;">
+            <input type="checkbox" class="use-custom-margin"> Custom Margin (%)
+        </label>
+        <input type="number" class="item-margin" value="15" min="0" disabled style="width:60px; opacity:0.5;">
+    `;
+    row.appendChild(marginWrap);
 
+    // Remove button
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'btn-remove';
+    removeBtn.title = 'Remove Row';
+    removeBtn.textContent = '✖';
+    row.appendChild(removeBtn);
+
+    // Wire custom margin toggle
     const customToggle = row.querySelector('.use-custom-margin');
     const marginInput = row.querySelector('.item-margin');
     customToggle.addEventListener('change', (e) => {
@@ -358,7 +523,7 @@ function createRow(type, catalog) {
         marginInput.style.opacity = e.target.checked ? '1' : '0.5';
     });
 
-    // Override Price button toggle
+    // Wire override price button
     const overrideBtn = row.querySelector('.btn-override-price');
     const overridePriceInput = row.querySelector('.item-override-price');
     const overridePriceLabel = row.querySelector('.override-price-label');
@@ -382,9 +547,7 @@ function createRow(type, catalog) {
         }
     });
 
-    row.querySelector('.btn-remove').addEventListener('click', () => {
-        row.remove();
-    });
+    removeBtn.addEventListener('click', () => row.remove());
 
     return row;
 }
@@ -478,6 +641,11 @@ function addSolarInverterRow() {
 function addBatteryRow() {
     const container = document.getElementById('battery-container');
     if(container) container.appendChild(createRow('battery', batteryCatalog));
+}
+
+function addSolarBatteryRow() {
+    const container = document.getElementById('solarbattery-container');
+    if(container) container.appendChild(createRow('solarbattery', solarBatteryCatalog));
 }
 
 function addCustomRow() {
@@ -608,6 +776,7 @@ function generateQuotation() {
     allItems = allItems.concat(extractRowData('.inverter-row', inverterCatalog, globalMargin, isReduce));
     allItems = allItems.concat(extractRowData('.solarinverter-row', solarInverterCatalog, globalMargin, isReduce));
     allItems = allItems.concat(extractRowData('.battery-row', batteryCatalog, globalMargin, isReduce));
+    allItems = allItems.concat(extractRowData('.solarbattery-row', solarBatteryCatalog, globalMargin, isReduce));
     
     // Extract custom line items
     allItems = allItems.concat(extractCustomRowData(globalMargin, isReduce));
