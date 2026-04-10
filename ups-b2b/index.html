@@ -63,9 +63,19 @@
                 <button type="button" class="btn-add" id="add-inverter-btn">+ Add Another Inverter Model</button>
             </section>
 
+            <!-- Solar Inverter Section -->
+            <section class="panel">
+                <h2>4. Solar Inverter Configuration</h2>
+                <p class="helper-text">Add one or multiple Solar Inverters (Off-Grid, On-Grid, Hybrid, PCU). Configure models, quantities, and margins.</p>
+                <div id="solarinverter-container" class="dynamic-container">
+                    <!-- Dynamic Solar Inverter rows injected here -->
+                </div>
+                <button type="button" class="btn-add" id="add-solarinverter-btn">+ Add Another Solar Inverter Model</button>
+            </section>
+
             <!-- Battery Section -->
             <section class="panel">
-                <h2>4. Battery Configuration</h2>
+                <h2>5. Battery Configuration</h2>
                 <p class="helper-text">Add the required battery banks. Supports multiple battery models if needed.</p>
                 <div id="battery-container" class="dynamic-container">
                     <!-- Dynamic Battery rows injected here -->
@@ -75,7 +85,7 @@
 
             <!-- Trolley / Accessories Section -->
             <section class="panel">
-                <h2>5. Accessories</h2>
+                <h2>6. Accessories</h2>
                 <div class="item-row" id="trolley-row">
                     <label class="toggle-switch">
                         <input type="checkbox" id="trolley-active" checked>
@@ -97,7 +107,7 @@
 
             <!-- Custom Products Section -->
             <section class="panel">
-                <h2>6. Custom Items & Extra Accessories</h2>
+                <h2>7. Custom Items & Extra Accessories</h2>
                 <p class="helper-text">Add extra wires, breakers, or installation charges. You can set custom names, base prices, and GST rates for these items.</p>
                 <div id="custom-container" class="dynamic-container">
                     <!-- Dynamic Custom rows injected here -->
@@ -107,7 +117,7 @@
 
             <!-- Installation & Socket Requirements -->
             <section class="panel highlight-panel">
-                <h2>7. Site Requirements</h2>
+                <h2>8. Site Requirements</h2>
                 <div class="socket-wrapper">
                     <div class="socket-info">
                         <h3>UPS Socket Required?</h3>
