@@ -7,6 +7,14 @@ const upsCatalog = [
     { id: 'u5', name: 'Microtek 10kVA Online UPS (3-Phase)', price: 95000, gst: 18 }
 ];
 
+const inverterCatalog = [
+    { id: 'i1', name: 'Luminous NXG+ 1400 Hybrid Inverter', price: 8500, gst: 18 },
+    { id: 'i2', name: 'Luminous Solar Hybrid 3kVA (Cruze)', price: 32000, gst: 18 },
+    { id: 'i3', name: 'Luminous Solar Hybrid 5kVA', price: 48000, gst: 18 },
+    { id: 'i4', name: 'Microtek 10kVA Solar Grid-Tie', price: 65000, gst: 18 },
+    { id: 'i5', name: 'Luminous 15kVA Solar Inverter', price: 110000, gst: 18 }
+];
+
 const batteryCatalog = [
     { id: 'b1', name: 'Luminous 150Ah RedCharge Tubular', price: 13500, gst: 28 },
     { id: 'b2', name: 'Luminous 200Ah Inverlast Tubular', price: 16800, gst: 28 },
@@ -47,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     upsPanel.parentNode.insertBefore(globalPanel, upsPanel);
 
+    // Auto-renumber the H2 headings dynamically
     let panelIndex = 3;
     let currentSibling = globalPanel.nextElementSibling;
     while(currentSibling && currentSibling.classList.contains('panel')) {
@@ -102,9 +111,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     addUpsRow();
+    addInverterRow();
     addBatteryRow();
 
+    // 3. Attach Custom Row Logic
+    document.getElementById('add-custom-btn').addEventListener('click', addCustomRow);
     document.getElementById('add-ups-btn').addEventListener('click', addUpsRow);
+    document.getElementById('add-inverter-btn').addEventListener('click', addInverterRow);
     document.getElementById('add-battery-btn').addEventListener('click', addBatteryRow);
     document.getElementById('generate-btn').addEventListener('click', generateQuotation);
 });
@@ -161,14 +174,70 @@ function createRow(type, catalog) {
     return row;
 }
 
+function createCustomRow() {
+    const row = document.createElement('div');
+    row.className = `item-row custom-row`;
+    row.style.flexWrap = 'wrap';
+    
+    row.innerHTML = `
+        <label class="toggle-switch" title="Enable/Disable Product">
+            <input type="checkbox" class="row-active" checked>
+            <span class="slider"></span>
+        </label>
+        <input type="text" class="item-name" placeholder="Item Name (e.g. Extra AC Cable)" style="flex: 1; min-width: 150px; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 15px;">
+        <div class="input-group-inline">
+            <label>Qty:</label>
+            <input type="number" class="item-qty" value="1" min="1" style="width: 60px;">
+        </div>
+        <div class="input-group-inline">
+            <label>Base Price:</label>
+            <input type="number" class="item-price" placeholder="0" style="width: 80px; padding: 10px; border: 1px solid var(--border); border-radius: 6px;">
+        </div>
+        <div class="input-group-inline">
+            <label>GST %:</label>
+            <input type="number" class="item-gst" value="18" min="0" style="width: 50px; padding: 10px; border: 1px solid var(--border); border-radius: 6px;">
+        </div>
+        <div class="input-group-inline" style="border-left: 2px solid var(--border); padding-left: 15px; margin-left: auto;">
+            <label style="cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 13px;">
+                <input type="checkbox" class="use-custom-margin"> Custom Margin
+            </label>
+            <input type="number" class="item-margin" value="15" min="0" disabled style="width: 60px; opacity: 0.5;">
+        </div>
+        <button type="button" class="btn-remove" title="Remove Row">✖</button>
+    `;
+
+    const customToggle = row.querySelector('.use-custom-margin');
+    const marginInput = row.querySelector('.item-margin');
+    customToggle.addEventListener('change', (e) => {
+        marginInput.disabled = !e.target.checked;
+        marginInput.style.opacity = e.target.checked ? '1' : '0.5';
+    });
+
+    row.querySelector('.btn-remove').addEventListener('click', () => {
+        row.remove();
+    });
+
+    return row;
+}
+
 function addUpsRow() {
     const container = document.getElementById('ups-container');
     container.appendChild(createRow('ups', upsCatalog));
 }
 
+function addInverterRow() {
+    const container = document.getElementById('inverter-container');
+    container.appendChild(createRow('inverter', inverterCatalog));
+}
+
 function addBatteryRow() {
     const container = document.getElementById('battery-container');
     container.appendChild(createRow('battery', batteryCatalog));
+}
+
+function addCustomRow() {
+    const container = document.getElementById('custom-container');
+    container.appendChild(createCustomRow());
 }
 
 // --- CALCULATION & INVOICE GENERATION ---
@@ -205,6 +274,7 @@ function extractRowData(rowSelector, catalog, globalMargin, isReduce) {
 
                 items.push({
                     name: product.name,
+                    make: product.name.split(' ')[0], // Extracts 'Luminous', 'Microtek', etc.
                     qty: qty,
                     unitPriceWithMargin: finalBase / qty,
                     gstRate: product.gst,
@@ -213,6 +283,51 @@ function extractRowData(rowSelector, catalog, globalMargin, isReduce) {
                     totalPrice: finalBase + gstAmount
                 });
             }
+        }
+    });
+    return items;
+}
+
+function extractCustomRowData(globalMargin, isReduce) {
+    const rows = document.querySelectorAll('.custom-row');
+    let items = [];
+
+    rows.forEach(row => {
+        const isActive = row.querySelector('.row-active').checked;
+        const name = row.querySelector('.item-name').value;
+        const qty = parseInt(row.querySelector('.item-qty').value) || 0;
+        const price = parseFloat(row.querySelector('.item-price').value) || 0;
+        const gst = parseFloat(row.querySelector('.item-gst').value) || 18;
+        
+        const useCustom = row.querySelector('.use-custom-margin').checked;
+        const customMarginVal = parseFloat(row.querySelector('.item-margin').value) || 0;
+
+        if (isActive && name && qty > 0) {
+            const baseTotal = price * qty;
+            let finalBase = baseTotal;
+            
+            if (useCustom) {
+                finalBase = baseTotal + (baseTotal * (customMarginVal / 100)); 
+            } else {
+                if (isReduce) {
+                    finalBase = baseTotal - (baseTotal * (globalMargin / 100)); 
+                } else {
+                    finalBase = baseTotal + (baseTotal * (globalMargin / 100)); 
+                }
+            }
+
+            const gstAmount = finalBase * (gst / 100);
+
+            items.push({
+                name: name,
+                make: 'Standard / Custom',
+                qty: qty,
+                unitPriceWithMargin: finalBase / qty,
+                gstRate: gst,
+                gstAmount: gstAmount,
+                totalPreTax: finalBase,
+                totalPrice: finalBase + gstAmount
+            });
         }
     });
     return items;
@@ -236,7 +351,11 @@ function generateQuotation() {
     // 3. Extract active line items
     let allItems = [];
     allItems = allItems.concat(extractRowData('.ups-row', upsCatalog, globalMargin, isReduce));
+    allItems = allItems.concat(extractRowData('.inverter-row', inverterCatalog, globalMargin, isReduce));
     allItems = allItems.concat(extractRowData('.battery-row', batteryCatalog, globalMargin, isReduce));
+    
+    // Extract custom line items
+    allItems = allItems.concat(extractCustomRowData(globalMargin, isReduce));
     
     // Trolley logic
     const trolleyActive = document.getElementById('trolley-active').checked;
@@ -264,6 +383,7 @@ function generateQuotation() {
         
         allItems.push({
             name: product.name,
+            make: 'Standard',
             qty: qty,
             unitPriceWithMargin: finalBase / qty,
             gstRate: product.gst,
@@ -274,7 +394,7 @@ function generateQuotation() {
     }
 
     if (allItems.length === 0) {
-        alert("Please select and activate at least one product (UPS, Battery, or Trolley) to generate a quotation.");
+        alert("Please select and activate at least one product (UPS, Inverter, Battery, or Trolley) to generate a quotation.");
         return;
     }
 
@@ -283,12 +403,25 @@ function generateQuotation() {
     let grandGst = 0;
     let grandTotal = 0;
 
+    let specRows = '';
     let commercialRows = '';
+    
     allItems.forEach((item, index) => {
         grandPreTax += item.totalPreTax;
         grandGst += item.gstAmount;
         grandTotal += item.totalPrice;
 
+        // Populate System Specifications Table
+        specRows += `
+            <tr class="odd:bg-white/50 even:bg-gray-50/50">
+                <td class="p-2 border font-semibold">${item.name}</td>
+                <td class="p-2 border">${item.make}</td>
+                <td class="p-2 border text-center">${item.qty}</td>
+                <td class="p-2 border text-center">Nos</td>
+            </tr>
+        `;
+
+        // Populate Commercial Pricing Table
         commercialRows += `
             <tr class="odd:bg-white/50 even:bg-gray-50/50">
                 <td class="p-3 border text-center font-semibold text-gray-500">${index + 1}</td>
@@ -335,7 +468,7 @@ function generateQuotation() {
         `;
     }
 
-    // 6. Build the 2-Pager HTML String (Using On-Grid Styles)
+    // 6. Build the 2-Pager HTML String
     const quoteHtml = `
     <!DOCTYPE html>
     <html lang="en">
@@ -473,15 +606,34 @@ function generateQuotation() {
 
             <div class="relative z-20 mt-16 px-12 h-full flex flex-col pb-12">
                
-               <div class="flex items-center justify-between mb-8 border-b-2 border-brand-orange pb-2 w-[80%]">
+               <div class="flex items-center justify-between mb-6 border-b-2 border-brand-orange pb-2 w-[80%]">
                    <div class="flex items-center gap-3">
                         <i class="fas fa-file-invoice-dollar text-3xl text-brand-blue"></i>
-                        <h2 class="text-3xl font-bold text-brand-blue">Commercial Proposal</h2>
+                        <h2 class="text-3xl font-bold text-brand-blue">Techno-Commercial Offer</h2>
                    </div>
+               </div>
+
+               <!-- NEW: System Specifications Table -->
+               <div class="mb-8" contenteditable="true">
+                    <h3 class="text-lg font-bold text-brand-green mb-3 pl-2 border-l-4 border-brand-green">1. System Specifications</h3>
+                    <table class="w-full text-sm border-collapse shadow-sm bg-white/90">
+                        <thead>
+                            <tr class="bg-brand-green text-white">
+                                <th class="p-3 border border-brand-green text-left">Component Description</th>
+                                <th class="p-3 border border-brand-green text-left">Make / Brand</th>
+                                <th class="p-3 border border-brand-green text-center">Qty</th>
+                                <th class="p-3 border border-brand-green text-center">UoM</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-gray-800">
+                            ${specRows}
+                        </tbody>
+                    </table>
                </div>
 
                <!-- The Detailed Pricing Table -->
                <div class="mb-6" contenteditable="true">
+                    <h3 class="text-lg font-bold text-brand-blue mb-3 pl-2 border-l-4 border-brand-blue">2. Commercial Proposal</h3>
                     <table class="w-full text-sm border-collapse shadow-lg bg-white/90">
                         <thead>
                             <tr class="bg-brand-blue text-white">
