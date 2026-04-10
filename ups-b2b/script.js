@@ -1,25 +1,103 @@
 // --- DATA CATALOGS ---
 const upsCatalog = [
-    { id: 'u1', name: 'Luminous 3kVA Cruze Sine Wave UPS', price: 28500, gst: 18 },
-    { id: 'u2', name: 'Luminous 5kVA Cruze Sine Wave UPS', price: 46000, gst: 18 },
-    { id: 'u3', name: 'Luminous 7.5kVA Cruze PRO', price: 68000, gst: 18 },
-    { id: 'u4', name: 'Luminous 10kVA Cruze PRO', price: 82000, gst: 18 },
-    { id: 'u5', name: 'Microtek 10kVA Online UPS (3-Phase)', price: 95000, gst: 18 }
+    { id: 'u1', name: 'Luminous ECO WATT NEO 2300 (2KVA/24V)', price: 7887, gst: 18 },
+    { id: 'u2', name: 'Luminous EVO D 2300 (24V)', price: 7887, gst: 18 },
+    { id: 'u3', name: 'Luminous EVO S 2300 (24V)', price: 8790, gst: 18 },
+    { id: 'u4', name: 'Luminous Eco Volt Neo 2300+ (2KVA/24V)', price: 8790, gst: 18 },
+    { id: 'u5', name: 'Luminous OPTIMUS 2300+ (2KVA/24V)', price: 10210, gst: 18 },
+    { id: 'u6', name: 'Luminous OPTIMUS 2800+ (2.5KVA/24V)', price: 12414, gst: 18 },
+    { id: 'u7', name: 'Luminous OPTIMUS 3500+ (3KVA/24V)', price: 14357, gst: 18 },
+    { id: 'u8', name: 'Luminous OPTIMUS 3800+ (3.5KVA/36V)', price: 15286, gst: 18 },
+    { id: 'u9', name: 'Luminous OPTIMUS 4300+ (4KVA/36V)', price: 21175, gst: 18 },
+    { id: 'u10', name: 'Luminous OPTIMUS 4500+ (4KVA/48V)', price: 17994, gst: 18 },
+    { id: 'u11', name: 'Luminous OPTIMUS 6000+ (5KVA/48V)', price: 25464, gst: 18 },
+    { id: 'u12', name: 'Luminous OPTIMUS 6500+ (5.5KVA/72V)', price: 25944, gst: 18 },
+    { id: 'u13', name: 'Luminous I-CRUZE 7000+ (6KVA/96V)', price: 38187, gst: 18 },
+    { id: 'u14', name: 'Luminous OPTIMUS 8000+ (7.5KVA/96V)', price: 51916, gst: 18 },
+    { id: 'u15', name: 'Luminous I-CRUZE 9000+ (7.5KVA/120V)', price: 48490, gst: 18 },
+    { id: 'u16', name: 'Luminous OPTIMUS 11000+ (10KVA/120V)', price: 68482, gst: 18 },
+    { id: 'u17', name: 'Luminous SYNC-X WI-FI DATA LOGGER', price: 100, gst: 18 }
 ];
 
 const inverterCatalog = [
-    { id: 'i1', name: 'Luminous NXG+ 1400 Hybrid Inverter', price: 8500, gst: 18 },
-    { id: 'i2', name: 'Luminous Solar Hybrid 3kVA (Cruze)', price: 32000, gst: 18 },
-    { id: 'i3', name: 'Luminous Solar Hybrid 5kVA', price: 48000, gst: 18 },
-    { id: 'i4', name: 'Microtek 10kVA Solar Grid-Tie', price: 65000, gst: 18 },
-    { id: 'i5', name: 'Luminous 15kVA Solar Inverter', price: 110000, gst: 18 }
+    // Sine Wave Inverters
+    { id: 'i1', name: 'Luminous ICON 1100 12V (Sine Wave) - 3 Yrs Warranty', price: 7802, gst: 18 },
+    { id: 'i2', name: 'Luminous ICON 1600 12V (Sine Wave) - 3 Yrs Warranty', price: 10664, gst: 18 },
+    { id: 'i3', name: 'Luminous OPTIMUS 1250+ 12V (Sine Wave) - 3 Yrs Warranty', price: 6272, gst: 18 },
+    { id: 'i4', name: 'Luminous ECO VOLT NEO 750 12V (Sine Wave) - 3 Yrs Warranty', price: 3882, gst: 18 },
+    { id: 'i5', name: 'Luminous ECO VOLT NEO 850 12V (Sine Wave) - 3 Yrs Warranty', price: 4080, gst: 18 },
+    { id: 'i6', name: 'Luminous ECO VOLT NEO 1050 12V (Sine Wave) - 3 Yrs Warranty', price: 4700, gst: 18 },
+    { id: 'i7', name: 'Luminous ECO VOLT NEO 1250+ 12V (Sine Wave) - 3 Yrs Warranty', price: 5484, gst: 18 },
+    { id: 'i8', name: 'Luminous ECO VOLT NEO 1550 12V (Sine Wave) - 3 Yrs Warranty', price: 7549, gst: 18 },
+    { id: 'i9', name: 'Luminous ECO VOLT NEO 1650 24V (Sine Wave) - 3 Yrs Warranty', price: 6893, gst: 18 },
+    { id: 'i10', name: 'Luminous ZELIO S 1150 12V (Sine Wave) - 3 Yrs Warranty', price: 5975, gst: 18 },
+    { id: 'i11', name: 'Luminous ZELIO S 1250 12V (Sine Wave) - 3 Yrs Warranty', price: 6452, gst: 18 },
+    { id: 'i12', name: 'Luminous ZELIO S 1550 12V (Sine Wave) - 3 Yrs Warranty', price: 8561, gst: 18 },
+    { id: 'i13', name: 'Luminous EVO S 750 12V (Sine Wave) - 3 Yrs Warranty', price: 3882, gst: 18 },
+    { id: 'i14', name: 'Luminous EVO S 850 12V (Sine Wave) - 3 Yrs Warranty', price: 4080, gst: 18 },
+    { id: 'i15', name: 'Luminous EVO S 1050 12V (Sine Wave) - 3 Yrs Warranty', price: 4700, gst: 18 },
+    { id: 'i16', name: 'Luminous EVO S 1250 12V (Sine Wave) - 3 Yrs Warranty', price: 5484, gst: 18 },
+    { id: 'i17', name: 'Luminous EVO S 1550 12V (Sine Wave) - 3 Yrs Warranty', price: 7549, gst: 18 },
+    { id: 'i18', name: 'Luminous EVO S 1650 24V (Sine Wave) - 3 Yrs Warranty', price: 6893, gst: 18 },
+
+    // Square Wave Inverters
+    { id: 'i19', name: 'Luminous ECO WATT NEO 800 12V (Square Wave) - 3 Yrs Warranty', price: 3614, gst: 18 },
+    { id: 'i20', name: 'Luminous ECO WATT NEO 900 12V (Square Wave) - 3 Yrs Warranty', price: 3886, gst: 18 },
+    { id: 'i21', name: 'Luminous ECO WATT NEO 1050 12V (Square Wave) - 3 Yrs Warranty', price: 4192, gst: 18 },
+    { id: 'i22', name: 'Luminous ECO WATT NEO 1250 PRO 12V (Square Wave) - 3 Yrs Warranty', price: 5002, gst: 18 },
+    { id: 'i23', name: 'Luminous ECO WATT NEO 1650 24V (Square Wave) - 3 Yrs Warranty', price: 6040, gst: 18 },
+    { id: 'i24', name: 'Luminous SHAKTI CHARGE NEO 1150 PRO 12V (Square Wave) - 3 Yrs Warranty', price: 4876, gst: 18 },
+    { id: 'i25', name: 'Luminous SHAKTI CHARGE NEO 1450 PRO 12V (Square Wave) - 3 Yrs Warranty', price: 5490, gst: 18 },
+    { id: 'i26', name: 'Luminous SHAKTI CHARGE NEO 1750 PRO 12V (Square Wave) - 3 Yrs Warranty', price: 6784, gst: 18 },
+    { id: 'i27', name: 'Luminous EVO D 700 12V (Square Wave) - 3 Yrs Warranty', price: 3456, gst: 18 },
+    { id: 'i28', name: 'Luminous EVO D 800 12V (Square Wave) - 3 Yrs Warranty', price: 3614, gst: 18 },
+    { id: 'i29', name: 'Luminous EVO D 900 12V (Square Wave) - 3 Yrs Warranty', price: 3886, gst: 18 },
+    { id: 'i30', name: 'Luminous EVO D 1050 12V (Square Wave) - 3 Yrs Warranty', price: 4192, gst: 18 },
+    { id: 'i31', name: 'Luminous EVO D 1250 12V (Square Wave) - 3 Yrs Warranty', price: 5002, gst: 18 },
+    { id: 'i32', name: 'Luminous EVO D 1650 24V (Square Wave) - 3 Yrs Warranty', price: 6040, gst: 18 }
 ];
 
 const batteryCatalog = [
-    { id: 'b1', name: 'Luminous 150Ah RedCharge Tubular', price: 13500, gst: 28 },
-    { id: 'b2', name: 'Luminous 200Ah Inverlast Tubular', price: 16800, gst: 28 },
-    { id: 'b3', name: 'Exide 150Ah InstaBrite', price: 12500, gst: 28 },
-    { id: 'b4', name: 'Exide 200Ah InvaTubular', price: 17200, gst: 28 }
+    { id: 'b1', name: 'Luminous ILST 10036 (80Ah) - 24+12* Months Warranty', price: 6459, gst: 18 },
+    { id: 'b2', name: 'Luminous ILST 12042 (100Ah) - 24+18* Months Warranty', price: 7849, gst: 18 },
+    { id: 'b3', name: 'Luminous RC 15000 Pro (120Ah) - 24+24* Months Warranty', price: 8399, gst: 18 },
+    { id: 'b4', name: 'Luminous SC 16060 (135Ah) - 36+24* Months Warranty', price: 9521, gst: 18 },
+    { id: 'b5', name: 'Luminous ILTJ 18148 (150Ah) - 36+12* Months Warranty', price: 10466, gst: 18 },
+    { id: 'b6', name: 'Luminous RC 18000ST (150Ah) - 18+18* Months Warranty', price: 9510, gst: 18 },
+    { id: 'b7', name: 'Luminous RC 18000ST PRO (150Ah) - 24+24* Months Warranty', price: 9763, gst: 18 },
+    { id: 'b8', name: 'Luminous NEO 18030 (150Ah) - 15+15* Months Warranty', price: 10336, gst: 18 },
+    { id: 'b9', name: 'Luminous RC 18000 (150Ah) - 18+18* Months Warranty', price: 10442, gst: 18 },
+    { id: 'b10', name: 'Luminous RC 18000 Pro (150Ah) - 24+24* Months Warranty', price: 10611, gst: 18 },
+    { id: 'b11', name: 'Luminous PC 18054 PRO (150Ah) - 30+24* Months Warranty', price: 10813, gst: 18 },
+    { id: 'b12', name: 'Luminous PC 18054 TJ PRO (150Ah) - 30+24* Months Warranty', price: 9998, gst: 18 },
+    { id: 'b13', name: 'Luminous SC 18060 (150Ah) - 36+24* Months Warranty', price: 11083, gst: 18 },
+    { id: 'b14', name: 'Luminous ECO 18000 (150Ah) - 24+18* Months Warranty', price: 10444, gst: 18 },
+    { id: 'b15', name: 'Luminous EC 18060 (150Ah) - 36+24* Months Warranty', price: 11422, gst: 18 },
+    { id: 'b16', name: 'Luminous ILTT 18060 PRO (150Ah) - 36+24* Months Warranty', price: 11193, gst: 18 },
+    { id: 'b17', name: 'Luminous LM 18075 (150Ah) - 60+15* Months Warranty', price: 14216, gst: 18 },
+    { id: 'b18', name: 'Luminous UCTT 18066 (150Ah) - 42+24* Months Warranty', price: 12112, gst: 18 },
+    { id: 'b19', name: 'Luminous PC 20042 (160Ah) - 21+21* Months Warranty', price: 11032, gst: 18 },
+    { id: 'b20', name: 'Luminous ILTT 20060 (160Ah) - 30+30* Months Warranty', price: 11655, gst: 18 },
+    { id: 'b21', name: 'Luminous ILTT 20066 (160Ah) - 36+30* Months Warranty', price: 12070, gst: 18 },
+    { id: 'b22', name: 'Luminous RC 24000 PRO (180Ah) - 24+24* Months Warranty', price: 12599, gst: 18 },
+    { id: 'b23', name: 'Luminous ILTT 24060 (180Ah) - 36+24* Months Warranty', price: 14040, gst: 18 },
+    { id: 'b24', name: 'Luminous UCTT 24066 (180Ah) - 42+24* Months Warranty', price: 14331, gst: 18 },
+    { id: 'b25', name: 'Luminous RC 25000 (200Ah) - 18+18* Months Warranty', price: 13434, gst: 18 },
+    { id: 'b26', name: 'Luminous RC 25000 PRO (200Ah) - 24+24* Months Warranty', price: 13628, gst: 18 },
+    { id: 'b27', name: 'Luminous ILTT 25060 (200Ah) - 36+24* Months Warranty', price: 15063, gst: 18 },
+    { id: 'b28', name: 'Luminous UCTT 25066 (200Ah) - 42+24* Months Warranty', price: 15488, gst: 18 },
+    { id: 'b29', name: 'Luminous UCTT 25072 (200Ah) - 48+24* Months Warranty', price: 15936, gst: 18 },
+    { id: 'b30', name: 'Luminous RC 26000 PRO (220Ah) - 24+24* Months Warranty', price: 14872, gst: 18 },
+    { id: 'b31', name: 'Luminous ILTT 26060 (220Ah) - 36+24* Months Warranty', price: 16324, gst: 18 },
+    { id: 'b32', name: 'Luminous UCTT 26066 (220Ah) - 42+24* Months Warranty', price: 16620, gst: 18 },
+    { id: 'b33', name: 'Luminous UCTT 28066 (250Ah) - 42+24* Months Warranty', price: 18279, gst: 18 },
+    { id: 'b34', name: 'Luminous ILTT 28060 (250Ah) - 36+24* Months Warranty', price: 18071, gst: 18 },
+    { id: 'b35', name: 'Luminous UCTT 29072 (260Ah) - 48+24* Months Warranty', price: 18728, gst: 18 },
+    { id: 'b36', name: 'Luminous ILTT 32060 (300Ah) - 36+24* Months Warranty', price: 20598, gst: 18 },
+    { id: 'b37', name: 'Luminous ECO 25048 (200Ah) - 24+24* Months Warranty', price: 14310, gst: 18 },
+    { id: 'b38', name: 'Luminous ECO 25060 (200Ah) - 36+24* Months Warranty', price: 15814, gst: 18 },
+    { id: 'b39', name: 'Luminous ECO 26060 (220Ah) - 36+24* Months Warranty', price: 17140, gst: 18 },
+    { id: 'b40', name: 'Luminous ECO 28060 (250Ah) - 36+24* Months Warranty', price: 18974, gst: 18 }
 ];
 
 const trolleyCatalog = [
@@ -468,7 +546,7 @@ function generateQuotation() {
         `;
     }
 
-    // 6. Build the 2-Pager HTML String
+    // 6. Build the 2-Pager HTML String (Using On-Grid Styles)
     const quoteHtml = `
     <!DOCTYPE html>
     <html lang="en">
