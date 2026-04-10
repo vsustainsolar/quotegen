@@ -194,11 +194,15 @@ document.addEventListener('DOMContentLoaded', () => {
         globalPanel.className = 'panel highlight-panel';
         globalPanel.innerHTML = `
             <h2>2. Global Pricing Settings</h2>
-            <p class="helper-text">Set a common margin for all products. Turn on "Reduce Margin" to apply a discount instead of a markup.</p>
-            <div class="form-grid" style="align-items: center;">
+            <p class="helper-text">Set a common margin % for all products. Turn on "Reduce Margin" to apply a discount instead of a markup. <strong style="color:var(--danger);">Margin is required before generating.</strong></p>
+            <div class="form-grid" style="align-items: flex-start;">
                 <div class="input-group">
-                    <label>Common Margin (%)</label>
-                    <input type="number" id="global-margin" value="15" min="0">
+                    <label style="display:flex; align-items:center; gap:6px;">
+                        Common Margin (%) <span style="color:var(--danger); font-weight:700;">*</span>
+                    </label>
+                    <input type="number" id="global-margin" placeholder="Enter e.g. 15" min="0"
+                        style="border:2px solid var(--danger); background:#fff8f8; transition:border 0.2s, background 0.2s;">
+                    <span id="margin-required-hint" style="color:var(--danger); font-size:12px; margin-top:5px; display:none; font-weight:600;">⚠ Please enter a margin value before generating.</span>
                 </div>
                 <div class="input-group" style="display: flex; align-items: center; gap: 15px; margin-top: 15px;">
                     <label class="toggle-switch">
@@ -212,13 +216,16 @@ document.addEventListener('DOMContentLoaded', () => {
         upsPanel.parentNode.insertBefore(globalPanel, upsPanel);
 
         // Auto-renumber the H2 headings dynamically
+        // Start from 3 because: 1=Customer Info, 2=Global Pricing (just injected)
         let panelIndex = 3;
         let currentSibling = globalPanel.nextElementSibling;
-        while(currentSibling && currentSibling.classList.contains('panel')) {
-            const h2 = currentSibling.querySelector('h2');
-            if(h2) {
-                h2.innerText = h2.innerText.replace(/^\d+\./, panelIndex + '.');
-                panelIndex++;
+        while(currentSibling) {
+            if (currentSibling.classList.contains('panel') || currentSibling.classList.contains('highlight-panel')) {
+                const h2 = currentSibling.querySelector('h2');
+                if(h2) {
+                    h2.innerText = h2.innerText.replace(/^\d+\./, panelIndex + '.');
+                    panelIndex++;
+                }
             }
             currentSibling = currentSibling.nextElementSibling;
         }
@@ -235,6 +242,19 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         reduceToggle.dispatchEvent(new Event('change'));
+
+        // Clear mandatory styling when user types in margin
+        const globalMarginInput = document.getElementById('global-margin');
+        globalMarginInput.addEventListener('input', function() {
+            if (this.value !== '') {
+                this.style.border = '2px solid var(--success)';
+                this.style.background = '#f0fff4';
+                document.getElementById('margin-required-hint').style.display = 'none';
+            } else {
+                this.style.border = '2px solid var(--danger)';
+                this.style.background = '#fff8f8';
+            }
+        });
     }
 
     // 2. Rewrite Trolley HTML row to support Custom Margin toggling
@@ -310,6 +330,15 @@ function createRow(type, catalog) {
             <label>Qty:</label>
             <input type="number" class="item-qty" value="1" min="1" style="width: 60px;">
         </div>
+        <div class="input-group-inline">
+            <button type="button" class="btn-override-price" title="Override catalog base price for this item"
+                style="background:#eff6ff; color:var(--primary); border:2px solid var(--primary); padding:6px 12px; border-radius:6px; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap;">
+                ✏ Override Price
+            </button>
+            <span style="font-size:12px; color:var(--text-muted); margin-left:4px; display:none;" class="override-price-label">Custom ₹:</span>
+            <input type="number" class="item-override-price" placeholder="Custom base price" min="0"
+                style="width:110px; padding:8px; border:2px solid var(--primary); border-radius:6px; display:none; font-size:14px;">
+        </div>
         <div class="input-group-inline" style="border-left: 2px solid var(--border); padding-left: 15px; margin-left: auto;">
             <label style="cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 13px;">
                 <input type="checkbox" class="use-custom-margin"> Custom Margin (%)
@@ -327,6 +356,30 @@ function createRow(type, catalog) {
     customToggle.addEventListener('change', (e) => {
         marginInput.disabled = !e.target.checked;
         marginInput.style.opacity = e.target.checked ? '1' : '0.5';
+    });
+
+    // Override Price button toggle
+    const overrideBtn = row.querySelector('.btn-override-price');
+    const overridePriceInput = row.querySelector('.item-override-price');
+    const overridePriceLabel = row.querySelector('.override-price-label');
+    let overrideActive = false;
+    overrideBtn.addEventListener('click', () => {
+        overrideActive = !overrideActive;
+        if (overrideActive) {
+            overridePriceInput.style.display = 'block';
+            overridePriceLabel.style.display = 'inline';
+            overrideBtn.style.background = 'var(--primary)';
+            overrideBtn.style.color = 'white';
+            overrideBtn.textContent = '✖ Cancel Override';
+            overridePriceInput.focus();
+        } else {
+            overridePriceInput.style.display = 'none';
+            overridePriceLabel.style.display = 'none';
+            overrideBtn.style.background = '#eff6ff';
+            overrideBtn.style.color = 'var(--primary)';
+            overrideBtn.textContent = '✏ Override Price';
+            overridePriceInput.value = '';
+        }
     });
 
     row.querySelector('.btn-remove').addEventListener('click', () => {
@@ -373,6 +426,30 @@ function createCustomRow() {
     customToggle.addEventListener('change', (e) => {
         marginInput.disabled = !e.target.checked;
         marginInput.style.opacity = e.target.checked ? '1' : '0.5';
+    });
+
+    // Override Price button toggle
+    const overrideBtn = row.querySelector('.btn-override-price');
+    const overridePriceInput = row.querySelector('.item-override-price');
+    const overridePriceLabel = row.querySelector('.override-price-label');
+    let overrideActive = false;
+    overrideBtn.addEventListener('click', () => {
+        overrideActive = !overrideActive;
+        if (overrideActive) {
+            overridePriceInput.style.display = 'block';
+            overridePriceLabel.style.display = 'inline';
+            overrideBtn.style.background = 'var(--primary)';
+            overrideBtn.style.color = 'white';
+            overrideBtn.textContent = '✖ Cancel Override';
+            overridePriceInput.focus();
+        } else {
+            overridePriceInput.style.display = 'none';
+            overridePriceLabel.style.display = 'none';
+            overrideBtn.style.background = '#eff6ff';
+            overrideBtn.style.color = 'var(--primary)';
+            overrideBtn.textContent = '✏ Override Price';
+            overridePriceInput.value = '';
+        }
     });
 
     row.querySelector('.btn-remove').addEventListener('click', () => {
@@ -422,20 +499,21 @@ function extractRowData(rowSelector, catalog, globalMargin, isReduce) {
         const useCustom = row.querySelector('.use-custom-margin').checked;
         const customMarginVal = parseFloat(row.querySelector('.item-margin').value) || 0;
 
+        const overridePriceInput = row.querySelector('.item-override-price');
+        const overridePriceVal = overridePriceInput ? parseFloat(overridePriceInput.value) : NaN;
+
         if (isActive && modelId && qty > 0) {
             const product = catalog.find(item => item.id === modelId);
             if (product) {
-                const baseTotal = product.price * qty;
+                const unitPrice = (!isNaN(overridePriceVal) && overridePriceVal > 0) ? overridePriceVal : product.price;
+                const baseTotal = unitPrice * qty;
                 let finalBase = baseTotal;
+                const effectiveMargin = useCustom ? customMarginVal : globalMargin;
                 
-                if (useCustom) {
-                    finalBase = baseTotal + (baseTotal * (customMarginVal / 100)); 
+                if (isReduce) {
+                    finalBase = baseTotal - (baseTotal * (effectiveMargin / 100));
                 } else {
-                    if (isReduce) {
-                        finalBase = baseTotal - (baseTotal * (globalMargin / 100)); 
-                    } else {
-                        finalBase = baseTotal + (baseTotal * (globalMargin / 100)); 
-                    }
+                    finalBase = baseTotal + (baseTotal * (effectiveMargin / 100));
                 }
 
                 const gstAmount = finalBase * (product.gst / 100);
@@ -473,15 +551,12 @@ function extractCustomRowData(globalMargin, isReduce) {
         if (isActive && name && qty > 0) {
             const baseTotal = price * qty;
             let finalBase = baseTotal;
+            const effectiveMargin = useCustom ? customMarginVal : globalMargin;
             
-            if (useCustom) {
-                finalBase = baseTotal + (baseTotal * (customMarginVal / 100)); 
+            if (isReduce) {
+                finalBase = baseTotal - (baseTotal * (effectiveMargin / 100));
             } else {
-                if (isReduce) {
-                    finalBase = baseTotal - (baseTotal * (globalMargin / 100)); 
-                } else {
-                    finalBase = baseTotal + (baseTotal * (globalMargin / 100)); 
-                }
+                finalBase = baseTotal + (baseTotal * (effectiveMargin / 100));
             }
 
             const gstAmount = finalBase * (gst / 100);
@@ -512,8 +587,19 @@ function generateQuotation() {
         proposalNo: `VS/${new Date().getFullYear()}/${String(Math.floor(Math.random() * 900) + 100)}`
     };
 
-    // 2. Fetch Global Pricing Settings
-    const globalMargin = parseFloat(document.getElementById('global-margin').value) || 0;
+    // 2. Fetch & Validate Global Pricing Settings
+    const globalMarginInput = document.getElementById('global-margin');
+    const globalMarginRaw = globalMarginInput.value.trim();
+    if (globalMarginRaw === '' || globalMarginRaw === null) {
+        globalMarginInput.style.border = '2px solid var(--danger)';
+        globalMarginInput.style.background = '#fff8f8';
+        const hint = document.getElementById('margin-required-hint');
+        if (hint) { hint.style.display = 'block'; }
+        globalMarginInput.focus();
+        globalMarginInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+    }
+    const globalMargin = parseFloat(globalMarginRaw) || 0;
     const isReduce = document.getElementById('global-margin-reduce').checked;
 
     // 3. Extract active line items from all sections
@@ -538,14 +624,11 @@ function generateQuotation() {
         const baseTotal = product.price * qty;
         
         let finalBase = baseTotal;
-        if (useCustom) {
-            finalBase = baseTotal + (baseTotal * (customMarginVal / 100));
+        const effectiveTrolleyMargin = useCustom ? customMarginVal : globalMargin;
+        if (isReduce) {
+            finalBase = baseTotal - (baseTotal * (effectiveTrolleyMargin / 100));
         } else {
-            if (isReduce) {
-                finalBase = baseTotal - (baseTotal * (globalMargin / 100));
-            } else {
-                finalBase = baseTotal + (baseTotal * (globalMargin / 100));
-            }
+            finalBase = baseTotal + (baseTotal * (effectiveTrolleyMargin / 100));
         }
         
         const gstAmount = finalBase * (product.gst / 100);
