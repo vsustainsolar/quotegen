@@ -192,6 +192,39 @@ const solarBatteryCatalog = [
     { id: 'sb9', name: 'Luminous LPTT 12200H (200Ah Hi-Backup) - Heavy Duty Solar Tall Tubular', price: 17238, gst: 18 }
 ];
 
+
+const epBatteryCatalog = [
+    // EP Series - SMF VRLA (1 Year Warranty)
+    { id: 'ep1',  name: 'EP Series SMF | FC04-CS7-12 (7Ah) - 1 Year Warranty',      price: 695,   gst: 18 },
+    { id: 'ep2',  name: 'EP Series SMF | FE01-EP7.5-12 (7.5Ah) - 1 Year Warranty',  price: 789,   gst: 18 },
+    { id: 'ep3',  name: 'EP Series SMF | FE00-EP1234W (12V 34W) - 1 Year Warranty',  price: 884,   gst: 18 },
+    { id: 'ep4',  name: 'EP Series SMF | FE01-EP12-12 (12Ah) - 1 Year Warranty',     price: 1414,  gst: 18 },
+    { id: 'ep5',  name: 'EP Series SMF | FE02-EP18-12ABS (18Ah) - 1 Year Warranty',  price: 1893,  gst: 18 },
+    // EP Series - SMF VRLA (2 Year Warranty)
+    { id: 'ep6',  name: 'EP Series SMF | FE02-EP26-12N (26Ah) - 2 Year Warranty',    price: 2388,  gst: 18 },
+    { id: 'ep7',  name: 'EP Series SMF | FE02-EP28-12 (28Ah) - 2 Year Warranty',     price: 2596,  gst: 18 },
+    { id: 'ep8',  name: 'EP Series SMF | FE02-EP34-12 (34Ah) - 2 Year Warranty',     price: 3155,  gst: 18 },
+    { id: 'ep9',  name: 'EP Series SMF | FE04-EP42-12 (42Ah) - 2 Year Warranty',     price: 3565,  gst: 18 },
+    { id: 'ep10', name: 'EP Series SMF | FE04-EP65-12 (65Ah) - 2 Year Warranty',     price: 4984,  gst: 18 },
+    { id: 'ep11', name: 'EP Series SMF | FE04-EP75-12 (75Ah) - 2 Year Warranty',     price: 6000,  gst: 18 },
+    { id: 'ep12', name: 'EP Series SMF | FE02-EP84-12 (84Ah) - 2 Year Warranty',     price: 7317,  gst: 18 },
+    { id: 'ep13', name: 'EP Series SMF | FE02-EP100-12 (100Ah) - 2 Year Warranty',   price: 7823,  gst: 18 },
+    { id: 'ep14', name: 'EP Series SMF | FE01-EP120-12 (120Ah) - 2 Year Warranty',   price: 9211,  gst: 18 },
+    { id: 'ep15', name: 'EP Series SMF | FE02-EP130-12 (130Ah) - 2 Year Warranty',   price: 10504, gst: 18 },
+    { id: 'ep16', name: 'EP Series SMF | FE04-EP150-12 (150Ah) - 2 Year Warranty',   price: 11985, gst: 18 },
+    { id: 'ep17', name: 'EP Series SMF | FE04-EP160-12 (160Ah) - 2 Year Warranty',   price: 12616, gst: 18 },
+    { id: 'ep18', name: 'EP Series SMF | FE05-EP200-12 (200Ah) - 2 Year Warranty',   price: 16023, gst: 18 },
+    // NXTPLUS Series - SMF VRLA (3 Year Warranty)
+    { id: 'ep19', name: 'NXTPLUS SMF | FN00-NXTPLUS26 (26Ah) - 3 Year Warranty',    price: 2633,  gst: 18 },
+    { id: 'ep20', name: 'NXTPLUS SMF | FN00-NXTPLUS42 (42Ah) - 3 Year Warranty',    price: 3815,  gst: 18 },
+    { id: 'ep21', name: 'NXTPLUS SMF | FN00-NXTPLUS65 (65Ah) - 3 Year Warranty',    price: 5335,  gst: 18 },
+    { id: 'ep22', name: 'NXTPLUS SMF | FN00-NXTPLUS75 (75Ah) - 3 Year Warranty',    price: 6421,  gst: 18 },
+    { id: 'ep23', name: 'NXTPLUS SMF | FN00-NXTPLUS100 (100Ah) - 3 Year Warranty',  price: 8215,  gst: 18 },
+    { id: 'ep24', name: 'NXTPLUS SMF | FN00-NXTPLUS120 (120Ah) - 3 Year Warranty',  price: 9673,  gst: 18 },
+    { id: 'ep25', name: 'NXTPLUS SMF | FN00-NXTPLUS150 (150Ah) - 3 Year Warranty',  price: 12585, gst: 18 },
+    { id: 'ep26', name: 'NXTPLUS SMF | FN00-NXTPLUS200 (200Ah) - 3 Year Warranty',  price: 16826, gst: 18 }
+];
+
 const trolleyCatalog = [
     { id: 't1', name: 'Single Battery Trolley', price: 1200, gst: 18 },
     { id: 't2', name: 'Double Battery Trolley', price: 2000, gst: 18 },
@@ -310,6 +343,7 @@ document.addEventListener('DOMContentLoaded', () => {
     addSolarInverterRow(); // Init new section
     addBatteryRow();
     addSolarBatteryRow();
+    addEpBatteryRow();
 
     // 3. Attach Event Listeners
     document.getElementById('add-ups-btn')?.addEventListener('click', addUpsRow);
@@ -317,6 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('add-solarinverter-btn')?.addEventListener('click', addSolarInverterRow);
     document.getElementById('add-battery-btn')?.addEventListener('click', addBatteryRow);
     document.getElementById('add-solarbattery-btn')?.addEventListener('click', addSolarBatteryRow);
+    document.getElementById('add-epbattery-btn')?.addEventListener('click', addEpBatteryRow);
     document.getElementById('add-custom-btn')?.addEventListener('click', addCustomRow);
     document.getElementById('generate-btn')?.addEventListener('click', generateQuotation);
 });
@@ -648,6 +683,11 @@ function addSolarBatteryRow() {
     if(container) container.appendChild(createRow('solarbattery', solarBatteryCatalog));
 }
 
+function addEpBatteryRow() {
+    const container = document.getElementById('epbattery-container');
+    if(container) container.appendChild(createRow('epbattery', epBatteryCatalog));
+}
+
 function addCustomRow() {
     const container = document.getElementById('custom-container');
     if(container) container.appendChild(createCustomRow());
@@ -777,6 +817,7 @@ function generateQuotation() {
     allItems = allItems.concat(extractRowData('.solarinverter-row', solarInverterCatalog, globalMargin, isReduce));
     allItems = allItems.concat(extractRowData('.battery-row', batteryCatalog, globalMargin, isReduce));
     allItems = allItems.concat(extractRowData('.solarbattery-row', solarBatteryCatalog, globalMargin, isReduce));
+    allItems = allItems.concat(extractRowData('.epbattery-row', epBatteryCatalog, globalMargin, isReduce));
     
     // Extract custom line items
     allItems = allItems.concat(extractCustomRowData(globalMargin, isReduce));
