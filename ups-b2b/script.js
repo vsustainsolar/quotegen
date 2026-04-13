@@ -225,6 +225,26 @@ const epBatteryCatalog = [
     { id: 'ep26', name: 'NXTPLUS SMF | FN00-NXTPLUS200 (200Ah) - 3 Year Warranty',  price: 16826, gst: 18 }
 ];
 
+
+const onlineUpsCatalog = [
+    { id: 'ou1',  name: 'Luminous LD1000IN (1KVA) - Online UPS',          price: 16170,  gst: 18 },
+    { id: 'ou2',  name: 'Luminous LD2000IN (2KVA) - Online UPS',          price: 27060,  gst: 18 },
+    { id: 'ou3',  name: 'Luminous LD3000IN (3KVA) - Online UPS',          price: 31020,  gst: 18 },
+    { id: 'ou4',  name: 'Luminous LD1000PRO (1KVA Pro) - Online UPS',     price: 14388,  gst: 18 },
+    { id: 'ou5',  name: 'Luminous LD2000 (2KVA) - Online UPS',            price: 23870,  gst: 18 },
+    { id: 'ou6',  name: 'Luminous LD3000PRO (3KVA Pro) - Online UPS',     price: 26602,  gst: 18 },
+    { id: 'ou7',  name: 'Luminous LD6000PRO (6KVA Pro) - Online UPS',     price: 51150,  gst: 18 },
+    { id: 'ou8',  name: 'Luminous LD10000PRO (10KVA Pro) - Online UPS',   price: 72688,  gst: 18 },
+    { id: 'ou9',  name: 'Luminous LD1000T (1KVA Tower) - Online UPS',     price: 19232,  gst: 18 },
+    { id: 'ou10', name: 'Luminous LD2000T (2KVA Tower) - Online UPS',     price: 26987,  gst: 18 },
+    { id: 'ou11', name: 'Luminous LD3000T (3KVA Tower) - Online UPS',     price: 33605,  gst: 18 },
+    { id: 'ou12', name: 'Luminous LD6000TXL (6KVA Tower XL) - Online UPS',price: 59972,  gst: 18 },
+    { id: 'ou13', name: 'Luminous LD10000T (10KVA Tower) - Online UPS',   price: 89958,  gst: 18 },
+    { id: 'ou14', name: 'Luminous LD20000 (20KVA) - Online UPS',          price: 198528, gst: 18 },
+    { id: 'ou15', name: 'Luminous LD20000S (20KVA S) - Online UPS',       price: 186120, gst: 18 },
+    { id: 'ou16', name: 'Luminous LD20KT 3:1 (20KVA 3-Phase) - Online UPS', price: 197700, gst: 18 }
+];
+
 const trolleyCatalog = [
     { id: 't1', name: 'Single Battery Trolley', price: 1200, gst: 18 },
     { id: 't2', name: 'Double Battery Trolley', price: 2000, gst: 18 },
@@ -305,35 +325,76 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 2. Rewrite Trolley HTML row to support Custom Margin toggling
+    // 2. Rewrite Trolley HTML row — override price + margin + searchable select
     const trolleyRow = document.getElementById('trolley-row');
     if (trolleyRow) {
-        trolleyRow.style.flexWrap = 'wrap';
+        trolleyRow.style.cssText = 'flex-wrap:wrap; display:flex; align-items:center; gap:12px;';
         trolleyRow.innerHTML = `
             <label class="toggle-switch" title="Enable Accessories">
                 <input type="checkbox" id="trolley-active" checked>
                 <span class="slider"></span>
             </label>
-            <select id="trolley-select" class="item-select"></select>
+            <div id="trolley-search-wrap" style="flex:1; min-width:220px;"></div>
             <div class="input-group-inline">
                 <label>Qty:</label>
-                <input type="number" id="trolley-qty" class="item-qty" value="1" min="1" style="width: 60px;">
+                <input type="number" id="trolley-qty" class="item-qty" value="1" min="1" style="width:60px;">
             </div>
-            <div class="input-group-inline" style="border-left: 2px solid var(--border); padding-left: 15px; margin-left: auto;">
-                <label style="cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 13px;">
-                    <input type="checkbox" id="trolley-custom-margin-toggle"> Custom Margin
+            <div class="input-group-inline">
+                <button type="button" id="trolley-override-btn"
+                    style="background:#eff6ff; color:var(--primary); border:2px solid var(--primary); padding:6px 12px; border-radius:6px; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap;">
+                    ✏ Override Price
+                </button>
+                <span id="trolley-override-label" style="font-size:12px; color:var(--text-muted); margin-left:4px; display:none;">Custom ₹:</span>
+                <input type="number" id="trolley-override-price" placeholder="Custom base price" min="0"
+                    style="width:110px; padding:8px; border:2px solid var(--primary); border-radius:6px; display:none; font-size:14px;">
+            </div>
+            <div class="input-group-inline" style="border-left:2px solid var(--border); padding-left:12px; margin-left:auto;">
+                <label style="cursor:pointer; display:flex; align-items:center; gap:5px; font-size:13px;">
+                    <input type="checkbox" id="trolley-custom-margin-toggle"> Custom Margin %
                 </label>
-                <input type="number" id="trolley-margin" class="item-margin" value="15" min="0" disabled style="width: 60px; opacity: 0.5;">
+                <input type="number" id="trolley-margin" class="item-margin" value="15" min="0" disabled style="width:55px; opacity:0.5;">
             </div>
         `;
-        const trolleySelect = document.getElementById('trolley-select');
-        populateDropdown(trolleySelect, trolleyCatalog);
 
+        // Inject searchable select for trolley
+        const trolleySearchWrap = document.getElementById('trolley-search-wrap');
+        const trolleySearchSelect = createSearchableSelect(trolleyCatalog, '🔍 Search accessory...');
+        trolleySearchSelect.id = 'trolley-search-select';
+        // Keep a hidden input with id=trolley-select for legacy extraction
+        const hiddenTrolley = trolleySearchSelect.querySelector('.model-select');
+        if (hiddenTrolley) hiddenTrolley.id = 'trolley-select';
+        trolleySearchWrap.appendChild(trolleySearchSelect);
+
+        // Wire margin toggle
         const trolleyMarginToggle = document.getElementById('trolley-custom-margin-toggle');
-        const trolleyMarginInput = document.getElementById('trolley-margin');
+        const trolleyMarginInput  = document.getElementById('trolley-margin');
         trolleyMarginToggle.addEventListener('change', (e) => {
-            trolleyMarginInput.disabled = !e.target.checked;
+            trolleyMarginInput.disabled    = !e.target.checked;
             trolleyMarginInput.style.opacity = e.target.checked ? '1' : '0.5';
+        });
+
+        // Wire override price toggle
+        const trolleyOverrideBtn   = document.getElementById('trolley-override-btn');
+        const trolleyOverrideInput = document.getElementById('trolley-override-price');
+        const trolleyOverrideLabel = document.getElementById('trolley-override-label');
+        let trolleyOverrideActive  = false;
+        trolleyOverrideBtn.addEventListener('click', () => {
+            trolleyOverrideActive = !trolleyOverrideActive;
+            if (trolleyOverrideActive) {
+                trolleyOverrideInput.style.display = 'block';
+                trolleyOverrideLabel.style.display  = 'inline';
+                trolleyOverrideBtn.style.background = 'var(--primary)';
+                trolleyOverrideBtn.style.color      = 'white';
+                trolleyOverrideBtn.textContent      = '✖ Cancel Override';
+                trolleyOverrideInput.focus();
+            } else {
+                trolleyOverrideInput.style.display = 'none';
+                trolleyOverrideLabel.style.display  = 'none';
+                trolleyOverrideBtn.style.background = '#eff6ff';
+                trolleyOverrideBtn.style.color      = 'var(--primary)';
+                trolleyOverrideBtn.textContent      = '✏ Override Price';
+                trolleyOverrideInput.value          = '';
+            }
         });
     }
 
@@ -344,6 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
     addBatteryRow();
     addSolarBatteryRow();
     addEpBatteryRow();
+    addOnlineUpsRow();
 
     // 3. Attach Event Listeners
     document.getElementById('add-ups-btn')?.addEventListener('click', addUpsRow);
@@ -352,6 +414,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('add-battery-btn')?.addEventListener('click', addBatteryRow);
     document.getElementById('add-solarbattery-btn')?.addEventListener('click', addSolarBatteryRow);
     document.getElementById('add-epbattery-btn')?.addEventListener('click', addEpBatteryRow);
+    document.getElementById('add-onlineups-btn')?.addEventListener('click', addOnlineUpsRow);
     document.getElementById('add-custom-btn')?.addEventListener('click', addCustomRow);
     document.getElementById('generate-btn')?.addEventListener('click', generateQuotation);
 });
@@ -589,71 +652,68 @@ function createRow(type, catalog) {
 
 function createCustomRow() {
     const row = document.createElement('div');
-    row.className = `item-row custom-row`;
-    row.style.flexWrap = 'wrap';
-    
+    row.className = 'item-row custom-row';
+    row.style.cssText = 'flex-wrap:wrap; display:flex; align-items:center; gap:10px; padding:14px; background:#f8fafc; border:1px solid var(--border); border-radius:8px;';
+
     row.innerHTML = `
-        <label class="toggle-switch" title="Enable/Disable Product">
+        <label class="toggle-switch" title="Enable/Disable">
             <input type="checkbox" class="row-active" checked>
             <span class="slider"></span>
         </label>
-        <input type="text" class="item-name" placeholder="Item Name (e.g. Extra AC Cable)" style="flex: 1; min-width: 150px; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 15px;">
+
+        <input type="text" class="item-name"
+            placeholder="Model / Item Name (e.g. Extra AC Cable)"
+            style="flex:1; min-width:180px; padding:10px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px; font-weight:600;">
+
         <div class="input-group-inline">
-            <label>Qty:</label>
-            <input type="number" class="item-qty" value="1" min="1" style="width: 60px;">
+            <label style="font-size:12px; font-weight:600; color:var(--text-muted);">Brand / Make:</label>
+            <input type="text" class="item-make" placeholder="e.g. Luminous"
+                style="width:100px; padding:9px; border:1px solid var(--border); border-radius:6px; font-size:13px;">
         </div>
+
         <div class="input-group-inline">
-            <label>Base Price:</label>
-            <input type="number" class="item-price" placeholder="0" style="width: 80px; padding: 10px; border: 1px solid var(--border); border-radius: 6px;">
+            <label style="font-size:12px; font-weight:600; color:var(--text-muted);">Qty:</label>
+            <input type="number" class="item-qty" value="1" min="1" style="width:55px; padding:9px; border:1px solid var(--border); border-radius:6px;">
         </div>
+
         <div class="input-group-inline">
-            <label>GST %:</label>
-            <input type="number" class="item-gst" value="18" min="0" style="width: 50px; padding: 10px; border: 1px solid var(--border); border-radius: 6px;">
+            <label style="font-size:12px; font-weight:600; color:var(--text-muted);">Base Price ₹:</label>
+            <input type="number" class="item-price" placeholder="0" min="0"
+                style="width:90px; padding:9px; border:1px solid var(--border); border-radius:6px; font-size:14px;">
         </div>
-        <div class="input-group-inline" style="border-left: 2px solid var(--border); padding-left: 15px; margin-left: auto;">
-            <label style="cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 13px;">
-                <input type="checkbox" class="use-custom-margin"> Custom Margin
+
+        <div class="input-group-inline">
+            <label style="font-size:12px; font-weight:600; color:var(--text-muted);">GST %:</label>
+            <input type="number" class="item-gst" value="18" min="0" max="100"
+                style="width:50px; padding:9px; border:1px solid var(--border); border-radius:6px;">
+        </div>
+
+        <div class="input-group-inline">
+            <label style="font-size:12px; font-weight:600; color:var(--text-muted);">Warranty:</label>
+            <input type="text" class="item-warranty" placeholder="e.g. 1 Year"
+                style="width:85px; padding:9px; border:1px solid var(--border); border-radius:6px; font-size:13px;">
+        </div>
+
+        <div class="input-group-inline" style="border-left:2px solid var(--border); padding-left:12px; margin-left:auto;">
+            <label style="cursor:pointer; display:flex; align-items:center; gap:5px; font-size:12px; font-weight:600; color:var(--text-muted);">
+                <input type="checkbox" class="use-custom-margin"> Custom Margin %
             </label>
-            <input type="number" class="item-margin" value="15" min="0" disabled style="width: 60px; opacity: 0.5;">
+            <input type="number" class="item-margin" value="15" min="0" disabled
+                style="width:55px; padding:9px; border:1px solid var(--border); border-radius:6px; opacity:0.5;">
         </div>
+
         <button type="button" class="btn-remove" title="Remove Row">✖</button>
     `;
 
+    // Wire margin toggle
     const customToggle = row.querySelector('.use-custom-margin');
-    const marginInput = row.querySelector('.item-margin');
+    const marginInput   = row.querySelector('.item-margin');
     customToggle.addEventListener('change', (e) => {
-        marginInput.disabled = !e.target.checked;
+        marginInput.disabled    = !e.target.checked;
         marginInput.style.opacity = e.target.checked ? '1' : '0.5';
     });
 
-    // Override Price button toggle
-    const overrideBtn = row.querySelector('.btn-override-price');
-    const overridePriceInput = row.querySelector('.item-override-price');
-    const overridePriceLabel = row.querySelector('.override-price-label');
-    let overrideActive = false;
-    overrideBtn.addEventListener('click', () => {
-        overrideActive = !overrideActive;
-        if (overrideActive) {
-            overridePriceInput.style.display = 'block';
-            overridePriceLabel.style.display = 'inline';
-            overrideBtn.style.background = 'var(--primary)';
-            overrideBtn.style.color = 'white';
-            overrideBtn.textContent = '✖ Cancel Override';
-            overridePriceInput.focus();
-        } else {
-            overridePriceInput.style.display = 'none';
-            overridePriceLabel.style.display = 'none';
-            overrideBtn.style.background = '#eff6ff';
-            overrideBtn.style.color = 'var(--primary)';
-            overrideBtn.textContent = '✏ Override Price';
-            overridePriceInput.value = '';
-        }
-    });
-
-    row.querySelector('.btn-remove').addEventListener('click', () => {
-        row.remove();
-    });
-
+    row.querySelector('.btn-remove').addEventListener('click', () => row.remove());
     return row;
 }
 
@@ -686,6 +746,11 @@ function addSolarBatteryRow() {
 function addEpBatteryRow() {
     const container = document.getElementById('epbattery-container');
     if(container) container.appendChild(createRow('epbattery', epBatteryCatalog));
+}
+
+function addOnlineUpsRow() {
+    const container = document.getElementById('onlineups-container');
+    if(container) container.appendChild(createRow('onlineups', onlineUpsCatalog));
 }
 
 function addCustomRow() {
@@ -747,39 +812,41 @@ function extractCustomRowData(globalMargin, isReduce) {
     let items = [];
 
     rows.forEach(row => {
-        const isActive = row.querySelector('.row-active').checked;
-        const name = row.querySelector('.item-name').value;
-        const qty = parseInt(row.querySelector('.item-qty').value) || 0;
-        const price = parseFloat(row.querySelector('.item-price').value) || 0;
-        const gst = parseFloat(row.querySelector('.item-gst').value) || 18;
-        
-        const useCustom = row.querySelector('.use-custom-margin').checked;
-        const customMarginVal = parseFloat(row.querySelector('.item-margin').value) || 0;
+        const isActive  = row.querySelector('.row-active').checked;
+        const name      = (row.querySelector('.item-name')?.value || '').trim();
+        const makeVal   = (row.querySelector('.item-make')?.value || 'Custom').trim();
+        const qty       = parseInt(row.querySelector('.item-qty')?.value) || 0;
+        const price     = parseFloat(row.querySelector('.item-price')?.value) || 0;
+        const gst       = parseFloat(row.querySelector('.item-gst')?.value) || 18;
+        const warranty  = (row.querySelector('.item-warranty')?.value || '').trim();
 
-        if (isActive && name && qty > 0) {
-            const baseTotal = price * qty;
-            let finalBase = baseTotal;
-            const effectiveMargin = useCustom ? customMarginVal : globalMargin;
-            
-            if (isReduce) {
-                finalBase = baseTotal - (baseTotal * (effectiveMargin / 100));
-            } else {
-                finalBase = baseTotal + (baseTotal * (effectiveMargin / 100));
-            }
+        const useCustom      = row.querySelector('.use-custom-margin')?.checked || false;
+        const customMarginVal = parseFloat(row.querySelector('.item-margin')?.value) || 0;
 
-            const gstAmount = finalBase * (gst / 100);
+        if (!isActive || !name || qty <= 0) return;
 
-            items.push({
-                name: name,
-                make: 'Standard / Custom',
-                qty: qty,
-                unitPriceWithMargin: finalBase / qty,
-                gstRate: gst,
-                gstAmount: gstAmount,
-                totalPreTax: finalBase,
-                totalPrice: finalBase + gstAmount
-            });
+        const baseTotal = price * qty;
+        let finalBase   = baseTotal;
+        const effectiveMargin = useCustom ? customMarginVal : globalMargin;
+
+        if (isReduce) {
+            finalBase = baseTotal - (baseTotal * (effectiveMargin / 100));
+        } else {
+            finalBase = baseTotal + (baseTotal * (effectiveMargin / 100));
         }
+
+        const gstAmount = finalBase * (gst / 100);
+
+        items.push({
+            name:                name + (warranty ? ` (${warranty})` : ''),
+            make:                makeVal || 'Custom',
+            qty:                 qty,
+            unitPriceWithMargin: finalBase / qty,
+            gstRate:             gst,
+            gstAmount:           gstAmount,
+            totalPreTax:         finalBase,
+            totalPrice:          finalBase + gstAmount
+        });
     });
     return items;
 }
@@ -818,21 +885,24 @@ function generateQuotation() {
     allItems = allItems.concat(extractRowData('.battery-row', batteryCatalog, globalMargin, isReduce));
     allItems = allItems.concat(extractRowData('.solarbattery-row', solarBatteryCatalog, globalMargin, isReduce));
     allItems = allItems.concat(extractRowData('.epbattery-row', epBatteryCatalog, globalMargin, isReduce));
+    allItems = allItems.concat(extractRowData('.onlineups-row', onlineUpsCatalog, globalMargin, isReduce));
     
     // Extract custom line items
     allItems = allItems.concat(extractCustomRowData(globalMargin, isReduce));
     
-    // Trolley logic
+    // Trolley / Accessories logic
     const trolleyActive = document.getElementById('trolley-active')?.checked;
-    const trolleyId = document.getElementById('trolley-select')?.value;
+    const trolleyId     = document.getElementById('trolley-select')?.value;
     if (trolleyActive && trolleyId) {
-        const qty = parseInt(document.getElementById('trolley-qty').value) || 1;
-        const useCustom = document.getElementById('trolley-custom-margin-toggle').checked;
-        const customMarginVal = parseFloat(document.getElementById('trolley-margin').value) || 0;
-        
-        const product = trolleyCatalog.find(i => i.id === trolleyId);
-        const baseTotal = product.price * qty;
-        
+        const qty              = parseInt(document.getElementById('trolley-qty').value) || 1;
+        const useCustom        = document.getElementById('trolley-custom-margin-toggle').checked;
+        const customMarginVal  = parseFloat(document.getElementById('trolley-margin').value) || 0;
+        const overridePriceRaw = parseFloat(document.getElementById('trolley-override-price')?.value);
+
+        const product   = trolleyCatalog.find(i => i.id === trolleyId);
+        const unitPrice = (!isNaN(overridePriceRaw) && overridePriceRaw > 0) ? overridePriceRaw : product.price;
+        const baseTotal = unitPrice * qty;
+
         let finalBase = baseTotal;
         const effectiveTrolleyMargin = useCustom ? customMarginVal : globalMargin;
         if (isReduce) {
@@ -840,18 +910,18 @@ function generateQuotation() {
         } else {
             finalBase = baseTotal + (baseTotal * (effectiveTrolleyMargin / 100));
         }
-        
+
         const gstAmount = finalBase * (product.gst / 100);
-        
+
         allItems.push({
             name: product.name,
             make: 'Standard',
             qty: qty,
             unitPriceWithMargin: finalBase / qty,
-            gstRate: product.gst,
-            gstAmount: gstAmount,
-            totalPreTax: finalBase,
-            totalPrice: finalBase + gstAmount
+            gstRate:             product.gst,
+            gstAmount:           gstAmount,
+            totalPreTax:         finalBase,
+            totalPrice:          finalBase + gstAmount
         });
     }
 
