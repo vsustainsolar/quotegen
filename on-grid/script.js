@@ -1415,6 +1415,14 @@ function buildDetailedQuotationHtml(totals, systemType) {
                    </tbody>
                </table>
            </div>
+
+           <!-- Solar Panel Model Disclaimer -->
+           <div class="mb-6 px-3 py-2 rounded-lg border border-red-200 bg-red-50/60">
+               <p class="text-xs text-red-400 leading-relaxed">
+                   <i class="fas fa-info-circle mr-1"></i>
+                   <strong class="text-red-400">Note:</strong> The solar panel model supplied will range between <strong class="text-red-400">545W / 550W / 600W / 625W / 630W</strong> depending on availability at the time of installation. We ensure that the panels provided will match the capacity of your inverter and are ideal for your system installation.
+               </p>
+           </div>
         </div>
     </div>
 
@@ -1458,7 +1466,7 @@ function buildDetailedQuotationHtml(totals, systemType) {
 
            <!-- 3. Chargeable Services & Notes Row -->
            <div class="flex gap-6 mt-auto">
-               <div class="w-2/3" contenteditable="true">
+               <div class="w-full" contenteditable="true">
                     <h3 class="text-sm font-bold text-brand-green mb-2">Optional Services</h3>
                     <table class="w-full text-xs border-collapse shadow-sm bg-white/90">
                         <thead>
@@ -1481,16 +1489,6 @@ function buildDetailedQuotationHtml(totals, systemType) {
                     ${subsidyDisclaimerHtml}
                </div>
 
-               <!-- Notes -->
-               <div class="w-1/3 border border-gray-300 bg-yellow-50/90 p-3 text-xs" contenteditable="true">
-                    <p class="font-bold mb-2 border-b border-gray-300 pb-1">Notes / Inclusions:</p>
-                    <ul class="list-disc list-inside text-gray-600 space-y-1">
-                        <li>Prices inclusive of Bengaluru transport.</li>
-                        <li>Standard structure height.</li>
-                        <li>Elevated structure extra.</li>
-                        <li>Discom charges excluded.</li>
-                    </ul>
-               </div>
            </div>
         </div>
     </div>
@@ -2298,6 +2296,14 @@ function buildSummaryQuotationHtml(totals, systemType) {
                    </tbody>
                </table>
            </div>
+
+           <!-- Solar Panel Model Disclaimer -->
+           <div class="mb-6 px-3 py-2 rounded-lg border border-red-200 bg-red-50/60">
+               <p class="text-xs text-red-400 leading-relaxed">
+                   <i class="fas fa-info-circle mr-1"></i>
+                   <strong class="text-red-400">Note:</strong> The solar panel model supplied will range between <strong class="text-red-400">545W / 550W / 600W / 625W / 630W</strong> depending on availability at the time of installation. We ensure that the panels provided will match the capacity of your inverter and are ideal for your system installation.
+               </p>
+           </div>
         </div>
     </div>
 
@@ -2341,7 +2347,7 @@ function buildSummaryQuotationHtml(totals, systemType) {
 
            <!-- 3. Chargeable Services & Notes Row -->
            <div class="flex gap-6 mt-auto">
-               <div class="w-2/3" contenteditable="true">
+               <div class="w-full" contenteditable="true">
                     <h3 class="text-sm font-bold text-brand-green mb-2">Optional Services</h3>
                     <table class="w-full text-xs border-collapse shadow-sm bg-white/90">
                         <thead>
@@ -2364,16 +2370,6 @@ function buildSummaryQuotationHtml(totals, systemType) {
                     ${subsidyDisclaimerHtml}
                </div>
 
-               <!-- Notes -->
-               <div class="w-1/3 border border-gray-300 bg-yellow-50/90 p-3 text-xs" contenteditable="true">
-                    <p class="font-bold mb-2 border-b border-gray-300 pb-1">Notes / Inclusions:</p>
-                    <ul class="list-disc list-inside text-gray-600 space-y-1">
-                        <li>Prices inclusive of Bengaluru transport.</li>
-                        <li>Standard structure height.</li>
-                        <li>Elevated structure extra.</li>
-                        <li>Discom charges excluded.</li>
-                    </ul>
-               </div>
            </div>
         </div>
     </div>
