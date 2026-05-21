@@ -49,7 +49,26 @@ const inverterList = [
   { model: "SOLAR HYBRID HF NXH 150 A48 5KW (1 phase) Wall Mount", price: 88615 },
   { model: "SOLAR HYBRID HF NXH 308 A 8KW (3 phase) Wall Mount", price: 191841 },
   { model: "SOLAR HYBRID HF NXH 310 A 10KW (3 phase) Wall Mount", price: 205269 },
-  { model: "SOLAR HYBRID HF NXH 312 A 12KW (3 phase) Wall Mount", price: 216033 }
+  { model: "SOLAR HYBRID HF NXH 312 A 12KW (3 phase) Wall Mount", price: 216033 },
+   { model: "DEYE HYBRID 3KW 24V Single Phase", price: 66643 },
+  { model: "DEYE HYBRID 3KW 48V Single Phase", price: 66643 },
+  { model: "DEYE HYBRID 3.6KW 48V Single Phase", price: 73886 },
+  { model: "DEYE HYBRID 5KW 48V Single Phase", price: 81130 },
+  { model: "DEYE HYBRID 6KW 48V Single Phase", price: 85476 },
+  { model: "DEYE HYBRID 8KW 48V Single Phase", price: 114451 },
+  { model: "DEYE HYBRID 8KW 48V Three Phase", price: 152119 },
+  { model: "DEYE HYBRID 10KW 48V Three Phase", price: 161536 },
+  { model: "DEYE HYBRID 12KW 48V Three Phase", price: 166606 },
+  { model: "DEYE HYBRID 15KW 48V Three Phase", price: 207896 },
+  { model: "DEYE HYBRID 20KW 48V Three Phase", price: 265846 },
+  { model: "DEYE HYBRID 30KW Three Phase", price: 412894 },
+  { model: "DEYE HYBRID 40KW Three Phase", price: 470844 },
+  { model: "DEYE HYBRID 50KW Three Phase", price: 514306 },
+  { model: "DEYE HYBRID 60KW Three Phase", price: 648316 },
+  { model: "DEYE HYBRID 70KW Three Phase", price: 666425 },
+  { model: "DEYE HYBRID 80KW Three Phase", price: 738863 },
+  { model: "DEYE HYBRID 100KW Three Phase", price: 811300 },
+  { model: "DEYE HYBRID 125KW Three Phase", price: 956175 }
   
 ];
 // SOLAR BATTERIES
