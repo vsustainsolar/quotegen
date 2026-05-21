@@ -81,7 +81,11 @@ const batteryList = [
   { model: "LPTT 12150L (150Ah, 60M*)", price: 11526 },
   { model: "LPTT 12150H (150Ah, 72M*)", price: 12554 },
   { model: "LPTT 12200L (200Ah, 60M*)", price: 15561 },
-  { model: "LPTT 12200H (200Ah, 72M*)", price: 16311 }
+  { model: "LPTT 12200H (200Ah, 72M*)", price: 16311 },
+   { model: "LV LiFePO4 Battery SE-F5 PLUS", price: 86717 },
+  { model: "LV LiFePO4 Battery SE-F12", price: 171926 },
+  { model: "LV LiFePO4 Battery SE-F16", price: 203597 },
+  { model: "HV Battery 51.2V 100AH BOS-GM5.1 HV Battery unit", price: 94710 }
 ];
 
 // SOLAR PANELS
