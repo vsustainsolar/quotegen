@@ -75,12 +75,29 @@
                     <label style="display:block; margin-bottom:8px;">Subsidy Eligible?</label>
                     <div style="display:flex; gap:15px; align-items:center;">
                         <label style="display:flex; align-items:center; gap:5px; cursor:pointer;">
-                            <input type="radio" name="subsidyEligible" value="yes" checked> Yes
+                            <input type="radio" name="subsidyEligible" value="yes" checked onchange="recalcAllCards()"> Yes
                         </label>
                         <label style="display:flex; align-items:center; gap:5px; cursor:pointer;">
-                            <input type="radio" name="subsidyEligible" value="no"> No
+                            <input type="radio" name="subsidyEligible" value="no" onchange="recalcAllCards()"> No
                         </label>
                     </div>
+                </div>
+            </div>
+
+            <!-- SUBSIDY COMPUTED DISPLAY -->
+            <div class="row">
+                <div class="col">
+                    <label>PM Surya Ghar Subsidy (Auto)</label>
+                    <input type="text" id="subsidyAmountDisplay" readonly placeholder="₹0.00" style="font-weight:600; color:#15803d;" />
+                </div>
+                <div class="col">
+                    <label>Net Expenditure (After Subsidy Refund)</label>
+                    <input type="text" id="netExpenditureDisplay" readonly placeholder="₹0.00" style="font-weight:600; color:#ff9933;" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <p class="muted-hint" id="subsidyModeHint">Select 'Yes' to apply PM Surya Ghar subsidy (₹60,000 for 2 kW, ₹78,000 for 3–10 kW).</p>
                 </div>
             </div>
         </section>

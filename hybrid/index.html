@@ -70,6 +70,52 @@
             </div>
         </section>
 
+        <!-- ========================= -->
+        <!--       SUBSIDY OPTIONS       -->
+        <!-- ========================= -->
+        <section class="card" id="subsidyCard">
+            <div class="card-header">
+                <h2>Subsidy Options</h2>
+                <span class="hint">Choose at most one</span>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Residential Solar Subsidy (PM Surya Ghar)</label>
+                    <label class="switch">
+                        <input type="checkbox" id="subsidyResidential" onclick="toggleSubsidy('residential')" />
+                        <span class="slider round"></span>
+                    </label>
+                    <p class="muted-hint">₹60,000 for 2 kW systems &nbsp;•&nbsp; ₹78,000 for 3–10 kW systems</p>
+                </div>
+
+                <div class="col">
+                    <label>Apartment / Flat Association Subsidy</label>
+                    <label class="switch">
+                        <input type="checkbox" id="subsidyApartment" onclick="toggleSubsidy('apartment')" />
+                        <span class="slider round"></span>
+                    </label>
+                    <p class="muted-hint">₹18,000 per kW (auto-calculated from system size)</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Computed Subsidy (Auto)</label>
+                    <input type="text" id="subsidyAmountDisplay" readonly placeholder="₹0.00" style="font-weight:600; color:#15803d;" />
+                </div>
+                <div class="col">
+                    <label>Net Expenditure (After Subsidy Refund)</label>
+                    <input type="text" id="netExpenditureDisplay" readonly placeholder="₹0.00" style="font-weight:600; color:#ff9933;" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <p class="muted-hint" id="subsidyModeHint">No subsidy selected — toggle on to apply.</p>
+                </div>
+            </div>
+        </section>
+
         <!-- =================================================== -->
         <!--      PRODUCT CARD — INVERTER (FULL FIELD CARD)      -->
         <!-- =================================================== -->
@@ -305,6 +351,78 @@
                 <div class="col">
                     <label>Total Amount</label>
                     <input type="number" id="panelTotal" readonly />
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================================== -->
+        <!--     PRODUCT CARD — BI-DIRECTIONAL METER             -->
+        <!-- =================================================== -->
+        <section class="card" id="meterCard">
+            <div class="card-header">
+                <h2>Bi-Directional Meter</h2>
+                <label class="switch">
+                    <input type="checkbox" id="enableMeter" checked onclick="toggleProduct('meter')">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Meter Type</label>
+                    <select id="meterType" onchange="updateMeterData()">
+                        <option value="">-- Select Meter Type --</option>
+                        <option value="single" data-price="4500">Single Phase</option>
+                        <option value="three" data-price="7500">Three Phase</option>
+                    </select>
+                </div>
+
+                <div class="col">
+                    <label>Quantity</label>
+                    <input type="number" id="meterQty" value="1" min="1" oninput="updateMeterData()" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Dealer Price (Auto)</label>
+                    <input type="number" id="meterDealer" readonly />
+                </div>
+
+                <div class="col">
+                    <label>Manual Price Override</label>
+                    <label class="switch-small">
+                        <input type="checkbox" id="meterOverrideToggle" onclick="toggleOverride('meter')">
+                        <span class="slider-small round"></span>
+                    </label>
+                    <input type="number" id="meterOverridePrice" class="hidden" placeholder="Enter manual price" oninput="updateMeterData()" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Use Common Margin?</label>
+                    <label class="switch-small">
+                        <input type="checkbox" id="meterUseCommonMargin" checked onclick="updateMeterData()">
+                        <span class="slider-small round"></span>
+                    </label>
+                </div>
+
+                <div class="col">
+                    <label>Custom Margin (%)</label>
+                    <input type="number" id="meterCustomMargin" disabled value="0" oninput="updateMeterData()" />
+                </div>
+            </div>
+
+            <div class="row result-row">
+                <div class="col">
+                    <label>GST (18%)</label>
+                    <input type="number" id="meterGST" readonly />
+                </div>
+
+                <div class="col">
+                    <label>Total Amount</label>
+                    <input type="number" id="meterTotal" readonly />
                 </div>
             </div>
         </section>

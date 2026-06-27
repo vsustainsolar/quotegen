@@ -212,6 +212,10 @@ function attachEventListeners() {
   $('systemKw').addEventListener('input', () => { updateSystemDependent(); recalcAllCards(); });
   $('commonMargin').addEventListener('input', () => recalcAllCards());
 
+  // Subsidy toggles (mutually exclusive)
+  $('subsidyResidential').addEventListener('change', () => toggleSubsidy('residential'));
+  $('subsidyApartment').addEventListener('change',  () => toggleSubsidy('apartment'));
+
   // Inverter
   $('inverterModel').addEventListener('change', updateInverterData);
   $('inverterQty').addEventListener('input', updateInverterData);
@@ -237,6 +241,14 @@ function attachEventListeners() {
   $('panelsCustomMargin').addEventListener('input', () => updatePanelData(false));
 
   // ACDB/DCDB
+  // Meter
+  $('meterType').addEventListener('change', updateMeterData);
+  $('meterQty').addEventListener('input', updateMeterData);
+  $('meterOverrideToggle').addEventListener('change', () => toggleOverrideUI('meter'));
+  $('meterOverridePrice').addEventListener('input', updateMeterData);
+  $('meterUseCommonMargin').addEventListener('change', toggleCustomMarginInput.bind(null, 'meter'));
+  $('meterCustomMargin').addEventListener('input', updateMeterData);
+
   $('acdbModel').addEventListener('change', updateACDBData);
   $('acdbQty').addEventListener('input', updateACDBData);
   $('acdbOverrideToggle').addEventListener('change', () => toggleOverrideUI('acdb'));
@@ -279,7 +291,7 @@ function attachEventListeners() {
   $('earthingSetCustomMargin').addEventListener('input', updateEarthingSetData);
 
   // enable/disable products via header toggles
-  ['inverter','battery','panels','acdb','dcdb','acCable','earthCable','la','installation','structure', 'earthingSet'].forEach(pid => {
+  ['inverter','battery','panels','meter','acdb','dcdb','acCable','earthCable','la','installation','structure', 'earthingSet'].forEach(pid => {
     const el = document.querySelector(`#${pid}Card input[type="checkbox"]`);
     if (el) el.addEventListener('change', () => recalcAllCards());
   });
@@ -519,6 +531,30 @@ function updatePanelData(manual = false) {
   $('panelTotal').value = total;
 }
 
+function updateMeterData() {
+  if (!isEnabled('meter')) {
+    $('meterDealer').value = '';
+    $('meterTotal').value = '';
+    $('meterGST').value = '';
+    return;
+  }
+  const sel = $('meterType');
+  const opt = sel.selectedOptions[0];
+  if (!opt) return;
+  const dealer = n(opt.dataset.price);
+  const qty = Math.max(1, n($('meterQty').value));
+  const base = computeBasePrice('meter', dealer);
+  const finalRate = applyMarginTo(base, 'meter');
+  const amount = round2(finalRate * qty);
+  const gstPct = getGstFor('meter');
+  const gstAmt = round2(amount * gstPct / 100);
+  const total = round2(amount + gstAmt);
+
+  $('meterDealer').value = round2(dealer);
+  $('meterGST').value = gstAmt;
+  $('meterTotal').value = total;
+}
+
 function updateACDBData() {
   if (!isEnabled('acdb')) {
     $('acdbDealer').value = '';
@@ -703,6 +739,7 @@ function recalcAllCards() {
   updateInverterData();
   updateBatteryData();
   updatePanelData(false);
+  updateMeterData();
   updateACDBData();
   updateDCDBData();
   updateACCableData();
@@ -831,6 +868,26 @@ function buildLineItemsForQuotation() {
     }
   }
 
+  // meter
+  if (isEnabled('meter')) {
+    const sel = $('meterType').selectedOptions[0];
+    if (sel) {
+      const qty = Math.max(1, n($('meterQty').value));
+      const dealer = n(sel.dataset.price);
+      const base = computeBasePrice('meter', dealer);
+      const rate = applyMarginTo(base, 'meter');
+      items.push({
+        type: 'meter',
+        item: 'Bi-Directional Meter',
+        desc: sel.value === 'single' ? 'Single Phase' : 'Three Phase',
+        qty,
+        unit: 'Nos',
+        baseRate: rate,
+        gstPercent: getGstFor('meter')
+      });
+    }
+  }
+
   if (isEnabled('acdb')) {
     const sel = $('acdbModel').selectedOptions[0];
     if (sel) {
@@ -942,14 +999,92 @@ function calcTotals() {
 
   const grandTotal = round2(subtotal + totalGst);
 
+  // ===========================
+  // SUBSIDY CALCULATION
+  // ===========================
+  // - Residential (PM Surya Ghar): kw <= 2 -> Rs 60,000  |  3 <= kw <= 10 -> Rs 78,000
+  // - Apartment/Flat Association: Rs 18,000 per kW (any kW)
+  // - Toggles are mutually exclusive (radio-style)
+  const kw = Math.max(0, n($('systemKw').value));
+  const residentialOn = $('subsidyResidential') && $('subsidyResidential').checked;
+  const apartmentOn  = $('subsidyApartment')  && $('subsidyApartment').checked;
+
+  let subsidyMode = 'none';        // 'none' | 'residential' | 'apartment'
+  let subsidyAmount = 0;
+
+  if (residentialOn && !apartmentOn) {
+    subsidyMode = 'residential';
+    if (kw > 0 && kw <= 2)        subsidyAmount = 60000;
+    else if (kw >= 3 && kw <= 10) subsidyAmount = 78000;
+    else                          subsidyAmount = 0;
+  } else if (apartmentOn && !residentialOn) {
+    subsidyMode = 'apartment';
+    subsidyAmount = round2(kw * 18000);
+  } else {
+    subsidyMode = 'none';
+    subsidyAmount = 0;
+  }
+
+  const netPayable = round2(Math.max(0, grandTotal - subsidyAmount));
+  // Net Payable to V-Sustain is the FULL grand total (no subsidy deducted).
+  // Net Expenditure (After Subsidy Refund) = Grand Total - Subsidy.
+  // Note: we keep `netPayable` here for any future external callers; its
+  // previous semantics (grand total - subsidy) is now exposed as `netExpenditure`.
+  const netPayableToVSustain = round2(grandTotal);
+  const netExpenditure       = round2(Math.max(0, grandTotal - subsidyAmount));
+
+  // Live-update the UI hint
+  const hintEl = $('subsidyModeHint');
+  const displayEl = $('subsidyAmountDisplay');
+  const netExpEl  = $('netExpenditureDisplay');
+  if (displayEl) displayEl.value = '₹' + subsidyAmount.toLocaleString('en-IN');
+  if (netExpEl)  netExpEl.value  = '₹' + netExpenditure.toLocaleString('en-IN');
+  if (hintEl) {
+    if (subsidyMode === 'none') {
+      hintEl.textContent = 'No subsidy selected — full amount is payable to V-Sustain.';
+      hintEl.style.color = '#64748b';
+    } else if (subsidyMode === 'residential') {
+      if (subsidyAmount > 0) {
+        hintEl.textContent = `Residential subsidy ${fmt(subsidyAmount)} will be refunded to the customer via DBT post-installation. Customer pays ${fmt(netPayableToVSustain)} upfront to V-Sustain; net expenditure is ${fmt(netExpenditure)}.`;
+        hintEl.style.color = '#15803d';
+      } else {
+        hintEl.textContent = `Residential subsidy not eligible for ${kw} kW — applies only to 2 kW or 3–10 kW systems.`;
+        hintEl.style.color = '#b45309';
+      }
+    } else if (subsidyMode === 'apartment') {
+      hintEl.textContent = `Apartment/Flat subsidy ${fmt(subsidyAmount)} (₹18,000 × ${kw} kW) will be refunded to the Association via DBT post-installation. Net expenditure: ${fmt(netExpenditure)}.`;
+      hintEl.style.color = '#15803d';
+    }
+  }
+
   return {
     items,
     subtotal: round2(subtotal),
     totalGst: round2(totalGst),
     gst5Total: round2(gst5Total),
     gst18Total: round2(gst18Total),
-    grandTotal
+    grandTotal,
+    subsidyMode,
+    subsidyAmount,
+    netPayable: netPayableToVSustain, // renamed semantics: full grand total payable upfront
+    netExpenditure
   };
+}
+
+/* ===========================
+   7b. SUBSIDY TOGGLE HANDLERS
+   =========================== */
+function toggleSubsidy(mode) {
+  // Mutually exclusive: turning one ON turns the other OFF.
+  const resEl = $('subsidyResidential');
+  const aptEl = $('subsidyApartment');
+  if (mode === 'residential' && resEl && resEl.checked) {
+    if (aptEl) aptEl.checked = false;
+  } else if (mode === 'apartment' && aptEl && aptEl.checked) {
+    if (resEl) resEl.checked = false;
+  }
+  // If user clicks the ON toggle to turn it OFF, just leave the other OFF too.
+  recalcAllCards();
 }
 
 /* ===========================
@@ -984,6 +1119,11 @@ function buildDetailedQuotationHtml(totals, systemType, summaryMode = false) {
   const proposalDate = date.toLocaleDateString('en-IN', { day:'2-digit', month:'long', year:'numeric' });
   const proposalNo = `VS/${date.getFullYear()}/001`;
 
+  // ---- Subsidy context (mutually exclusive toggle) ----
+  const subMode = totals.subsidyMode || 'none';
+  const subAmt  = totals.subsidyAmount || 0;
+  const showSubsidy = subMode !== 'none' && subAmt > 0;
+
   const specRows = totals.items.map(it => `
     <tr class="odd:bg-white/50 even:bg-gray-50/50">
       <td class="p-2 border font-semibold">${it.item}</td>
@@ -1007,13 +1147,89 @@ function buildDetailedQuotationHtml(totals, systemType, summaryMode = false) {
     `;
   }).join('');
 
+  const subsidyLabel = subMode === 'residential'
+    ? `Less: Residential Solar Subsidy (PM Surya Ghar)${plantKw <= 2 ? ' – 2 kW slab' : ' – 3–10 kW slab'} (refunded to customer via DBT)`
+    : subMode === 'apartment'
+      ? `Less: Apartment / Flat Association Subsidy (₹18,000 × ${plantKw} kW) (refunded via DBT)`
+      : '';
+
+  const subsidyRow = showSubsidy ? `
+    <tr class="bg-green-50/80 font-semibold border-t border-brand-green/40">
+      <td class="p-3 border"></td>
+      <td class="p-3 border text-right text-brand-green" colspan="3">${subsidyLabel}</td>
+      <td class="p-3 border text-right text-brand-green">- ${fmt(subAmt)}</td>
+    </tr>
+  ` : '';
+
+  // Net Payable to V-Sustain = FULL grand total (subsidy NOT deducted).
+  // Net Expenditure (After Subsidy Refund) = grand total - subsidy.
+  const netExpenditure = totals.netExpenditure != null ? totals.netExpenditure : Math.max(0, totals.grandTotal - subAmt);
+
   const footerRows = `
-  <tr class="bg-blue-50/80 font-bold border-t-2 border-brand-blue">
-    <td class="p-4 border"></td>
-    <td class="p-4 border text-right text-base" colspan="3">GRAND TOTAL (Inclusive of all taxes)</td>
-    <td class="p-4 border text-right text-xl text-brand-blue">${fmt(totals.grandTotal)}</td>
-  </tr>
-`;
+    <tr class="bg-blue-50/80 font-bold border-t-2 border-brand-blue">
+      <td class="p-4 border"></td>
+      <td class="p-4 border text-right text-base" colspan="3">NET PAYABLE TO V-SUSTAIN SOLAR</td>
+      <td class="p-4 border text-right text-xl text-brand-blue">${fmt(totals.grandTotal)}</td>
+    </tr>
+    ${subsidyRow}
+    <tr class="bg-orange-50/80 font-bold border-t-2 border-brand-orange">
+      <td class="p-4 border"></td>
+      <td class="p-4 border text-right text-base" colspan="3">NET EXPENDITURE (After Subsidy Refund)</td>
+      <td class="p-4 border text-right text-xl text-brand-orange">${fmt(netExpenditure)}</td>
+    </tr>
+  `;
+
+  // ---- Subsidy disclaimers (rendered in Detailed + Summary) ----
+  const subsidyDisclaimerHtml = (() => {
+    if (!showSubsidy) return '';
+    if (subMode === 'residential') {
+      return `
+        <div class="mt-6 bg-green-50 border-l-4 border-brand-green p-4 rounded shadow-sm" contenteditable="true">
+          <p class="font-bold text-brand-green mb-2 flex items-center gap-2">
+            <i class="fas fa-hand-holding-usd"></i> Residential Solar Subsidy Disclaimer
+          </p>
+          <p class="text-sm text-gray-700 leading-relaxed mb-2">
+            The <span class="font-semibold">${fmt(subAmt)}</span> subsidy under the PM Surya Ghar Yojana will be credited
+            <span class="font-semibold">directly to your bank account</span> by the Government of India after successful
+            installation, inspection and commissioning of your rooftop solar system.
+          </p>
+          <p class="text-sm text-gray-700 leading-relaxed">
+            <span class="font-semibold">Payment terms:</span> The customer pays the full
+            <span class="font-semibold text-brand-blue">${fmt(totals.grandTotal)}</span> to V-Sustain Solar Solutions upfront.
+            The <span class="font-semibold">${fmt(subAmt)}</span> subsidy is then refunded by the government to the customer's bank account
+            <span class="font-semibold">post installation</span> via DBT (Direct Benefit Transfer),
+            bringing the customer's <span class="font-semibold">net expenditure</span> down to
+            <span class="font-semibold text-brand-orange">${fmt(netExpenditure)}</span>.
+            Subject to DISCOM / MNRE approval.
+          </p>
+        </div>`;
+    }
+    if (subMode === 'apartment') {
+      return `
+        <div class="mt-6 bg-blue-50 border-l-4 border-brand-blue p-4 rounded shadow-sm" contenteditable="true">
+          <p class="font-bold text-brand-blue mb-2 flex items-center gap-2">
+            <i class="fas fa-building"></i> Apartment / Flat Association Subsidy Disclaimer
+          </p>
+          <p class="text-sm text-gray-700 leading-relaxed mb-2">
+            Apartment / Flat Association solar installations are eligible for a subsidy of
+            <span class="font-semibold">₹18,000 per kW</span>, giving a total subsidy of
+            <span class="font-semibold">${fmt(subAmt)}</span> for the <span class="font-semibold">${plantKw} kW</span> system.
+            This amount will be credited <span class="font-semibold">directly to the Apartment / Flat Association's bank account</span>
+            by the Government of India after successful installation, inspection and commissioning.
+          </p>
+          <p class="text-sm text-gray-700 leading-relaxed">
+            <span class="font-semibold">Payment terms:</span> The Apartment / Flat Association pays the full
+            <span class="font-semibold text-brand-blue">${fmt(totals.grandTotal)}</span> to V-Sustain Solar Solutions upfront.
+            The <span class="font-semibold">${fmt(subAmt)}</span> subsidy is then refunded by the government to the Association's bank account
+            <span class="font-semibold">post installation</span> via DBT (Direct Benefit Transfer),
+            bringing the Association's <span class="font-semibold">net expenditure</span> down to
+            <span class="font-semibold text-brand-orange">${fmt(netExpenditure)}</span>.
+            Subject to DISCOM / MNRE approval.
+          </p>
+        </div>`;
+    }
+    return '';
+  })();
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -1286,6 +1502,8 @@ function buildDetailedQuotationHtml(totals, systemType, summaryMode = false) {
                 </div>
             </div>
         </div>
+
+        ${subsidyDisclaimerHtml}
     </div>
 
     <!-- PAGE 5: WHY CHOOSE US -->
@@ -1587,6 +1805,19 @@ function buildShortQuotationHtml(totals, systemType) {
   const proposalDate = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'long', year:'numeric' });
   const proposalNo = `VS/${new Date().getFullYear()}/001`;
 
+  // Subsidy context
+  const subMode = totals.subsidyMode || 'none';
+  const subAmt  = totals.subsidyAmount || 0;
+  const showSubsidy = subMode !== 'none' && subAmt > 0;
+  const subLabel = subMode === 'residential'
+    ? `Less: Residential Subsidy (PM Surya Ghar) — refunded to customer via DBT`
+    : subMode === 'apartment'
+      ? `Less: Apartment / Flat Association Subsidy (₹18,000 × ${plantKw} kW) — refunded via DBT`
+      : '';
+  const netExpenditure = totals.netExpenditure != null
+    ? totals.netExpenditure
+    : Math.max(0, totals.grandTotal - subAmt);
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1639,11 +1870,40 @@ function buildShortQuotationHtml(totals, systemType) {
         <div class="mb-8">
             <h3 class="text-lg font-bold text-brand-blue mb-4 border-l-4 border-brand-blue pl-3">Commercial Offer</h3>
             <table class="w-full text-sm border-collapse">
-                <tr class="bg-gray-100 border-b border-gray-200">
-                    <td class="p-4 font-medium">Supply & Installation of ${plantKw} KW Hybrid Solar System</td>
-                    <td class="p-4 text-right font-bold">${fmt(totals.grandTotal)}</td>
+                <tr class="bg-blue-50 border-b border-gray-200">
+                    <td class="p-4 font-bold text-brand-blue">NET PAYABLE TO V-SUSTAIN SOLAR</td>
+                    <td class="p-4 text-right font-extrabold text-brand-blue">${fmt(totals.grandTotal)}</td>
                 </tr>
+                ${showSubsidy ? `
+                <tr class="bg-green-50 border-b border-gray-200">
+                    <td class="p-4 font-medium text-brand-green">${subLabel}</td>
+                    <td class="p-4 text-right font-bold text-brand-green">- ${fmt(subAmt)}</td>
+                </tr>
+                <tr class="bg-orange-100 border-b-2 border-brand-orange">
+                    <td class="p-4 font-bold text-brand-orange">NET EXPENDITURE (After Subsidy Refund)</td>
+                    <td class="p-4 text-right font-extrabold text-brand-orange">${fmt(netExpenditure)}</td>
+                </tr>` : ''}
             </table>
+            ${showSubsidy ? `
+            <div class="mt-4 ${subMode === 'residential' ? 'bg-green-50 border-l-4 border-brand-green' : 'bg-blue-50 border-l-4 border-brand-blue'} p-4 rounded text-xs text-gray-700 leading-relaxed" contenteditable="true">
+                <p class="font-bold mb-2 ${subMode === 'residential' ? 'text-brand-green' : 'text-brand-blue'}">
+                    ${subMode === 'residential' ? 'Residential Solar Subsidy Disclaimer' : 'Apartment / Flat Association Subsidy Disclaimer'}
+                </p>
+                <p class="mb-2">
+                    The <span class="font-semibold">${fmt(subAmt)}</span> subsidy will be credited
+                    <span class="font-semibold">directly to ${subMode === 'apartment' ? "the Apartment / Flat Association's bank account" : 'your bank account'}</span>
+                    by the Government of India after successful installation, inspection and commissioning.
+                </p>
+                <p>
+                    <span class="font-semibold">Payment terms:</span> The customer pays the full
+                    <span class="font-semibold text-brand-blue">${fmt(totals.grandTotal)}</span> to V-Sustain Solar Solutions upfront.
+                    The <span class="font-semibold">${fmt(subAmt)}</span> subsidy is then refunded by the government to the customer's bank account
+                    <span class="font-semibold">post installation</span> via DBT, making the customer's
+                    <span class="font-semibold">net expenditure</span>
+                    <span class="font-semibold text-brand-orange">${fmt(netExpenditure)}</span>.
+                    Subject to DISCOM / MNRE approval and DBT rules.
+                </p>
+            </div>` : ''}
             <div class="mt-2 text-right">
                 <p class="text-xs text-gray-500">* Price is inclusive of GST, Installation, and Commissioning.</p>
             </div>
@@ -1700,7 +1960,7 @@ function escapeHtml(text) {
    9. Boot
    =========================== */
 (function boot() {
-  ['inverter','battery','panels','acdb','dcdb','installation','structure','earthingSet'].forEach(id => {
+  ['inverter','battery','panels','meter','acdb','dcdb','installation','structure','earthingSet'].forEach(id => {
     toggleCustomMarginInput(id);
   });
 })();

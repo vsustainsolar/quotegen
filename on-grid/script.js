@@ -956,10 +956,42 @@ function calcTotals() {
 
   const grandTotal = round2(subtotal + totalGst);
 
+  // SUBSIDY (PM Surya Ghar) — only applied when subsidyEligible = 'yes'
+  const subsidyRadio = document.querySelector('input[name="subsidyEligible"]:checked');
+  const isSubsidyYes = subsidyRadio && subsidyRadio.value === 'yes';
+
   const kw = Math.max(0, n($('systemKw').value));
   let subsidy = 0;
-  if (kw > 0 && kw <= 2) subsidy = 60000;
-  else if (kw >= 3 && kw <= 10) subsidy = 78000;
+  let subsidyEligible = false;
+  if (isSubsidyYes) {
+    if (kw > 0 && kw <= 2)        { subsidy = 60000; subsidyEligible = true; }
+    else if (kw >= 3 && kw <= 10) { subsidy = 78000; subsidyEligible = true; }
+    else                          { subsidy = 0;      subsidyEligible = false; }
+  }
+
+  // Net Payable to V-Sustain = Grand Total (subsidy NOT deducted here).
+  // Net Expenditure (After Subsidy Refund) = Grand Total - Subsidy.
+  const netPayable   = round2(grandTotal);
+  const netExpenditure = round2(Math.max(0, grandTotal - subsidy));
+
+  // Live-update the Subsidy + Net Expenditure preview fields
+  const displayEl = $('subsidyAmountDisplay');
+  const netExpEl  = $('netExpenditureDisplay');
+  const hintEl    = $('subsidyModeHint');
+  if (displayEl) displayEl.value = '₹' + subsidy.toLocaleString('en-IN');
+  if (netExpEl)  netExpEl.value  = '₹' + netExpenditure.toLocaleString('en-IN');
+  if (hintEl) {
+    if (!isSubsidyYes) {
+      hintEl.textContent = 'Subsidy not selected — full amount is payable to V-Sustain.';
+      hintEl.style.color = '#64748b';
+    } else if (subsidyEligible) {
+      hintEl.textContent = `PM Surya Ghar subsidy ${fmt(subsidy)} will be refunded to the customer's bank account post-installation via DBT.`;
+      hintEl.style.color = '#15803d';
+    } else {
+      hintEl.textContent = `PM Surya Ghar subsidy is only eligible for systems between 1–10 kW. Current size: ${kw} kW.`;
+      hintEl.style.color = '#b45309';
+    }
+  }
 
   return {
     items,
@@ -968,7 +1000,10 @@ function calcTotals() {
     gst5Total: round2(gst5Total),
     gst18Total: round2(gst18Total),
     grandTotal,
-    subsidy
+    subsidy,
+    subsidyEligible,
+    netPayable,
+    netExpenditure
   };
 }
 
@@ -1046,28 +1081,29 @@ function buildDetailedQuotationHtml(totals, systemType) {
     `;
   }).join('');
 
-  // Add Grand Total row and subsidy row if applicable
+  // Footer rows:
+  //  1. NET PAYABLE TO V-SUSTAIN SOLAR (= full grand total, no subsidy deduction)
+  //  2. Subsidy row (only if subsidy applies) — informational only
+  //  3. NET EXPENDITURE (After Subsidy Refund) = grand total - subsidy
   let footerRows = `
   <tr class="bg-blue-50/80 font-bold border-t-2 border-brand-blue">
     <td class="p-4 border"></td>
-    <td class="p-4 border text-right text-base" colspan="3">GRAND TOTAL (Inclusive of all taxes)</td>
+    <td class="p-4 border text-right text-base" colspan="3">NET PAYABLE TO V-SUSTAIN SOLAR</td>
     <td class="p-4 border text-right text-xl text-brand-blue">${fmt(totals.grandTotal)}</td>
   </tr>
 `;
 
-  // Add subsidy row if subsidy is selected
   if (isSubsidyYes && totals.subsidy > 0) {
-    const amountAfterSubsidy = totals.grandTotal - totals.subsidy;
     footerRows += `
   <tr class="bg-green-50/80 font-semibold border-t">
     <td class="p-4 border"></td>
-    <td class="p-4 border text-right text-sm" colspan="3">Less: PM Surya Ghar Subsidy</td>
+    <td class="p-4 border text-right text-sm" colspan="3">Less: PM Surya Ghar Subsidy (refunded to customer via DBT)</td>
     <td class="p-4 border text-right text-lg text-green-700">- ${fmt(totals.subsidy)}</td>
   </tr>
   <tr class="bg-orange-50/80 font-bold border-t-2 border-brand-orange">
     <td class="p-4 border"></td>
-    <td class="p-4 border text-right text-base" colspan="3">TOTAL AMOUNT</td>
-    <td class="p-4 border text-right text-xl text-brand-orange">${fmt(amountAfterSubsidy)}</td>
+    <td class="p-4 border text-right text-base" colspan="3">NET EXPENDITURE (After Subsidy Refund)</td>
+    <td class="p-4 border text-right text-xl text-brand-orange">${fmt(totals.netExpenditure)}</td>
   </tr>
 `;
   }
@@ -1083,7 +1119,7 @@ function buildDetailedQuotationHtml(totals, systemType) {
               <li><strong>₹60,000 subsidy</strong> for 2kW systems.</li>
               <li><strong>₹78,000 subsidy</strong> for 3kW and above systems.</li>
           </ul>
-          <div class="mt-2 italic text-[10px] text-green-700">*The subsidy amount will be credited directly to your bank account by the government through Direct Benefit Transfer (DBT). Subject to government approval. Not deducted from invoice.</div>
+          <div class="mt-2 italic text-[10px] text-green-700">*The <strong>${fmt(totals.subsidy)}</strong> subsidy will be credited <strong>directly to the customer's bank account</strong> by the government through Direct Benefit Transfer (DBT), subject to DISCOM / MNRE approval. The customer pays <strong>${fmt(totals.grandTotal)}</strong> upfront to V-Sustain Solar Solutions; the <strong>${fmt(totals.subsidy)}</strong> subsidy is refunded to the customer post-installation, making the customer's <strong>net expenditure</strong> <strong>${fmt(totals.netExpenditure)}</strong>.</div>
       </div>
     `;
   }
@@ -1932,27 +1968,29 @@ function buildSummaryQuotationHtml(totals, systemType) {
     `;
   }).join('');
 
-  // Add Grand Total row and subsidy row if applicable
+  // Footer rows:
+  //  1. NET PAYABLE TO V-SUSTAIN SOLAR (= full grand total, no subsidy deduction)
+  //  2. Subsidy row (only if subsidy applies) — informational only
+  //  3. NET EXPENDITURE (After Subsidy Refund) = grand total - subsidy
   let footerRows = `
   <tr class="bg-blue-50/80 font-bold border-t-2 border-brand-blue">
     <td class="p-4 border"></td>
-    <td class="p-4 border text-right text-base" colspan="3">GRAND TOTAL (Inclusive of all taxes)</td>
+    <td class="p-4 border text-right text-base" colspan="3">NET PAYABLE TO V-SUSTAIN SOLAR</td>
     <td class="p-4 border text-right text-xl text-brand-blue">${fmt(totals.grandTotal)}</td>
   </tr>
 `;
 
   if (isSubsidyYes && totals.subsidy > 0) {
-    const amountAfterSubsidy = totals.grandTotal - totals.subsidy;
     footerRows += `
   <tr class="bg-green-50/80 font-semibold border-t">
     <td class="p-4 border"></td>
-    <td class="p-4 border text-right text-sm" colspan="3">Less: PM Surya Ghar Subsidy</td>
+    <td class="p-4 border text-right text-sm" colspan="3">Less: PM Surya Ghar Subsidy (refunded to customer via DBT)</td>
     <td class="p-4 border text-right text-lg text-green-700">- ${fmt(totals.subsidy)}</td>
   </tr>
   <tr class="bg-orange-50/80 font-bold border-t-2 border-brand-orange">
     <td class="p-4 border"></td>
-    <td class="p-4 border text-right text-base" colspan="3">TOTAL AMOUNT</td>
-    <td class="p-4 border text-right text-xl text-brand-orange">${fmt(amountAfterSubsidy)}</td>
+    <td class="p-4 border text-right text-base" colspan="3">NET EXPENDITURE (After Subsidy Refund)</td>
+    <td class="p-4 border text-right text-xl text-brand-orange">${fmt(totals.netExpenditure)}</td>
   </tr>
 `;
   }
@@ -1967,7 +2005,7 @@ function buildSummaryQuotationHtml(totals, systemType) {
               <li><strong>₹60,000 subsidy</strong> for 2kW systems.</li>
               <li><strong>₹78,000 subsidy</strong> for 3kW and above systems.</li>
           </ul>
-          <div class="mt-2 italic text-[10px] text-green-700">*The subsidy amount will be credited directly to your bank account by the government through Direct Benefit Transfer (DBT). Subject to government approval. Not deducted from invoice.</div>
+          <div class="mt-2 italic text-[10px] text-green-700">*The <strong>${fmt(totals.subsidy)}</strong> subsidy will be credited <strong>directly to the customer's bank account</strong> by the government through Direct Benefit Transfer (DBT), subject to DISCOM / MNRE approval. The customer pays <strong>${fmt(totals.grandTotal)}</strong> upfront to V-Sustain Solar Solutions; the <strong>${fmt(totals.subsidy)}</strong> subsidy is refunded to the customer post-installation, making the customer's <strong>net expenditure</strong> <strong>${fmt(totals.netExpenditure)}</strong>.</div>
       </div>
     `;
   }
@@ -2776,7 +2814,7 @@ function buildShortQuotationHtml(totals, systemType) {
   const subsidyRadio = document.querySelector('input[name="subsidyEligible"]:checked');
   const isSubsidyYes = subsidyRadio && subsidyRadio.value === 'yes';
 
-  // Subsidy Disclaimer
+  // Subsidy Disclaimer + subsidy breakdown block
   let subsidyBlock = '';
   if (isSubsidyYes) {
     subsidyBlock = `
@@ -2786,10 +2824,22 @@ function buildShortQuotationHtml(totals, systemType) {
               <li><strong>₹60,000</strong> subsidy for systems up to 2kW.</li>
               <li><strong>₹78,000</strong> subsidy for systems 3kW and above.</li>
           </ul>
-          <p class="text-[10px] text-green-600 mt-2 italic">* Direct Benefit Transfer (DBT) to customer account upon approval.</p>
+          <p class="text-[10px] text-green-600 mt-2 italic">* The <strong>${fmt(totals.subsidy)}</strong> subsidy will be credited directly to the customer's bank account via DBT post-installation. Customer pays the full <strong>${fmt(totals.grandTotal)}</strong> to V-Sustain Solar Solutions upfront; the subsidy refund makes the customer's <strong>net expenditure</strong> <strong>${fmt(totals.netExpenditure)}</strong>.</p>
       </div>
     `;
   }
+
+  // Subsidy breakdown rows for the commercial offer table
+  const subsidyBreakdownRows = (isSubsidyYes && totals.subsidy > 0) ? `
+                <tr class="bg-green-50 border-b border-gray-200">
+                    <td class="p-4 font-medium text-brand-green">Less: PM Surya Ghar Subsidy (refunded to customer via DBT)</td>
+                    <td class="p-4 text-right font-bold text-brand-green">- ${fmt(totals.subsidy)}</td>
+                </tr>
+                <tr class="bg-orange-100 border-b-2 border-brand-orange">
+                    <td class="p-4 font-bold text-brand-orange">NET EXPENDITURE (After Subsidy Refund)</td>
+                    <td class="p-4 text-right font-extrabold text-brand-orange">${fmt(totals.netExpenditure)}</td>
+                </tr>
+  ` : '';
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -2865,10 +2915,11 @@ function buildShortQuotationHtml(totals, systemType) {
         <div class="mb-8">
             <h3 class="text-lg font-bold text-brand-blue mb-4 border-l-4 border-brand-blue pl-3">Commercial Offer</h3>
             <table class="w-full text-sm border-collapse">
-                <tr class="bg-gray-100 border-b border-gray-200">
-                    <td class="p-4 font-medium">Supply & Installation of ${plantKw} KW On-Grid Solar System</td>
-                    <td class="p-4 text-right font-bold">${fmt(totals.grandTotal)}</td>
+                <tr class="bg-blue-50 border-b border-gray-200">
+                    <td class="p-4 font-bold text-brand-blue">NET PAYABLE TO V-SUSTAIN SOLAR</td>
+                    <td class="p-4 text-right font-extrabold text-brand-blue">${fmt(totals.grandTotal)}</td>
                 </tr>
+                ${subsidyBreakdownRows}
             </table>
             
             <div class="mt-2 text-right">

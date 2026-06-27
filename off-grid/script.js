@@ -7,41 +7,41 @@
    1. DATASETS
    =========================== */
 
-// OFF-GRID INVERTERS
+// OFF-GRID INVERTERS  (Ref: HO/Dealer/PL/Solar/27/04/26  •  W.e.f. 09-Jun-2026)
 const inverterList = [
-  { model: "NXG 850E (NXG PWM)", price: 4135 },
-  { model: "NXG 1150E (NXG PWM)", price: 5274 },
-  { model: "NXG 1450E (NXG PWM)", price: 6375 },
-  { model: "NXG 1850E (NXG PWM)", price: 7515 },
-  { model: "NXG 2350 (NXG PWM)", price: 9527 },
-  { model: "NXP 3500 (NXG PWM)", price: 13701 },
-  { model: "NXP PRO 3500 (NXP PRO MPPT)", price: 22507 },
-  { model: "SOLAR NXE 5KVA/48V (NXE PWM)", price: 30592 },
-  { model: "NXG PRO 1KVA/12V (NXG MPPT)", price: 8946 },
-  { model: "NXG PRO 1KVA/24V (NXG MPPT)", price: 8946 },
+  { model: "NXG 850E (NXG PWM)", price: 4501 },
+  { model: "NXG 1150E (NXG PWM)", price: 5740 },
+  { model: "NXG 1450E (NXG PWM)", price: 6939 },
+  { model: "NXG 1850E (NXG PWM)", price: 8179 },
+  { model: "NXG 2350 (NXG PWM)", price: 10368 },
+  { model: "NXP 3500 (NXG PWM)", price: 14687 },
+  { model: "NXP PRO 3500 (NXP PRO MPPT)", price: 24129 },
+  { model: "SOLAR NXE 5KVA/48V (NXE PWM)", price: 32794 },
+  { model: "NXG PRO 1KVA/12V (NXG MPPT)", price: 9735 },
+  { model: "NXG PRO 1KVA/24V (NXG MPPT)", price: 9735 },
   { model: "SOLARVERTER 2KVA/24V (PWM)", price: 11177 },
-  { model: "SOLARVERTER 3KVA/36V (PWM)", price: 16286 },
-  { model: "SOLARVERTER 5KVA/48V (PWM)", price: 30592 },
-  { model: "SOLARVERTER PRO 2KVA ECO (MPPT)", price: 16159 },
-  { model: "SOLARVERTER PRO 3KVA ECO (MPPT)", price: 23778 },
-  { model: "SOLARVERTER PRO 3.5KVA (MPPT)", price: 30701 },
-  { model: "SOLARVERTER PRO 5KVA (MPPT)", price: 40666 },
-  { model: "SOLARVERTER PRO 6KVA (MPPT)", price: 47247 },
-  { model: "SOLARVERTER PRO 7.5KVA (MPPT)", price: 64266 },
-  { model: "SOLARVERTER PRO 10.1KVA (MPPT)", price: 82817 }
+  { model: "SOLARVERTER 3KVA/48V (PWM)", price: 17459 },
+  { model: "SOLARVERTER 5KVA/48V (PWM)", price: 32794 },
+  { model: "SOLARVERTER PRO 2KVA/24V ECO (MPPT)", price: 17583 },
+  { model: "SOLARVERTER PRO 3KVA/36V ECO (MPPT)", price: 25492 },
+  { model: "SOLARVERTER PRO 3.5KVA/48V (MPPT)", price: 32912 },
+  { model: "SOLARVERTER PRO 5KVA/48V (MPPT)", price: 43596 },
+  { model: "SOLARVERTER PRO 6KVA/96V (MPPT)", price: 48679 },
+  { model: "SOLARVERTER PRO 7.5KVA/96V ECO (MPPT)", price: 66212 },
+  { model: "SOLARVERTER PRO 10.1KVA/120V ECO (MPPT)", price: 85326 }
 ];
 
-// SOLAR BATTERIES (NEW)
+// SOLAR BATTERIES  (Ref: HO/Dealer/PL/Solar/27/04/26  •  W.e.f. 09-Jun-2026)
 const batteryList = [
-  { model: "LPT 1240L (40Ah, 60M*)", price: 4300 },
-  { model: "LPT 1240H (40Ah, 72M*)", price: 4765 },
-  { model: "LPT 1280H (80Ah, 72M*)", price: 7587 },
-  { model: "LPTT 12100H (100Ah, 72M*)", price: 9370 },
-  { model: "LPTT12120H (120Ah, 72M*)", price: 10006 },
-  { model: "LPTT 12150L (150Ah, 60M*)", price: 11526 },
-  { model: "LPTT 12150H (150Ah, 72M*)", price: 12554 },
-  { model: "LPTT 12200L (200Ah, 60M*)", price: 15561 },
-  { model: "LPTT 12200H (200Ah, 72M*)", price: 16311 }
+  { model: "LPT 1240L (40Ah, 60M*)", price: 4689 },
+  { model: "LPT 1240H (40Ah, 72M*)", price: 5196 },
+  { model: "LPT 1280H (80Ah, 72M*)", price: 8267 },
+  { model: "LPTT 12100H (100Ah, 72M*)", price: 10206 },
+  { model: "LPTT 12120H (120Ah, 72M*)", price: 10900 },
+  { model: "LPTT 12150L (150Ah, 60M*)", price: 12524 },
+  { model: "LPTT 12150H (150Ah, 72M*)", price: 13672 },
+  { model: "LPTT 12200L (200Ah, 60M*)", price: 16944 },
+  { model: "LPTT 12200H (200Ah, 72M*)", price: 17760 }
 ];
 
 // SOLAR PANELS
