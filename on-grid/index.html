@@ -100,6 +100,29 @@
                     <p class="muted-hint" id="subsidyModeHint">Select 'Yes' to apply PM Surya Ghar subsidy (₹60,000 for 2 kW, ₹78,000 for 3–10 kW).</p>
                 </div>
             </div>
+
+            <!-- APARTMENT SUBSIDY (new) -->
+            <div class="row">
+                <div class="col">
+                    <label style="display:block; margin-bottom:8px; font-weight:600;">PM Surya Ghar – Apartment Common Area (₹18,000/kW)</label>
+                    <div style="display:flex; gap:15px; align-items:center;">
+                        <label class="switch">
+                            <input type="checkbox" id="apartmentSubsidyToggle" onchange="recalcAllCards()">
+                            <span class="slider round"></span>
+                        </label>
+                        <span style="font-size:13px; color:#475569;">Enable subsidy for residential apartment building common areas</span>
+                    </div>
+                </div>
+                <div class="col">
+                    <label>Apartment Common Area Subsidy (Auto)</label>
+                    <input type="text" id="apartmentSubsidyDisplay" readonly placeholder="₹0.00" style="font-weight:600; color:#15803d;" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <p class="muted-hint" id="apartmentSubsidyHint">Toggle on to apply the PM Surya Ghar subsidy of ₹18,000 per kW for common areas in residential apartment buildings.</p>
+                </div>
+            </div>
         </section>
 
         <!-- =================================================== -->

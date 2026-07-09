@@ -969,12 +969,20 @@ function calcTotals() {
     else                          { subsidy = 0;      subsidyEligible = false; }
   }
 
-  // Net Payable to V-Sustain = Grand Total (subsidy NOT deducted here).
-  // Net Expenditure (After Subsidy Refund) = Grand Total - Subsidy.
-  const netPayable   = round2(grandTotal);
-  const netExpenditure = round2(Math.max(0, grandTotal - subsidy));
+  // APARTMENT SUBSIDY (₹18,000 per kW for residential apartment common areas)
+  const apartmentToggle = $('apartmentSubsidyToggle');
+  const isApartmentSubsidy = apartmentToggle && apartmentToggle.checked;
+  const apartmentSubsidy = isApartmentSubsidy ? round2(kw * 18000) : 0;
 
-  // Live-update the Subsidy + Net Expenditure preview fields
+  // Combined subsidy deduction (PM Surya Ghar + Apartment)
+  const totalDeductions = round2(subsidy + apartmentSubsidy);
+
+  // Net Payable to V-Sustain = Grand Total (subsidy NOT deducted here).
+  // Net Expenditure (After Subsidy Refund) = Grand Total - total subsidies.
+  const netPayable   = round2(grandTotal);
+  const netExpenditure = round2(Math.max(0, grandTotal - totalDeductions));
+
+  // Live-update the PM Surya Ghar Subsidy + Net Expenditure preview fields
   const displayEl = $('subsidyAmountDisplay');
   const netExpEl  = $('netExpenditureDisplay');
   const hintEl    = $('subsidyModeHint');
@@ -993,6 +1001,20 @@ function calcTotals() {
     }
   }
 
+  // Live-update Apartment Subsidy display fields
+  const aptDisplayEl = $('apartmentSubsidyDisplay');
+  const aptHintEl    = $('apartmentSubsidyHint');
+  if (aptDisplayEl) aptDisplayEl.value = '₹' + apartmentSubsidy.toLocaleString('en-IN');
+  if (aptHintEl) {
+    if (isApartmentSubsidy) {
+      aptHintEl.textContent = `PM Surya Ghar subsidy of ₹18,000/kW × ${kw} kW = ${fmt(apartmentSubsidy)} applied for common areas in residential apartment buildings.`;
+      aptHintEl.style.color = '#15803d';
+    } else {
+      aptHintEl.textContent = 'Toggle on to apply the PM Surya Ghar subsidy of ₹18,000 per kW for common areas in residential apartment buildings.';
+      aptHintEl.style.color = '#64748b';
+    }
+  }
+
   return {
     items,
     subtotal: round2(subtotal),
@@ -1002,6 +1024,7 @@ function calcTotals() {
     grandTotal,
     subsidy,
     subsidyEligible,
+    apartmentSubsidy,
     netPayable,
     netExpenditure
   };
@@ -1083,8 +1106,8 @@ function buildDetailedQuotationHtml(totals, systemType) {
 
   // Footer rows:
   //  1. NET PAYABLE TO V-SUSTAIN SOLAR (= full grand total, no subsidy deduction)
-  //  2. Subsidy row (only if subsidy applies) — informational only
-  //  3. NET EXPENDITURE (After Subsidy Refund) = grand total - subsidy
+  //  2. Subsidy rows (PM Surya Ghar + Apartment)
+  //  3. NET EXPENDITURE (After Subsidy Refund) = grand total - all subsidies
   let footerRows = `
   <tr class="bg-blue-50/80 font-bold border-t-2 border-brand-blue">
     <td class="p-4 border"></td>
@@ -1093,33 +1116,53 @@ function buildDetailedQuotationHtml(totals, systemType) {
   </tr>
 `;
 
-  if (isSubsidyYes && totals.subsidy > 0) {
-    footerRows += `
+  const hasPmSubsidy = isSubsidyYes && totals.subsidy > 0;
+  const hasApartmentSubsidy = totals.apartmentSubsidy > 0;
+
+  if (hasPmSubsidy || hasApartmentSubsidy) {
+    if (hasPmSubsidy) {
+      footerRows += `
   <tr class="bg-green-50/80 font-semibold border-t">
     <td class="p-4 border"></td>
     <td class="p-4 border text-right text-sm" colspan="3">Less: PM Surya Ghar Subsidy (refunded to customer via DBT)</td>
     <td class="p-4 border text-right text-lg text-green-700">- ${fmt(totals.subsidy)}</td>
-  </tr>
+  </tr>`;
+    }
+    if (hasApartmentSubsidy) {
+      footerRows += `
+  <tr class="bg-teal-50/80 font-semibold border-t">
+    <td class="p-4 border"></td>
+    <td class="p-4 border text-right text-sm" colspan="3">Less: PM Surya Ghar – Apartment Common Area Subsidy (₹18,000/kW)</td>
+    <td class="p-4 border text-right text-lg text-teal-700">- ${fmt(totals.apartmentSubsidy)}</td>
+  </tr>`;
+    }
+    footerRows += `
   <tr class="bg-orange-50/80 font-bold border-t-2 border-brand-orange">
     <td class="p-4 border"></td>
     <td class="p-4 border text-right text-base" colspan="3">NET EXPENDITURE (After Subsidy Refund)</td>
     <td class="p-4 border text-right text-xl text-brand-orange">${fmt(totals.netExpenditure)}</td>
-  </tr>
-`;
+  </tr>`;
   }
 
 
   // BUILD SUBSIDY DISCLAIMER BLOCK
   let subsidyDisclaimerHtml = '';
-  if (isSubsidyYes) {
+  if (hasPmSubsidy || hasApartmentSubsidy) {
+    let disclaimerItems = '';
+    if (hasPmSubsidy) {
+      disclaimerItems += `
+              <li><strong>PM Surya Ghar (Residential): ₹60,000</strong> for 2kW systems, <strong>₹78,000</strong> for 3kW and above systems.</li>`;
+    }
+    if (hasApartmentSubsidy) {
+      disclaimerItems += `
+              <li><strong>PM Surya Ghar (Apartment Common Area): ₹18,000/kW</strong> for common areas in residential apartment buildings. Total: ${fmt(totals.apartmentSubsidy)} for ${plantKw} kW.</li>`;
+    }
     subsidyDisclaimerHtml = `
       <div class="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg text-xs text-green-800 shadow-sm">
-          <strong class="block mb-1 text-green-900 border-b border-green-200 pb-1">Subsidy Eligibility (PM Surya Ghar):</strong>
-          <ul class="list-disc list-inside space-y-1 mt-1">
-              <li><strong>₹60,000 subsidy</strong> for 2kW systems.</li>
-              <li><strong>₹78,000 subsidy</strong> for 3kW and above systems.</li>
+          <strong class="block mb-1 text-green-900 border-b border-green-200 pb-1">PM Surya Ghar Subsidy Details:</strong>
+          <ul class="list-disc list-inside space-y-1 mt-1">${disclaimerItems}
           </ul>
-          <div class="mt-2 italic text-[10px] text-green-700">*The <strong>${fmt(totals.subsidy)}</strong> subsidy will be credited <strong>directly to the customer's bank account</strong> by the government through Direct Benefit Transfer (DBT), subject to DISCOM / MNRE approval. The customer pays <strong>${fmt(totals.grandTotal)}</strong> upfront to V-Sustain Solar Solutions; the <strong>${fmt(totals.subsidy)}</strong> subsidy is refunded to the customer post-installation, making the customer's <strong>net expenditure</strong> <strong>${fmt(totals.netExpenditure)}</strong>.</div>
+          <div class="mt-2 italic text-[10px] text-green-700">*Subsidies under the PM Surya Ghar scheme are subject to DISCOM / MNRE approval. The customer pays <strong>${fmt(totals.grandTotal)}</strong> upfront to V-Sustain Solar Solutions. The total subsidy of <strong>${fmt(totals.subsidy + totals.apartmentSubsidy)}</strong> is refunded to the customer post-installation, making the customer's <strong>net expenditure</strong> <strong>${fmt(totals.netExpenditure)}</strong>.</div>
       </div>
     `;
   }
@@ -1970,8 +2013,8 @@ function buildSummaryQuotationHtml(totals, systemType) {
 
   // Footer rows:
   //  1. NET PAYABLE TO V-SUSTAIN SOLAR (= full grand total, no subsidy deduction)
-  //  2. Subsidy row (only if subsidy applies) — informational only
-  //  3. NET EXPENDITURE (After Subsidy Refund) = grand total - subsidy
+  //  2. Subsidy rows (PM Surya Ghar + Apartment)
+  //  3. NET EXPENDITURE (After Subsidy Refund) = grand total - all subsidies
   let footerRows = `
   <tr class="bg-blue-50/80 font-bold border-t-2 border-brand-blue">
     <td class="p-4 border"></td>
@@ -1980,37 +2023,56 @@ function buildSummaryQuotationHtml(totals, systemType) {
   </tr>
 `;
 
-  if (isSubsidyYes && totals.subsidy > 0) {
-    footerRows += `
+  const hasPmSubsidy = isSubsidyYes && totals.subsidy > 0;
+  const hasApartmentSubsidy = totals.apartmentSubsidy > 0;
+
+  if (hasPmSubsidy || hasApartmentSubsidy) {
+    if (hasPmSubsidy) {
+      footerRows += `
   <tr class="bg-green-50/80 font-semibold border-t">
     <td class="p-4 border"></td>
     <td class="p-4 border text-right text-sm" colspan="3">Less: PM Surya Ghar Subsidy (refunded to customer via DBT)</td>
     <td class="p-4 border text-right text-lg text-green-700">- ${fmt(totals.subsidy)}</td>
-  </tr>
+  </tr>`;
+    }
+    if (hasApartmentSubsidy) {
+      footerRows += `
+  <tr class="bg-teal-50/80 font-semibold border-t">
+    <td class="p-4 border"></td>
+    <td class="p-4 border text-right text-sm" colspan="3">Less: PM Surya Ghar – Apartment Common Area Subsidy (₹18,000/kW)</td>
+    <td class="p-4 border text-right text-lg text-teal-700">- ${fmt(totals.apartmentSubsidy)}</td>
+  </tr>`;
+    }
+    footerRows += `
   <tr class="bg-orange-50/80 font-bold border-t-2 border-brand-orange">
     <td class="p-4 border"></td>
     <td class="p-4 border text-right text-base" colspan="3">NET EXPENDITURE (After Subsidy Refund)</td>
     <td class="p-4 border text-right text-xl text-brand-orange">${fmt(totals.netExpenditure)}</td>
-  </tr>
-`;
+  </tr>`;
   }
 
   // BUILD SUBSIDY DISCLAIMER BLOCK
   let subsidyDisclaimerHtml = '';
-  if (isSubsidyYes) {
+  if (hasPmSubsidy || hasApartmentSubsidy) {
+    let disclaimerItems = '';
+    if (hasPmSubsidy) {
+      disclaimerItems += `
+              <li><strong>PM Surya Ghar (Residential): ₹60,000</strong> for 2kW systems, <strong>₹78,000</strong> for 3kW and above systems.</li>`;
+    }
+    if (hasApartmentSubsidy) {
+      disclaimerItems += `
+              <li><strong>PM Surya Ghar (Apartment Common Area): ₹18,000/kW</strong> for common areas in residential apartment buildings. Total: ${fmt(totals.apartmentSubsidy)} for ${plantKw} kW.</li>`;
+    }
     subsidyDisclaimerHtml = `
       <div class="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg text-xs text-green-800 shadow-sm">
-          <strong class="block mb-1 text-green-900 border-b border-green-200 pb-1">Subsidy Eligibility (PM Surya Ghar):</strong>
-          <ul class="list-disc list-inside space-y-1 mt-1">
-              <li><strong>₹60,000 subsidy</strong> for 2kW systems.</li>
-              <li><strong>₹78,000 subsidy</strong> for 3kW and above systems.</li>
+          <strong class="block mb-1 text-green-900 border-b border-green-200 pb-1">PM Surya Ghar Subsidy Details:</strong>
+          <ul class="list-disc list-inside space-y-1 mt-1">${disclaimerItems}
           </ul>
-          <div class="mt-2 italic text-[10px] text-green-700">*The <strong>${fmt(totals.subsidy)}</strong> subsidy will be credited <strong>directly to the customer's bank account</strong> by the government through Direct Benefit Transfer (DBT), subject to DISCOM / MNRE approval. The customer pays <strong>${fmt(totals.grandTotal)}</strong> upfront to V-Sustain Solar Solutions; the <strong>${fmt(totals.subsidy)}</strong> subsidy is refunded to the customer post-installation, making the customer's <strong>net expenditure</strong> <strong>${fmt(totals.netExpenditure)}</strong>.</div>
+          <div class="mt-2 italic text-[10px] text-green-700">*Subsidies under the PM Surya Ghar scheme are subject to DISCOM / MNRE approval. The customer pays <strong>${fmt(totals.grandTotal)}</strong> upfront to V-Sustain Solar Solutions. The total subsidy of <strong>${fmt(totals.subsidy + totals.apartmentSubsidy)}</strong> is refunded to the customer post-installation, making the customer's <strong>net expenditure</strong> <strong>${fmt(totals.netExpenditure)}</strong>.</div>
       </div>
     `;
   }
 
-  // Identical HTML Template as Detailed Quote
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2029,6 +2091,16 @@ function buildSummaryQuotationHtml(totals, systemType) {
                 extend: {
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            blue: '#005bac', // Primary Blue
+                            lightBlue: '#4fa8e0',
+                            orange: '#ff9933', // Accent Orange
+                            green: '#8cc63f', // Green for sustainability
+                            greenDark: '#7ab82e',
+                            gray: '#f3f4f6',
+                        }
                     },
                     colors: {
                         brand: {
@@ -2814,32 +2886,55 @@ function buildShortQuotationHtml(totals, systemType) {
   const subsidyRadio = document.querySelector('input[name="subsidyEligible"]:checked');
   const isSubsidyYes = subsidyRadio && subsidyRadio.value === 'yes';
 
+  const hasPmSubsidy = isSubsidyYes && totals.subsidy > 0;
+  const hasApartmentSubsidy = totals.apartmentSubsidy > 0;
+
   // Subsidy Disclaimer + subsidy breakdown block
   let subsidyBlock = '';
-  if (isSubsidyYes) {
+  if (hasPmSubsidy || hasApartmentSubsidy) {
+    let listItems = '';
+    if (hasPmSubsidy) {
+      listItems += `
+              <li><strong>₹60,000</strong> subsidy for systems up to 2kW.</li>
+              <li><strong>₹78,000</strong> subsidy for systems 3kW and above.</li>`;
+    }
+    if (hasApartmentSubsidy) {
+      listItems += `
+              <li><strong>PM Surya Ghar (Apartment Common Area): ₹18,000/kW</strong> for common areas in residential apartment buildings. Total: ${fmt(totals.apartmentSubsidy)} for ${plantKw} kW.</li>`;
+    }
     subsidyBlock = `
       <div class="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-          <h4 class="font-bold text-green-800 text-sm mb-2 flex items-center gap-2"><i class="fas fa-check-circle"></i> PM Surya Ghar Subsidy Eligible</h4>
-          <ul class="list-disc list-inside text-xs text-green-700 space-y-1">
-              <li><strong>₹60,000</strong> subsidy for systems up to 2kW.</li>
-              <li><strong>₹78,000</strong> subsidy for systems 3kW and above.</li>
+          <h4 class="font-bold text-green-800 text-sm mb-2 flex items-center gap-2"><i class="fas fa-check-circle"></i> PM Surya Ghar – Subsidy Eligible</h4>
+          <ul class="list-disc list-inside text-xs text-green-700 space-y-1">${listItems}
           </ul>
-          <p class="text-[10px] text-green-600 mt-2 italic">* The <strong>${fmt(totals.subsidy)}</strong> subsidy will be credited directly to the customer's bank account via DBT post-installation. Customer pays the full <strong>${fmt(totals.grandTotal)}</strong> to V-Sustain Solar Solutions upfront; the subsidy refund makes the customer's <strong>net expenditure</strong> <strong>${fmt(totals.netExpenditure)}</strong>.</p>
+          <p class="text-[10px] text-green-600 mt-2 italic">* Subsidies under the PM Surya Ghar scheme are subject to DISCOM / MNRE approval. Customer pays the full <strong>${fmt(totals.grandTotal)}</strong> to V-Sustain Solar Solutions upfront; the total subsidy of <strong>${fmt(totals.subsidy + totals.apartmentSubsidy)}</strong> is refunded post-installation, making the customer's <strong>net expenditure</strong> <strong>${fmt(totals.netExpenditure)}</strong>.</p>
       </div>
     `;
   }
 
   // Subsidy breakdown rows for the commercial offer table
-  const subsidyBreakdownRows = (isSubsidyYes && totals.subsidy > 0) ? `
+  let subsidyBreakdownRows = '';
+  if (hasPmSubsidy) {
+    subsidyBreakdownRows += `
                 <tr class="bg-green-50 border-b border-gray-200">
                     <td class="p-4 font-medium text-brand-green">Less: PM Surya Ghar Subsidy (refunded to customer via DBT)</td>
                     <td class="p-4 text-right font-bold text-brand-green">- ${fmt(totals.subsidy)}</td>
-                </tr>
+                </tr>`;
+  }
+  if (hasApartmentSubsidy) {
+    subsidyBreakdownRows += `
+                <tr class="bg-teal-50 border-b border-gray-200">
+                    <td class="p-4 font-medium text-teal-700">Less: PM Surya Ghar – Apartment Common Area Subsidy (₹18,000/kW)</td>
+                    <td class="p-4 text-right font-bold text-teal-700">- ${fmt(totals.apartmentSubsidy)}</td>
+                </tr>`;
+  }
+  if (hasPmSubsidy || hasApartmentSubsidy) {
+    subsidyBreakdownRows += `
                 <tr class="bg-orange-100 border-b-2 border-brand-orange">
                     <td class="p-4 font-bold text-brand-orange">NET EXPENDITURE (After Subsidy Refund)</td>
                     <td class="p-4 text-right font-extrabold text-brand-orange">${fmt(totals.netExpenditure)}</td>
-                </tr>
-  ` : '';
+                </tr>`;
+  }
 
   return `<!DOCTYPE html>
 <html lang="en">
