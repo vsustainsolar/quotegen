@@ -57,7 +57,25 @@ const panelList = [
    { model: "DCR LUM 620TG132 BI-GL", watt: 620, price: 16554 },
   { model: "DCR LUM 625TG132 BI-GL", watt: 625, price: 16687 },
   { model: "DCR LUM 630TG132 BI-GL", watt: 630, price: 16821 },
-  { model: "DCR LUM 635TG132 BI-GL", watt: 635, price: 16954 }
+  { model: "DCR LUM 635TG132 BI-GL", watt: 635, price: 16954 },
+  { model: "Novasys DCR 550Wp", watt: 550, price: 12375 },
+  { model: "Novasys DCR 600Wp", watt: 600, price: 14400 },
+  { model: "Novasys NON DCR 550Wp", watt: 550, price: 7700 },
+  { model: "Novasys NON DCR 630Wp", watt: 630, price: 8694 },
+  { model: "Premier DCR 550Wp", watt: 550, price: 12045 },
+  { model: "Premier DCR 620Wp", watt: 620, price: 15686 },
+  { model: "Premier DCR 620Wp (All Black)", watt: 620, price: 16306 },
+  { model: "Premier NON DCR 615Wp", watt: 615, price: 8917.5 },
+  { model: "Waaree DCR 540Wp", watt: 540, price: 12690 },
+  { model: "Waaree DCR 585Wp", watt: 585, price: 14917.5 },
+  { model: "Waaree DCR 705Wp", watt: 705, price: 19387.5 },
+  { model: "Waaree NON DCR 620Wp", watt: 620, price: 8680 },
+  { model: "Adani NON DCR 615Wp", watt: 615, price: 8548.5 },
+  { model: "Adani NON DCR 635Wp", watt: 635, price: 8826.5 },
+  { model: "Adani DCR PERC 535Wp", watt: 535, price: 12759.75 },
+  { model: "Adani DCR PERC 555Wp", watt: 555, price: 13236.75 },
+  { model: "Adani DCR TOPCON 610Wp", watt: 610, price: 16378.5 },
+  { model: "Adani DCR TOPCON 635Wp", watt: 635, price: 17049.75 }
 ];
 
 // ACDB / DCDB (same as on-grid)
@@ -94,6 +112,23 @@ const fmt = v => {
 
 function $(id) { return document.getElementById(id); }
 
+/* Panel display helpers.
+   Model names may already carry the watt (e.g. "Novasys DCR 550Wp"), so we
+   only append the watt when it is missing, and we show the rate per watt so
+   different brands can be compared at a glance. */
+function panelHasWp(model) { return /\d\s*wp/i.test(String(model)); }
+
+function panelDesc(model, watt) {
+  return panelHasWp(model) ? String(model) : `${model} (${watt} Wp)`;
+}
+
+function panelOptionLabel(p) {
+  if (panelHasWp(p.model)) {
+    return `${p.model} — ${fmt(p.price)} — ₹${(p.price / p.watt).toFixed(2)}/Wp`;
+  }
+  return `${p.model} — ${p.watt} W — ${fmt(p.price)}`;
+}
+
 /* ===========================
    3. INITIALIZATION
    =========================== */
@@ -102,6 +137,7 @@ window.addEventListener('DOMContentLoaded', () => {
   attachEventListeners();
   setInitialValues();
   recalcAllCards();
+  initSearchableSelects();
 });
 
 function populateSelects() {
@@ -111,6 +147,7 @@ function populateSelects() {
     const o = document.createElement('option');
     o.value = inv.model;
     o.dataset.price = inv.price;
+    o.dataset.ssName = inv.model;
     o.textContent = `${inv.model} — ${fmt(inv.price)}`;
     invSel.appendChild(o);
   });
@@ -121,6 +158,7 @@ function populateSelects() {
     const o = document.createElement('option');
     o.value = bat.model;
     o.dataset.price = bat.price;
+    o.dataset.ssName = bat.model;
     o.textContent = `${bat.model} — ${fmt(bat.price)}`;
     batSel.appendChild(o);
   });
@@ -132,7 +170,8 @@ function populateSelects() {
     o.value = p.model;
     o.dataset.watt = p.watt;
     o.dataset.price = p.price;
-    o.textContent = `${p.model} — ${p.watt} W — ${fmt(p.price)}`;
+    o.dataset.ssName = p.model;
+    o.textContent = panelOptionLabel(p);
     panelSel.appendChild(o);
   });
 
@@ -144,6 +183,7 @@ function populateSelects() {
       o.value = a.sku;
       o.dataset.price = a.price;
       o.dataset.desc = a.desc;
+      o.dataset.ssName = a.desc;
       o.textContent = `${a.desc} — ${fmt(a.price)}`;
       acdbSel.appendChild(o);
     });
@@ -157,10 +197,25 @@ function populateSelects() {
       o.value = d.sku;
       o.dataset.price = d.price;
       o.dataset.desc = d.desc;
+      o.dataset.ssName = d.desc;
       o.textContent = `${d.desc} — ${fmt(d.price)}`;
       dcdbSel.appendChild(o);
     });
   }
+}
+
+/* Turn the product dropdowns into searchable comboboxes.
+   The native <select> stays as the source of truth - the widget only sets
+   selectedIndex and fires "change", so no pricing logic is affected. */
+function initSearchableSelects() {
+  if (typeof SearchableSelect === 'undefined') return;
+  SearchableSelect.upgradeAll({
+    inverterModel: { gstType: 'inverter', marginSection: 'inverter', placeholder: '🔍 Search inverters…' },
+    batteryModel:  { gstType: 'battery', marginSection: 'battery', placeholder: '🔍 Search batteries…' },
+    panelModel:    { gstType: 'panels',  marginSection: 'panels',  placeholder: '🔍 Search solar panels…' },
+    acdbModel:     { gstType: 'acdb',    marginSection: 'acdb',    placeholder: '🔍 Search ACDB…' },
+    dcdbModel:     { gstType: 'dcdb',    marginSection: 'dcdb',    placeholder: '🔍 Search DCDB…' }
+  });
 }
 
 function attachEventListeners() {
@@ -832,7 +887,7 @@ function buildLineItemsForQuotation() {
       items.push({
         type: 'panels',
         item: sel.value,
-        desc: `${sel.value} (${sel.dataset.watt} Wp)`,
+        desc: panelDesc(sel.value, sel.dataset.watt),
         qty,
         unit: 'Nos',
         baseRate: rate,

@@ -1,0 +1,17 @@
+{
+  "name": "quotegen",
+  "version": "1.0.0",
+  "private": true,
+  "description": "V-Sustain Solar Solutions — Quotation Suite (static app; dev tooling only)",
+  "scripts": {
+    "validate": "node tools/validate-catalog.mjs",
+    "smoke": "node tools/smoke.mjs",
+    "prices": "node tools/apply-prices.mjs",
+    "prices:check": "node tools/apply-prices.mjs --dry-run",
+    "prices:extract": "node tools/extract-catalog.mjs",
+    "smoke:update": "node tools/smoke.mjs --update"
+  },
+  "devDependencies": {
+    "playwright": "^1.49.0"
+  }
+}

@@ -7,6 +7,8 @@
 
     <!-- Main Stylesheet -->
     <link rel="stylesheet" href="style.css" />
+    <!-- Searchable product dropdowns -->
+    <link rel="stylesheet" href="../assets/css/searchable-select.css" />
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -60,7 +62,7 @@
             <div class="row">
                 <div class="col">
                     <label>Required System Size (kW)</label>
-                    <input type="number" id="systemKw" min="1" placeholder="Enter kW (e.g., 3)" oninput="updateSystemKW()" />
+                    <input type="number" id="systemKw" min="1" placeholder="Enter kW (e.g., 3)" />
                 </div>
 
                 <div class="col">
@@ -810,6 +812,7 @@
     <!-- =================================================== -->
     <!--                 SCRIPT IMPORTS                      -->
     <!-- =================================================== -->
+    <script src="../assets/js/searchable-select.js"></script>
     <script src="script.js"></script>
 
 </body>

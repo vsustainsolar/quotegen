@@ -35,40 +35,43 @@ const inverterList = [
   { model: "HYBRID TX 5KVA + Dongle (PV 5 KW)", price: 48058 },
   { model: "HYBRID TX 3.75KVA/48V", price: 34290 },
   { model: "Hybrid Feston Single Phase 3KW", price: 66000 },
-  { model: "Hybrid Feston Single Phase 3.6KW", price: 74000 },
-  { model: "Hybrid Feston Single Phase 5kW", price: 78000 },
+  { model: "Hybrid Feston Single Phase 3.6KW", price: 73500 },
+  { model: "Hybrid Feston Single Phase 5kW", price: 79000 },
   { model: "Hybrid Feston Single Phase 6KW", price: 82000 },
-  { model: "Hybrid Feston Single Phase 8KW", price: 119000 },
-  { model: "Hybrid Feston Three phase 8KW", price: 155000 },
-  { model: "Hybrid Feston Three phase 10KW", price: 161000 },
-  { model: "Hybrid Feston Three phase 12KW", price: 170000 },
-  { model: "Hybrid Feston Three phase 15KW", price: 220000 },
-  { model: "Hybrid Feston Three phase 20KW", price: 285000 },
-  { model: "Hybrid Feston Three phase 30KW", price: 380000 },
+  { model: "Hybrid Feston Single Phase 8KW", price: 114000 },
+  { model: "Hybrid Feston Three phase 5KW", price: 147000 },
+  { model: "Hybrid Feston Three phase 8KW", price: 152000 },
+  { model: "Hybrid Feston Three phase 10KW", price: 158000 },
+  { model: "Hybrid Feston Three phase 12KW", price: 165000 },
+  { model: "Hybrid Feston Three phase 15KW", price: 208000 },
+  { model: "Hybrid Feston Three phase 20KW", price: 263000 },
+  { model: "Hybrid Feston Three phase 30KW", price: 390000 },
   { model: "SOLAR HYBRID HF NXH 130 A48 3kW (1 phase) Wall Mount", price: 74300 },
   { model: "SOLAR HYBRID HF NXH 150 A48 5KW (1 phase) Wall Mount", price: 88615 },
   { model: "SOLAR HYBRID HF NXH 308 A 8KW (3 phase) Wall Mount", price: 191841 },
   { model: "SOLAR HYBRID HF NXH 310 A 10KW (3 phase) Wall Mount", price: 205269 },
   { model: "SOLAR HYBRID HF NXH 312 A 12KW (3 phase) Wall Mount", price: 216033 },
-   { model: "DEYE HYBRID 3KW 24V Single Phase", price: 66643 },
-  { model: "DEYE HYBRID 3KW 48V Single Phase", price: 66643 },
-  { model: "DEYE HYBRID 3.6KW 48V Single Phase", price: 73886 },
-  { model: "DEYE HYBRID 5KW 48V Single Phase", price: 81130 },
-  { model: "DEYE HYBRID 6KW 48V Single Phase", price: 85476 },
-  { model: "DEYE HYBRID 8KW 48V Single Phase", price: 114451 },
-  { model: "DEYE HYBRID 8KW 48V Three Phase", price: 152119 },
-  { model: "DEYE HYBRID 10KW 48V Three Phase", price: 161536 },
-  { model: "DEYE HYBRID 12KW 48V Three Phase", price: 166606 },
-  { model: "DEYE HYBRID 15KW 48V Three Phase", price: 207896 },
-  { model: "DEYE HYBRID 20KW 48V Three Phase", price: 265846 },
-  { model: "DEYE HYBRID 30KW Three Phase", price: 412894 },
-  { model: "DEYE HYBRID 40KW Three Phase", price: 470844 },
-  { model: "DEYE HYBRID 50KW Three Phase", price: 514306 },
-  { model: "DEYE HYBRID 60KW Three Phase", price: 648316 },
-  { model: "DEYE HYBRID 70KW Three Phase", price: 666425 },
-  { model: "DEYE HYBRID 80KW Three Phase", price: 738863 },
-  { model: "DEYE HYBRID 100KW Three Phase", price: 811300 },
-  { model: "DEYE HYBRID 125KW Three Phase", price: 956175 }
+   { model: "DEYE HYBRID 3KW 24V Single Phase", price: 68955 },
+  { model: "DEYE HYBRID 3KW 48V Single Phase", price: 68955 },
+  { model: "DEYE HYBRID 3.6KW 48V Single Phase", price: 76291 },
+  { model: "DEYE HYBRID 5KW 48V Single Phase", price: 81425 },
+  { model: "DEYE HYBRID 6KW 48V Single Phase", price: 84360 },
+  { model: "DEYE HYBRID 8KW 48V Single Phase", price: 118837 },
+  { model: "DEYE HYBRID 5KW 48V Three Phase", price: 122505 },
+  { model: "DEYE HYBRID 8KW 48V Three Phase", price: 155515 },
+  { model: "DEYE HYBRID 10KW 48V Three Phase", price: 161384 },
+  { model: "DEYE HYBRID 12KW 48V Three Phase", price: 166519 },
+  { model: "DEYE HYBRID 15KW 48V Three Phase", price: 212000 },
+  { model: "DEYE HYBRID 20KW 48V Three Phase", price: 270685 },
+  { model: "DEYE HYBRID 30KW Three Phase", price: 374117 },
+  { model: "DEYE HYBRID 40KW Three Phase", price: 447473 },
+  { model: "DEYE HYBRID 50KW Three Phase", price: 454809 },
+  { model: "DEYE HYBRID 60KW Three Phase", price: 627196 },
+  { model: "DEYE HYBRID 70KW Three Phase", price: 660206 },
+  { model: "DEYE HYBRID 80KW Three Phase", price: 718891 },
+  { model: "DEYE HYBRID 100KW Three Phase", price: 777576 },
+  { model: "DEYE HYBRID 125KW Three Phase", price: 894946 },
+  { model: "DEYE MICRO INVERTER HYBRID 1000W", price: 32131 }
   
 ];
 // SOLAR BATTERIES
@@ -85,7 +88,8 @@ const batteryList = [
    { model: "LV LiFePO4 Battery SE-F5 PLUS", price: 86717 },
   { model: "LV LiFePO4 Battery SE-F12", price: 171926 },
   { model: "LV LiFePO4 Battery SE-F16", price: 203597 },
-  { model: "HV Battery 51.2V 100AH BOS-GM5.1 HV Battery unit", price: 94710 }
+  { model: "HV Battery 51.2V 100AH BOS-GM5.1 HV Battery unit", price: 94710 },
+  { model: "Feston Lithium Ion Battery LV 5KWH", price: 87000 }
 ];
 
 // SOLAR PANELS
@@ -101,7 +105,25 @@ const panelList = [
    { model: "DCR LUM 620TG132 BI-GL", watt: 620, price: 16554 },
   { model: "DCR LUM 625TG132 BI-GL", watt: 625, price: 16687 },
   { model: "DCR LUM 630TG132 BI-GL", watt: 630, price: 16821 },
-  { model: "DCR LUM 635TG132 BI-GL", watt: 635, price: 16954 }
+  { model: "DCR LUM 635TG132 BI-GL", watt: 635, price: 16954 },
+  { model: "Novasys DCR 550Wp", watt: 550, price: 12375 },
+  { model: "Novasys DCR 600Wp", watt: 600, price: 14400 },
+  { model: "Novasys NON DCR 550Wp", watt: 550, price: 7700 },
+  { model: "Novasys NON DCR 630Wp", watt: 630, price: 8694 },
+  { model: "Premier DCR 550Wp", watt: 550, price: 12045 },
+  { model: "Premier DCR 620Wp", watt: 620, price: 15686 },
+  { model: "Premier DCR 620Wp (All Black)", watt: 620, price: 16306 },
+  { model: "Premier NON DCR 615Wp", watt: 615, price: 8917.5 },
+  { model: "Waaree DCR 540Wp", watt: 540, price: 12690 },
+  { model: "Waaree DCR 585Wp", watt: 585, price: 14917.5 },
+  { model: "Waaree DCR 705Wp", watt: 705, price: 19387.5 },
+  { model: "Waaree NON DCR 620Wp", watt: 620, price: 8680 },
+  { model: "Adani NON DCR 615Wp", watt: 615, price: 8548.5 },
+  { model: "Adani NON DCR 635Wp", watt: 635, price: 8826.5 },
+  { model: "Adani DCR PERC 535Wp", watt: 535, price: 12759.75 },
+  { model: "Adani DCR PERC 555Wp", watt: 555, price: 13236.75 },
+  { model: "Adani DCR TOPCON 610Wp", watt: 610, price: 16378.5 },
+  { model: "Adani DCR TOPCON 635Wp", watt: 635, price: 17049.75 }
 ];
 
 // ACDB / DCDB
@@ -138,6 +160,23 @@ const fmt = v => {
 
 function $(id) { return document.getElementById(id); }
 
+/* Panel display helpers.
+   Model names may already carry the watt (e.g. "Novasys DCR 550Wp"), so we
+   only append the watt when it is missing, and we show the rate per watt so
+   different brands can be compared at a glance. */
+function panelHasWp(model) { return /\d\s*wp/i.test(String(model)); }
+
+function panelDesc(model, watt) {
+  return panelHasWp(model) ? String(model) : `${model} (${watt} Wp)`;
+}
+
+function panelOptionLabel(p) {
+  if (panelHasWp(p.model)) {
+    return `${p.model} — ${fmt(p.price)} — ₹${(p.price / p.watt).toFixed(2)}/Wp`;
+  }
+  return `${p.model} — ${p.watt} W — ${fmt(p.price)}`;
+}
+
 /* ===========================
    3. INITIALIZATION
    =========================== */
@@ -146,6 +185,7 @@ window.addEventListener('DOMContentLoaded', () => {
   attachEventListeners();
   setInitialValues();
   recalcAllCards();
+  initSearchableSelects();
 });
 
 function populateSelects() {
@@ -155,6 +195,7 @@ function populateSelects() {
     const o = document.createElement('option');
     o.value = inv.model;
     o.dataset.price = inv.price;
+    o.dataset.ssName = inv.model;
     o.textContent = `${inv.model} — ${fmt(inv.price)}`;
     invSel.appendChild(o);
   });
@@ -165,6 +206,7 @@ function populateSelects() {
     const o = document.createElement('option');
     o.value = bat.model;
     o.dataset.price = bat.price;
+    o.dataset.ssName = bat.model;
     o.textContent = `${bat.model} — ${fmt(bat.price)}`;
     batSel.appendChild(o);
   });
@@ -176,7 +218,8 @@ function populateSelects() {
     o.value = p.model;
     o.dataset.watt = p.watt;
     o.dataset.price = p.price;
-    o.textContent = `${p.model} — ${p.watt} W — ${fmt(p.price)}`;
+    o.dataset.ssName = p.model;
+    o.textContent = panelOptionLabel(p);
     panelSel.appendChild(o);
   });
 
@@ -188,6 +231,7 @@ function populateSelects() {
       o.value = a.sku;
       o.dataset.price = a.price;
       o.dataset.desc = a.desc;
+      o.dataset.ssName = a.desc;
       o.textContent = `${a.desc} — ${fmt(a.price)}`;
       acdbSel.appendChild(o);
     });
@@ -201,10 +245,26 @@ function populateSelects() {
       o.value = d.sku;
       o.dataset.price = d.price;
       o.dataset.desc = d.desc;
+      o.dataset.ssName = d.desc;
       o.textContent = `${d.desc} — ${fmt(d.price)}`;
       dcdbSel.appendChild(o);
     });
   }
+}
+
+/* Turn the product dropdowns into searchable comboboxes.
+   The native <select> stays as the source of truth - the widget only sets
+   selectedIndex and fires "change", so no pricing logic is affected. */
+function initSearchableSelects() {
+  if (typeof SearchableSelect === 'undefined') return;
+  SearchableSelect.upgradeAll({
+    inverterModel: { gstType: 'inverter', marginSection: 'inverter', placeholder: '🔍 Search inverters…' },
+    batteryModel:  { gstType: 'battery', marginSection: 'battery', placeholder: '🔍 Search batteries…' },
+    panelModel:    { gstType: 'panels',  marginSection: 'panels',  placeholder: '🔍 Search solar panels…' },
+    meterType:     { gstType: 'meter',   marginSection: 'meter',   placeholder: '🔍 Search meters…' },
+    acdbModel:     { gstType: 'acdb',    marginSection: 'acdb',    placeholder: '🔍 Search ACDB…' },
+    dcdbModel:     { gstType: 'dcdb',    marginSection: 'dcdb',    placeholder: '🔍 Search DCDB…' }
+  });
 }
 
 function attachEventListeners() {
@@ -864,7 +924,7 @@ function buildLineItemsForQuotation() {
       const dealer = n(sel.dataset.price);
       const base = computeBasePrice('panel', dealer);
       const rate = applyMarginTo(base, 'panels');
-      items.push({ type: 'panels', item: sel.value, desc: `${sel.value} (${sel.dataset.watt} Wp)`, qty, unit: 'Nos', baseRate: rate, gstPercent: getGstFor('panels') });
+      items.push({ type: 'panels', item: sel.value, desc: panelDesc(sel.value, sel.dataset.watt), qty, unit: 'Nos', baseRate: rate, gstPercent: getGstFor('panels') });
     }
   }
 

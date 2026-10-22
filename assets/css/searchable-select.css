@@ -1,0 +1,95 @@
+/* ==========================================================================
+ * SearchableSelect - shared styles for the searchable product dropdowns.
+ * Loaded by on-grid, off-grid and hybrid. The visible search box inherits the
+ * app's existing `input` styling (padding, radius, focus ring).
+ * ========================================================================== */
+
+.ss {
+  position: relative;
+  width: 100%;
+}
+
+/* The real <select> stays in the DOM (it is the source of truth for the
+   pricing logic) but is not painted. */
+.ss-native {
+  display: none !important;
+}
+
+.ss-input {
+  width: 100%;
+  cursor: pointer;
+}
+
+.ss-input::placeholder {
+  color: #94a3b8;
+}
+
+.ss-list {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 60;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.14);
+  max-height: 300px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  display: none;
+}
+
+.ss.is-open .ss-list {
+  display: block;
+}
+
+.ss-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.ss-item:last-child {
+  border-bottom: none;
+}
+
+.ss-item:hover,
+.ss-item.is-active {
+  background: #eff6ff;
+}
+
+.ss-item.is-selected {
+  background: #dbeafe;
+}
+
+.ss-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+  line-height: 1.3;
+}
+
+.ss-detail {
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.35;
+}
+
+.ss-empty {
+  padding: 10px 12px;
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+/* The placeholder row (-- Select Inverter --) reads as a clear action. */
+.ss-item.is-placeholder .ss-name {
+  color: #64748b;
+  font-weight: 500;
+}
