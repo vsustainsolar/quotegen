@@ -172,6 +172,60 @@ const SCENARIOS = [
     },
   },
 
+  /* The searchable dropdown must drive the real <select>, which then drives
+     the normal pricing path. This guards the widget end to end. */
+  {
+    name: 'search-dropdown',
+    page: 'on-grid/index.html',
+    async run(page) {
+      // widget built for every product select?
+      const widgets = await page.evaluate(() => document.querySelectorAll('.ss .ss-input').length);
+
+      // set up a 5 kW system
+      await page.evaluate(() => {
+        document.getElementById('systemKw').value = '5';
+        document.getElementById('commonMargin').value = '20';
+        document.getElementById('systemKw').dispatchEvent(new Event('input', { bubbles: true }));
+      });
+      await page.waitForTimeout(150);
+
+      // type "novasys" into the panel box and read the filtered list
+      const panelBox = page.locator('.ss').filter({ has: page.locator('#panelModel') }).locator('.ss-input');
+      await panelBox.click();
+      await panelBox.fill('novasys');
+      await page.waitForTimeout(250);
+
+      const filtered = await page.evaluate(() => {
+        const open = document.querySelector('.ss.is-open');
+        if (!open) return { open: false };
+        return {
+          open: true,
+          count: open.querySelectorAll('.ss-item').length,
+          first: open.querySelector('.ss-item .ss-name')?.textContent || null,
+          detail: open.querySelector('.ss-item .ss-detail')?.textContent || null,
+        };
+      });
+
+      // pick it with the keyboard
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
+      await page.waitForTimeout(250);
+
+      const picked = await page.evaluate(() => {
+        const t = calcTotals();
+        const p = t.items.find((i) => i.type === 'panels');
+        return {
+          selectValue: document.getElementById('panelModel').value,
+          panelDesc: p?.desc,
+          panelRate: p?.baseRate,
+          panelQty: p?.qty,
+          grandTotal: t.grandTotal,
+        };
+      });
+
+      return { widgets, filtered: filtered.count, firstMatch: filtered.first, detail: filtered.detail, ...picked };
+    },
+  },
 ];
 
 /* ---------------- run ---------------- */

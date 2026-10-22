@@ -137,6 +137,7 @@ window.addEventListener('DOMContentLoaded', () => {
   attachEventListeners();
   setInitialValues();
   recalcAllCards();
+  initSearchableSelects();
 });
 
 function populateSelects() {
@@ -146,6 +147,7 @@ function populateSelects() {
     const o = document.createElement('option');
     o.value = inv.model;
     o.dataset.price = inv.price;
+    o.dataset.ssName = inv.model;
     o.textContent = `${inv.model} — ${fmt(inv.price)}`;
     invSel.appendChild(o);
   });
@@ -156,6 +158,7 @@ function populateSelects() {
     const o = document.createElement('option');
     o.value = bat.model;
     o.dataset.price = bat.price;
+    o.dataset.ssName = bat.model;
     o.textContent = `${bat.model} — ${fmt(bat.price)}`;
     batSel.appendChild(o);
   });
@@ -167,7 +170,8 @@ function populateSelects() {
     o.value = p.model;
     o.dataset.watt = p.watt;
     o.dataset.price = p.price;
-    o.textContent = `${p.model} — ${p.watt} W — ${fmt(p.price)}`;
+    o.dataset.ssName = p.model;
+    o.textContent = panelOptionLabel(p);
     panelSel.appendChild(o);
   });
 
@@ -179,6 +183,7 @@ function populateSelects() {
       o.value = a.sku;
       o.dataset.price = a.price;
       o.dataset.desc = a.desc;
+      o.dataset.ssName = a.desc;
       o.textContent = `${a.desc} — ${fmt(a.price)}`;
       acdbSel.appendChild(o);
     });
@@ -192,10 +197,25 @@ function populateSelects() {
       o.value = d.sku;
       o.dataset.price = d.price;
       o.dataset.desc = d.desc;
+      o.dataset.ssName = d.desc;
       o.textContent = `${d.desc} — ${fmt(d.price)}`;
       dcdbSel.appendChild(o);
     });
   }
+}
+
+/* Turn the product dropdowns into searchable comboboxes.
+   The native <select> stays as the source of truth - the widget only sets
+   selectedIndex and fires "change", so no pricing logic is affected. */
+function initSearchableSelects() {
+  if (typeof SearchableSelect === 'undefined') return;
+  SearchableSelect.upgradeAll({
+    inverterModel: { gstType: 'inverter', marginSection: 'inverter', placeholder: '🔍 Search inverters…' },
+    batteryModel:  { gstType: 'battery', marginSection: 'battery', placeholder: '🔍 Search batteries…' },
+    panelModel:    { gstType: 'panels',  marginSection: 'panels',  placeholder: '🔍 Search solar panels…' },
+    acdbModel:     { gstType: 'acdb',    marginSection: 'acdb',    placeholder: '🔍 Search ACDB…' },
+    dcdbModel:     { gstType: 'dcdb',    marginSection: 'dcdb',    placeholder: '🔍 Search DCDB…' }
+  });
 }
 
 function attachEventListeners() {

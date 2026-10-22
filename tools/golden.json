@@ -28,5 +28,16 @@
     "subtotal": 18928.8,
     "totalGst": 3407.18,
     "grandTotal": 22335.98
+  },
+  "search-dropdown": {
+    "widgets": 5,
+    "filtered": 4,
+    "firstMatch": "Novasys DCR 550Wp",
+    "detail": "Dealer ₹12,375 → Sells at ₹14,850 · GST 5% · ₹22.50/Wp",
+    "selectValue": "Novasys DCR 550Wp",
+    "panelDesc": "Novasys DCR 550Wp",
+    "panelRate": 14850,
+    "panelQty": 10,
+    "grandTotal": 236873
   }
 }

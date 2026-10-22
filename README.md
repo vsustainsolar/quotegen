@@ -86,9 +86,55 @@ three** solar tools, which is why one entry updates all of them at once.
 
 ---
 
+## 3. Searching for products
+
+Every product dropdown in the **On-Grid**, **Off-Grid** and **Hybrid** tools is a
+searchable combobox. Click the box (or click into it and type) and the product
+list opens; typing filters it.
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│ 🔍  Novasys DCR 550Wp                                        │  ← type here
+└──────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│ Novasys DCR 550Wp                                           │
+│ Dealer ₹12,375 → Sells at ₹14,850 · GST 5% · ₹22.50/Wp     │
+├──────────────────────────────────────────────────────────────┤
+│ Novasys DCR 600Wp                                           │
+│ Dealer ₹14,400 → Sells at ₹17,280 · GST 5% · ₹24.00/Wp     │
+└──────────────────────────────────────────────────────────────┘
+```
+
+Each row shows the product name plus the three numbers that matter:
+
+| Shown | Where it comes from |
+|---|---|
+| **Dealer ₹X** | the price in `data/catalog.json` |
+| **→ Sells at ₹Y** | dealer price with your live margin applied |
+| **GST Z%** | the tool's own `getGstFor()` — always the rate the quote will use |
+| **₹/Wp** | panels only, the rate per watt |
+
+**Searching works on the whole visible label**, so you can search by brand
+(`novasys`), by model (`550`), by watt (`620`), **by price** (`22.50`) or by
+rate (`14652`). Prefix matches are ranked first, so `wa` puts *Waaree* at the
+top of the 74 on-grid inverters.
+
+**Keyboard:** `↑` `↓` to move, `Enter` to pick, `Esc` to close, `Home`/`End`
+to jump.
+
+**Your current selection is never wiped while you type** — you only change it
+by picking something. (The B2B UPS tool clears its selection on every
+keystroke; that behaviour was deliberately not copied here, because in a
+quotation builder it would zero the quote mid-search.)
+
+The tool that renders this is `assets/js/searchable-select.js`, shared by all
+three solar tools. Under the hood the real `<select>` is still there and is
+still the source of truth — the widget only sets `selectedIndex` and fires a
+normal `change` event, so **no pricing, tax or quotation logic was touched**.
+
 ---
 
-## 3. Pricing model
+## 4. Pricing model
 
 ```
 dealer price  →  × (1 + margin)  →  customer rate  →  × qty  →  + GST  →  line total
@@ -114,7 +160,7 @@ These behave like catalog data but are not products. They live in the
 
 ---
 
-## 4. GST logic
+## 5. GST logic
 
 > **The 5% combination on inverter + battery + panels is a deliberate
 > commercial offering by V-Sustain Solar Solutions.** It is a pricing
@@ -175,7 +221,7 @@ Be aware of these when reading a generated quotation:
 
 ---
 
-## 5. Subsidies
+## 6. Subsidies
 
 Only the **On-Grid** tool computes subsidies. Off-Grid and Hybrid have the
 UI placeholders but no calculation; B2B UPS has none.
@@ -193,7 +239,7 @@ refunded later by the government via DBT. So the quote carries two figures:
 
 ---
 
-## 6. Panel price list
+## 7. Panel price list
 
 Prices are **dealer prices, EX-GST and EX-WORKS** — freight to site is not
 included. GST is added by the tool.
@@ -225,7 +271,7 @@ the rate per watt for the newer entries so brands can be compared at a glance.
 
 ---
 
-## 7. Inverter price lists
+## 8. Inverter price lists
 
 ### Deye — EPC price list, Oct 2026
 
@@ -342,7 +388,7 @@ Inverter price list. Prices are **dealer prices, ex-GST**.
 
 ---
 
-## 8. Known issues
+## 9. Known issues
 
 Found while reviewing the code. None of them are fixed yet — they are recorded
 here so they are not lost.
@@ -386,7 +432,7 @@ here so they are not lost.
 
 ---
 
-## 9. Repository map
+## 10. Repository map
 
 ```
 index.html              landing page — pick a quotation type
@@ -395,6 +441,8 @@ off-grid/               off-grid tool      (index.html, script.js)
 hybrid/                 hybrid tool        (index.html, script.js)
 ups-b2b/                B2B UPS tool       (index.html, script.js, style.css)
 assets/icons/           icon set
+assets/js/              searchable-select.js — shared searchable dropdown widget
+assets/css/             searchable-select.css — its styles
 Uplodes/                images used in the generated documents
 
 data/catalog.json       ← master product & price list (edit this)
@@ -407,6 +455,19 @@ tools/lib/              shared helpers
 ```
 
 ---
+
+## 11. Recent changes
+
+The full trail is in the git history. This is the short version.
+
+| When | What |
+|---|---|
+| Oct 2026 | **Master price catalog.** `data/catalog.json` became the single source of truth for all 393 → 422 products, with `tools/apply-prices.mjs` writing it into the four tool files, `tools/validate-catalog.mjs` checking it, and `tools/smoke.mjs` pinning the quotations it produces. |
+| Oct 2026 | **Panel price update.** 18 new panels — Novasys, Premier, Waaree and Adani — added alongside the existing Luminous ones. 30 panel options in total, now showing the rate per watt. |
+| Oct 2026 | **Deye EPC price list (Oct 2026).** 26 on-grid inverters and 19 hybrid inverters re-priced, 3 micro inverters added, and the on-grid warranty corrected to Deye's policy (10 years up to 10 kW, 8 years above). |
+| Oct 2026 | **Feston price list.** 23 Feston on-grid string inverters added as a new brand, 10 hybrid inverters re-priced, and the Feston LV 5 kWh battery added. |
+| Oct 2026 | **Searchable product dropdowns.** Every product dropdown in the three solar tools is now a searchable combobox showing dealer price, live selling price and GST rate per row. |
+| Oct 2026 | Fixed a broken `oninput="updateSystemKW()"` handler in the On-Grid kW field (the function did not exist — it is `updateSystemDependent()`). |
 
 ---
 

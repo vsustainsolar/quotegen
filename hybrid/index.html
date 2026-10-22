@@ -7,6 +7,8 @@
 
     <!-- Main Stylesheet -->
     <link rel="stylesheet" href="../on-grid/style.css" />
+    <!-- Searchable product dropdowns -->
+    <link rel="stylesheet" href="../assets/css/searchable-select.css" />
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -372,8 +374,8 @@
                     <label>Meter Type</label>
                     <select id="meterType" onchange="updateMeterData()">
                         <option value="">-- Select Meter Type --</option>
-                        <option value="single" data-price="4500">Single Phase</option>
-                        <option value="three" data-price="7500">Three Phase</option>
+                        <option value="single" data-price="4500" data-ss-name="Single Phase">Single Phase</option>
+                        <option value="three" data-price="7500" data-ss-name="Three Phase">Three Phase</option>
                     </select>
                 </div>
 
@@ -879,6 +881,7 @@
     <!-- =================================================== -->
     <!--                 SCRIPT IMPORTS                      -->
     <!-- =================================================== -->
+    <script src="../assets/js/searchable-select.js"></script>
     <script src="script.js"></script>
 
 </body>
