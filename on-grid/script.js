@@ -33,32 +33,57 @@ const inverterList = [
   { model: "NXI W3150(150KW) (INCL.DONGLE)", capacityKw: 150, warranty: "8 Years*", price: 344553 },
   { model: "NXI A3250-HV(250KW)", capacityKw: 250, warranty: "8 Years*", price: 417806 },
   { model: "NXI A3250-HV(350KW)", capacityKw: 350, warranty: "8 Years*", price: 555492 },
-   { model: "DEYE ON GRID 1.5kW Single Phase", capacityKw: 1.5, warranty: "10 Years*", price: 14602 },
-  { model: "DEYE ON GRID 2.2kw Single Phase", capacityKw: 2.2, warranty: "10 Years*", price: 14739 },
-  { model: "DEYE ON GRID 3.0kw Single Phase", capacityKw: 3.0, warranty: "10 Years*", price: 15153 },
-  { model: "DEYE ON GRID 3.3kw Single Phase", capacityKw: 3.3, warranty: "10 Years*", price: 15428 },
-  { model: "DEYE ON GRID 3.6KW Single Phase", capacityKw: 3.6, warranty: "10 Years*", price: 16530 },
-  { model: "DEYE ON GRID 4.0kw Single Phase", capacityKw: 4.0, warranty: "10 Years*", price: 17494 },
-  { model: "DEYE ON GRID 5.0kw Single Phase", capacityKw: 5.0, warranty: "10 Years*", price: 24382 },
-  { model: "DEYE ON GRID 5.0kw Three Phase", capacityKw: 5.0, warranty: "10 Years*", price: 42008 },
-  { model: "DEYE ON GRID 6.0kw Three Phase", capacityKw: 6.0, warranty: "10 Years*", price: 43492 },
-  { model: "DEYE ON GRID 8.0kw Three Phase", capacityKw: 8.0, warranty: "10 Years*", price: 45125 },
-  { model: "DEYE ON GRID 10kw Three Phase", capacityKw: 10.0, warranty: "10 Years*", price: 46758 },
-  { model: "DEYE ON GRID 12kw Three Phase", capacityKw: 12.0, warranty: "10 Years*", price: 48242 },
-  { model: "DEYE ON GRID 15kw Three Phase", capacityKw: 15.0, warranty: "10 Years*", price: 57148 },
-  { model: "DEYE ON GRID 18kw Three Phase", capacityKw: 18.0, warranty: "10 Years*", price: 60859 },
-  { model: "DEYE ON GRID 20kw Three Phase", capacityKw: 20.0, warranty: "10 Years*", price: 64570 },
-  { model: "DEYE ON GRID 25kw Three Phase", capacityKw: 25.0, warranty: "10 Years*", price: 69766 },
-  { model: "DEYE ON GRID 33kw Three Phase", capacityKw: 33.0, warranty: "10 Years*", price: 78660 },
-  { model: "DEYE ON GRID 40kw Three Phase", capacityKw: 40.0, warranty: "10 Years*", price: 101175 },
-  { model: "DEYE ON GRID 50kw Three Phase", capacityKw: 50.0, warranty: "10 Years*", price: 112575 },
-  { model: "DEYE ON GRID 60kw Three Phase", capacityKw: 60.0, warranty: "10 Years*", price: 119700 },
-  { model: "DEYE ON GRID 80kw Three Phase", capacityKw: 80.0, warranty: "10 Years*", price: 206625 },
-  { model: "DEYE ON GRID 90kw Three Phase", capacityKw: 90.0, warranty: "10 Years*", price: 235553 },
-  { model: "DEYE ON GRID 100kw Three Phase", capacityKw: 100.0, warranty: "10 Years*", price: 242440 },
-  { model: "DEYE ON GRID 110kw Three Phase", capacityKw: 110.0, warranty: "10 Years*", price: 249328 },
-  { model: "DEYE ON GRID 125kw Three Phase", capacityKw: 125.0, warranty: "10 Years*", price: 283765 },
-  { model: "DEYE ON GRID 136kw Three Phase", capacityKw: 136.0, warranty: "10 Years*", price: 297540 }
+   { model: "DEYE ON GRID 1.5kW Single Phase", capacityKw: 1.5, warranty: "10 Years*", price: 14514 },
+  { model: "DEYE ON GRID 2.2kw Single Phase", capacityKw: 2.2, warranty: "10 Years*", price: 14652 },
+  { model: "DEYE ON GRID 3.0kw Single Phase", capacityKw: 3.0, warranty: "10 Years*", price: 14455 },
+  { model: "DEYE ON GRID 3.3kw Single Phase", capacityKw: 3.3, warranty: "10 Years*", price: 14725 },
+  { model: "DEYE ON GRID 3.6KW Single Phase", capacityKw: 3.6, warranty: "10 Years*", price: 15400 },
+  { model: "DEYE ON GRID 4.0kw Single Phase", capacityKw: 4.0, warranty: "10 Years*", price: 16311 },
+  { model: "DEYE ON GRID 5.0kw Single Phase", capacityKw: 5.0, warranty: "10 Years*", price: 24328 },
+  { model: "DEYE ON GRID 5.0kw Three Phase", capacityKw: 5.0, warranty: "10 Years*", price: 43697 },
+  { model: "DEYE ON GRID 6.0kw Three Phase", capacityKw: 6.0, warranty: "10 Years*", price: 45189 },
+  { model: "DEYE ON GRID 8.0kw Three Phase", capacityKw: 8.0, warranty: "10 Years*", price: 45934 },
+  { model: "DEYE ON GRID 10kw Three Phase", capacityKw: 10.0, warranty: "10 Years*", price: 46680 },
+  { model: "DEYE ON GRID 12kw Three Phase", capacityKw: 12.0, warranty: "8 Years*", price: 48171 },
+  { model: "DEYE ON GRID 15kw Three Phase", capacityKw: 15.0, warranty: "8 Years*", price: 59109 },
+  { model: "DEYE ON GRID 18kw Three Phase", capacityKw: 18.0, warranty: "8 Years*", price: 62141 },
+  { model: "DEYE ON GRID 20kw Three Phase", capacityKw: 20.0, warranty: "8 Years*", price: 65930 },
+  { model: "DEYE ON GRID 25kw Three Phase", capacityKw: 25.0, warranty: "8 Years*", price: 71234 },
+  { model: "DEYE ON GRID 33kw Three Phase", capacityKw: 33.0, warranty: "8 Years*", price: 77547 },
+  { model: "DEYE ON GRID 40kw Three Phase", capacityKw: 40.0, warranty: "8 Years*", price: 98722 },
+  { model: "DEYE ON GRID 50kw Three Phase", capacityKw: 50.0, warranty: "8 Years*", price: 109452 },
+  { model: "DEYE ON GRID 60kw Three Phase", capacityKw: 60.0, warranty: "8 Years*", price: 120183 },
+  { model: "DEYE ON GRID 80kw Three Phase", capacityKw: 80.0, warranty: "8 Years*", price: 204597 },
+  { model: "DEYE ON GRID 90kw Three Phase", capacityKw: 90.0, warranty: "8 Years*", price: 237699 },
+  { model: "DEYE ON GRID 100kw Three Phase", capacityKw: 100.0, warranty: "8 Years*", price: 244731 },
+  { model: "DEYE ON GRID 110kw Three Phase", capacityKw: 110.0, warranty: "8 Years*", price: 251764 },
+  { model: "DEYE ON GRID 125kw Three Phase", capacityKw: 125.0, warranty: "8 Years*", price: 289739 },
+  { model: "DEYE ON GRID 136kw Three Phase", capacityKw: 136.0, warranty: "8 Years*", price: 296772 },
+  { model: "DEYE MICRO INVERTER ONGRID 1000W", capacityKw: 1, warranty: "10 Years*", price: 9397 },
+  { model: "DEYE MICRO INVERTER ONGRID 2200W", capacityKw: 2.2, warranty: "10 Years*", price: 15459 },
+  { model: "FESTON ON GRID 2KW Single Phase", capacityKw: 2, warranty: "10 Years*", price: 14271 },
+  { model: "FESTON ON GRID 3KW Single Phase", capacityKw: 3, warranty: "10 Years*", price: 14967 },
+  { model: "FESTON ON GRID 4KW Single Phase", capacityKw: 4, warranty: "10 Years*", price: 15841 },
+  { model: "FESTON ON GRID 5KW Single Phase", capacityKw: 5, warranty: "10 Years*", price: 25402 },
+  { model: "FESTON ON GRID 5KW Three Phase", capacityKw: 5, warranty: "10 Years*", price: 40052 },
+  { model: "FESTON ON GRID 6KW Three Phase", capacityKw: 6, warranty: "10 Years*", price: 41520 },
+  { model: "FESTON ON GRID 8KW Three Phase", capacityKw: 8, warranty: "10 Years*", price: 43133 },
+  { model: "FESTON ON GRID 10KW Three Phase", capacityKw: 10, warranty: "10 Years*", price: 44014 },
+  { model: "FESTON ON GRID 12KW Three Phase", capacityKw: 12, warranty: "10 Years*", price: 44747 },
+  { model: "FESTON ON GRID 15KW Three Phase", capacityKw: 15, warranty: "10 Years*", price: 52530 },
+  { model: "FESTON ON GRID 20KW Three Phase", capacityKw: 20, warranty: "10 Years*", price: 59778 },
+  { model: "FESTON ON GRID 25KW Three Phase", capacityKw: 25, warranty: "10 Years*", price: 64821 },
+  { model: "FESTON ON GRID 30KW Three Phase", capacityKw: 30, warranty: "10 Years*", price: 76584 },
+  { model: "FESTON ON GRID 35KW Three Phase", capacityKw: 35, warranty: "10 Years*", price: 80985 },
+  { model: "FESTON ON GRID 40KW Three Phase", capacityKw: 40, warranty: "10 Years*", price: 99031 },
+  { model: "FESTON ON GRID 50KW Three Phase", capacityKw: 50, warranty: "10 Years*", price: 109300 },
+  { model: "FESTON ON GRID 60KW Three Phase", capacityKw: 60, warranty: "10 Years*", price: 123239 },
+  { model: "FESTON ON GRID 80KW Three Phase", capacityKw: 80, warranty: "10 Years*", price: 205398 },
+  { model: "FESTON ON GRID 90KW Three Phase", capacityKw: 90, warranty: "10 Years*", price: 239115 },
+  { model: "FESTON ON GRID 100KW Three Phase", capacityKw: 100, warranty: "10 Years*", price: 246318 },
+  { model: "FESTON ON GRID 110KW Three Phase", capacityKw: 110, warranty: "10 Years*", price: 253519 },
+  { model: "FESTON ON GRID 125KW Three Phase", capacityKw: 125, warranty: "10 Years*", price: 296733 },
+  { model: "FESTON ON GRID 136KW Three Phase", capacityKw: 136, warranty: "10 Years*", price: 311137 }
 ];
 
 // SOLAR PANELS (model / watt / dealer price)
@@ -74,7 +99,25 @@ const panelList = [
    { model: "DCR LUM 620TG132 BI-GL", watt: 620, price: 16554 },
   { model: "DCR LUM 625TG132 BI-GL", watt: 625, price: 16687 },
   { model: "DCR LUM 630TG132 BI-GL", watt: 630, price: 16821 },
-  { model: "DCR LUM 635TG132 BI-GL", watt: 635, price: 16954 }
+  { model: "DCR LUM 635TG132 BI-GL", watt: 635, price: 16954 },
+  { model: "Novasys DCR 550Wp", watt: 550, price: 12375 },
+  { model: "Novasys DCR 600Wp", watt: 600, price: 14400 },
+  { model: "Novasys NON DCR 550Wp", watt: 550, price: 7700 },
+  { model: "Novasys NON DCR 630Wp", watt: 630, price: 8694 },
+  { model: "Premier DCR 550Wp", watt: 550, price: 12045 },
+  { model: "Premier DCR 620Wp", watt: 620, price: 15686 },
+  { model: "Premier DCR 620Wp (All Black)", watt: 620, price: 16306 },
+  { model: "Premier NON DCR 615Wp", watt: 615, price: 8917.5 },
+  { model: "Waaree DCR 540Wp", watt: 540, price: 12690 },
+  { model: "Waaree DCR 585Wp", watt: 585, price: 14917.5 },
+  { model: "Waaree DCR 705Wp", watt: 705, price: 19387.5 },
+  { model: "Waaree NON DCR 620Wp", watt: 620, price: 8680 },
+  { model: "Adani NON DCR 615Wp", watt: 615, price: 8548.5 },
+  { model: "Adani NON DCR 635Wp", watt: 635, price: 8826.5 },
+  { model: "Adani DCR PERC 535Wp", watt: 535, price: 12759.75 },
+  { model: "Adani DCR PERC 555Wp", watt: 555, price: 13236.75 },
+  { model: "Adani DCR TOPCON 610Wp", watt: 610, price: 16378.5 },
+  { model: "Adani DCR TOPCON 635Wp", watt: 635, price: 17049.75 }
    
 ];
 
@@ -118,6 +161,23 @@ const fmt = v => {
 };
 
 function $(id) { return document.getElementById(id); }
+
+/* Panel display helpers.
+   Model names may already carry the watt (e.g. "Novasys DCR 550Wp"), so we
+   only append the watt when it is missing, and we show the rate per watt so
+   different brands can be compared at a glance. */
+function panelHasWp(model) { return /\d\s*wp/i.test(String(model)); }
+
+function panelDesc(model, watt) {
+  return panelHasWp(model) ? String(model) : `${model} (${watt} Wp)`;
+}
+
+function panelOptionLabel(p) {
+  if (panelHasWp(p.model)) {
+    return `${p.model} — ${fmt(p.price)} — ₹${(p.price / p.watt).toFixed(2)}/Wp`;
+  }
+  return `${p.model} — ${p.watt} W — ${fmt(p.price)}`;
+}
 
 /* ===========================
    3. INITIALIZATION
@@ -801,7 +861,7 @@ if (isEnabled('panels')) {
     items.push({
       type: 'panels',
       item: sel.value,
-      desc: `${sel.value} (${sel.dataset.watt} Wp)`,
+      desc: panelDesc(sel.value, sel.dataset.watt),
       qty,
       unit: 'Nos',
       baseRate: rate,

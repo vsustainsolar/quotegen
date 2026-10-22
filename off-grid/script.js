@@ -57,7 +57,25 @@ const panelList = [
    { model: "DCR LUM 620TG132 BI-GL", watt: 620, price: 16554 },
   { model: "DCR LUM 625TG132 BI-GL", watt: 625, price: 16687 },
   { model: "DCR LUM 630TG132 BI-GL", watt: 630, price: 16821 },
-  { model: "DCR LUM 635TG132 BI-GL", watt: 635, price: 16954 }
+  { model: "DCR LUM 635TG132 BI-GL", watt: 635, price: 16954 },
+  { model: "Novasys DCR 550Wp", watt: 550, price: 12375 },
+  { model: "Novasys DCR 600Wp", watt: 600, price: 14400 },
+  { model: "Novasys NON DCR 550Wp", watt: 550, price: 7700 },
+  { model: "Novasys NON DCR 630Wp", watt: 630, price: 8694 },
+  { model: "Premier DCR 550Wp", watt: 550, price: 12045 },
+  { model: "Premier DCR 620Wp", watt: 620, price: 15686 },
+  { model: "Premier DCR 620Wp (All Black)", watt: 620, price: 16306 },
+  { model: "Premier NON DCR 615Wp", watt: 615, price: 8917.5 },
+  { model: "Waaree DCR 540Wp", watt: 540, price: 12690 },
+  { model: "Waaree DCR 585Wp", watt: 585, price: 14917.5 },
+  { model: "Waaree DCR 705Wp", watt: 705, price: 19387.5 },
+  { model: "Waaree NON DCR 620Wp", watt: 620, price: 8680 },
+  { model: "Adani NON DCR 615Wp", watt: 615, price: 8548.5 },
+  { model: "Adani NON DCR 635Wp", watt: 635, price: 8826.5 },
+  { model: "Adani DCR PERC 535Wp", watt: 535, price: 12759.75 },
+  { model: "Adani DCR PERC 555Wp", watt: 555, price: 13236.75 },
+  { model: "Adani DCR TOPCON 610Wp", watt: 610, price: 16378.5 },
+  { model: "Adani DCR TOPCON 635Wp", watt: 635, price: 17049.75 }
 ];
 
 // ACDB / DCDB (same as on-grid)
@@ -93,6 +111,23 @@ const fmt = v => {
 };
 
 function $(id) { return document.getElementById(id); }
+
+/* Panel display helpers.
+   Model names may already carry the watt (e.g. "Novasys DCR 550Wp"), so we
+   only append the watt when it is missing, and we show the rate per watt so
+   different brands can be compared at a glance. */
+function panelHasWp(model) { return /\d\s*wp/i.test(String(model)); }
+
+function panelDesc(model, watt) {
+  return panelHasWp(model) ? String(model) : `${model} (${watt} Wp)`;
+}
+
+function panelOptionLabel(p) {
+  if (panelHasWp(p.model)) {
+    return `${p.model} — ${fmt(p.price)} — ₹${(p.price / p.watt).toFixed(2)}/Wp`;
+  }
+  return `${p.model} — ${p.watt} W — ${fmt(p.price)}`;
+}
 
 /* ===========================
    3. INITIALIZATION
@@ -832,7 +867,7 @@ function buildLineItemsForQuotation() {
       items.push({
         type: 'panels',
         item: sel.value,
-        desc: `${sel.value} (${sel.dataset.watt} Wp)`,
+        desc: panelDesc(sel.value, sel.dataset.watt),
         qty,
         unit: 'Nos',
         baseRate: rate,
